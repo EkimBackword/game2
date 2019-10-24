@@ -1,0 +1,28 @@
+<h2>Авторизация</h2>
+<form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off" class="form-signin">
+
+  <!-- name -->
+  <fieldset class="form-group">
+    <label for="name">Имя пользователя</label>
+    <input
+      id="name"
+      type="text"
+      class="form-control"
+      name="name"
+      formControlName="name"
+      [readonly]="isBusy"
+      placeholder="Имя пользователя"
+      tabindex="1"
+    />
+  </fieldset>
+  <!-- END name -->
+
+  <!-- КНОПОЧКИ -->
+  <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+    <button type="submit" tabindex="4" class="btn btn-primary" [disabled]="!form.valid || isBusy" [class.btn-busy]="isBusy">
+      <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
+      <div class="btn-content">Войти</div>
+    </button>
+  </fieldset>
+  <!-- END КНОПОЧКИ -->
+</form>

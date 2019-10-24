@@ -1,0 +1,50 @@
+// Brand Colors
+
+// цвет фона
+$white: #F4F6F9;
+// основной цвет
+$black: #0A0E14;
+// неактивные кнопки, цвет обводки
+$dark-gray: #171A1E;
+// неактивные кнопки, цвет обводки
+$gray: #687386;
+// кнопки, ползунки на сером фоне
+$light-gray: #E6EAF2;
+
+// акцентный
+$dark-primary: #5D4293;
+// наведения, активные состояния, кнопки
+$primary: #825FC3;
+// фильтры, фон строк таблиц
+$light-primary: #D6CEE5;
+
+
+// any gray
+$gray-100: $light-gray;
+$gray-200: #CED5E0;
+$gray-300: #B3BCCC;
+$gray-400: #929EB2;
+$gray-500: #818C9E;
+$gray-600: $gray;
+$gray-700: #414954;
+$gray-800: #31373F;
+$gray-900: $dark-gray;
+
+
+// basic color
+$indigo: #586ADA;
+$cyan: #067AB8;
+$green: #09815C;
+$yellow: #BB5506;
+$orange: #C44C35;
+$red: #CD3D64;
+$purple: #A44FB5;
+$violet: #825FC3;
+// other color
+$pink: #ff4081;
+$teal: #26a69a;
+$blue: #448aff;
+
+
+$colors: ($white, $green, $purple, $cyan, $red, $black, $indigo, $yellow, $violet, $orange, $pink, $primary);
+$colors-name: ('white', 'green', 'purple', 'cyan', 'red', 'black', 'indigo', 'yellow', 'violet', 'orange', 'pink', 'primary');

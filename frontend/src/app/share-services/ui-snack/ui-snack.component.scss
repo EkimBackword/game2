@@ -1,0 +1,98 @@
+@import "./src/assets/styles/_variables";
+
+:host {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex: 1 1 auto;
+    border-radius: 2px;
+}
+
+$color-text-white: $white;
+$color-text-black: $black;
+
+$color-massage-info: $indigo;
+$color-massage-danger: $red;
+$color-massage-warning: $orange;
+$color-massage-success: $green;
+
+.snack-bar-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 2px;
+
+    .snack-bar__icon {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding-left: 16px;
+
+        .material-icons {
+            $custom-icon-size: 36px;
+            width: $custom-icon-size;
+            height: $custom-icon-size;
+            font-size: $custom-icon-size;
+            line-height: $custom-icon-size;
+        }
+    }
+
+    .snack-bar__body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 8px 16px;
+
+        .snack-bar__title {
+            font-size: 14px;
+            font-weight: 700;
+            color: $color-text-white;
+
+            padding: .3em 0 .6em;
+            margin: 0;
+        }
+
+        .snack-bar__info {
+            font-size: 14px;
+            font-weight: 400;
+            color: $color-text-white;
+
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.snack-bar-wrapper--success {
+    background-color: $color-massage-success;
+    color: $color-text-white;
+    button {
+        color: $color-text-white;
+    }
+}
+.snack-bar-wrapper--warn {
+    background-color: $color-massage-warning;
+    color: $color-text-white;
+    button {
+        color: $color-text-white;
+    }
+}
+.snack-bar-wrapper--error {
+    background-color: $color-massage-danger;
+    color: $color-text-white;
+    button {
+        color: $color-text-white;
+    }
+}
+.snack-bar-wrapper--info {
+    background-color: $color-massage-info;
+    color: $color-text-white;
+    button {
+        color: $color-text-white;
+    }
+}
+

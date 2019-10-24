@@ -1,0 +1,18 @@
+@import "./src/assets/styles/_variables";
+
+.form-group {
+  margin: 8px 0px;
+}
+
+h3, p {
+  text-align: center;
+}
+
+.menu__login {
+  color: $dark-primary;
+  text-transform: uppercase;
+}
+
+.btn {
+  width: 100%;
+}

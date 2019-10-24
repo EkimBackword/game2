@@ -1,0 +1,10 @@
+@import "./src/assets/styles/_variables";
+
+:host {
+  display: block;
+  width: $xxs;
+}
+
+.btn {
+  width: 100%;
+}

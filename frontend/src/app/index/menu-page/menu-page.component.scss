@@ -1,0 +1,25 @@
+@import "./src/assets/styles/_variables";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 100%;
+}
+
+.menu-content {
+  width: $xxs;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-bottom: 30px;
+  padding-top: 30px;
+  background-color: $white;
+}
+

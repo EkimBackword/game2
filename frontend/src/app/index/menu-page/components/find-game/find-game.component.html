@@ -1,0 +1,17 @@
+<h3>Присоединиться игру</h3>
+
+<fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+  *ngFor="let item of games | keyvalue"
+>
+  <button type="button" class="btn btn-primary" (click)="join(item.value.id)"
+    [class.btn-primary]="item.value.state === 'waiting'"
+    [class.btn-info]="item.value.state !== 'waiting'"
+  >
+    <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
+    <div class="btn-content">{{item.value.name}}</div>
+  </button>
+</fieldset>
+
+<nav class="auth-nav-bottom">
+  <button class="btn btn-link" (click)="openMenuOption.next(0)">В главное меню</button>
+</nav>

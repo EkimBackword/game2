@@ -1,0 +1,22 @@
+$xxs: 480px;
+$xs: 740px;
+$small: 980px;
+$middle: 1200px;
+$large: 1400px;
+
+// 0 - 992pc
+@mixin for-xsmall {
+  @media (max-width: $small) { @content; }
+}
+// 992px - 1200px
+@mixin for-small {
+  @media (min-width: $small) { @content; }
+}
+// 1200px - 1400px
+@mixin for-middle {
+  @media (min-width: $middle) { @content; }
+}
+// 1400px - ...
+@mixin for-large {
+  @media (min-width: $large) { @content; }
+}

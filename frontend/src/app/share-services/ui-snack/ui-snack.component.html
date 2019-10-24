@@ -1,0 +1,12 @@
+<div class="snack-bar-wrapper snack-bar-wrapper--{{data.type}} mat-elevation-z1">
+  <div class="snack-bar__icon" [ngSwitch]="data.type" >
+    <i class="material-icons" *ngSwitchCase="'success'">check_circle</i>
+    <i class="material-icons" *ngSwitchCase="'warn'">warning</i>
+    <i class="material-icons" *ngSwitchCase="'error'">error</i>
+    <i class="material-icons" *ngSwitchCase="'info'">info</i>
+  </div>
+  <div class="snack-bar__body">
+    <h6 class="snack-bar__title">{{data.title}}</h6>
+    <p class="snack-bar__info">{{data.message}}</p>
+  </div>
+</div>

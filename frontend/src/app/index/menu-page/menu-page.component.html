@@ -1,0 +1,22 @@
+<header class="auth-header d-flex justify-content-center align-items-center">
+  <a class="logo" [routerLink]="['/']">
+    <span>Castles</span>
+  </a>
+</header>
+<section class="menu-content shadow-sm" [ngSwitch]="menuState">
+  <app-main-menu
+    *ngSwitchCase="0"
+    [user]="user"
+    (logout)="logout()"
+    (openMenuOption)="openMenuOption($event)"
+  ></app-main-menu>
+  <app-create-game
+    *ngSwitchCase="1"
+    [host]="user"
+    (openMenuOption)="openMenuOption($event)"
+  ></app-create-game>
+  <app-find-game
+    *ngSwitchCase="2"
+    (openMenuOption)="openMenuOption($event)"
+  ></app-find-game>
+</section>

@@ -1,0 +1,29 @@
+<h3>Создать игру</h3>
+<p class="menu__login">{{host.name}}</p>
+<fieldset class="form-group">
+  <label for="name">Название</label>
+  <input class="form-control"
+    id="name" name="name"
+    [(ngModel)]="data.name"
+    placeholder="Название"/>
+</fieldset>
+<fieldset class="form-group" *ngIf="maps$ | async; let maps">
+  <label for="name">Тип карты</label>
+  <ng-select id="map"
+    [searchable]="false"
+    [(ngModel)]="data.mapId"
+  >
+    <ng-option *ngFor="let map of maps"
+                [value]="map.id"
+    >{{map.name}}</ng-option>
+  </ng-select>
+</fieldset>
+<fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+  <button type="button" class="btn btn-primary" (click)="create()">
+    <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
+    <div class="btn-content">Создать</div>
+  </button>
+</fieldset>
+<nav class="auth-nav-bottom">
+  <button class="btn btn-link" (click)="openMenuOption.next(0)">В главное меню</button>
+</nav>

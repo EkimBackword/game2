@@ -1,0 +1,190 @@
+::placeholder {
+  color: #cecece;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="phone"],
+input[type="password"] {
+  color: #3f3f3f;
+}
+
+.form-control {
+  border-color: #cecece;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+/*Change text in autofill textbox*/
+input:-webkit-autofill {
+  -webkit-text-fill-color: #3f3f3f !important;
+}
+
+.was-validated .form-control:invalid, .form-control.is-invalid, .was-validated .custom-select:invalid, .custom-select.is-invalid {
+  border-color: $red;
+}
+
+.invalid-feedback {
+  color: $red;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+}
+
+.btn.disabled, .btn:disabled {
+  opacity: 1;
+}
+
+.btn.btn-in-details {
+max-width: 180px;
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+  background-color: #cecece;
+  border-color: #cecece;
+}
+
+.custom-file-label {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: auto;
+  line-height: 1.4;
+}
+
+.form-control {
+  height: 30px;
+}
+
+label {
+  line-height: 30px;
+}
+
+.as-link {
+color: #0099ff;
+text-decoration: underline;
+background-color: transparent;
+cursor: pointer;
+}
+
+
+.question-circle {
+color: $primary;
+}
+
+.error-message {
+  text-align: center;
+  color: $red;
+
+  &.error-message--black {
+    color: #212529;
+  }
+}
+
+.form-check-label {
+  text-transform: none;
+  line-height: 1.4;
+}
+
+
+
+// checkbox
+.checkbox--center {
+  text-align: center;
+  .checkbox-container {
+    display: inline-block;
+  }
+}
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 24px;
+  // margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  label {
+      line-height: 14px;
+      font-size: 14px;
+  }
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #3f3f3f;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-container .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid #f7f7f7;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.form-group.single-text-form-field {
+margin-top: 30px;
+margin-bottom: 30px;
+}
+
+.question-circle {
+color: $primary;
+}
+

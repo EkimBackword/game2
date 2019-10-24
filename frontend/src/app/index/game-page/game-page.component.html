@@ -1,0 +1,30 @@
+<section class="d-flex flex-fill flex-column justify-content-center align-items-center" *ngIf="isLoading">
+  <h1>Loading ...</h1>
+</section>
+<section id="scene" class="map-wrapper" *ngIf="!isLoading">
+  <div id="map" class='map'> </div>
+</section>
+
+
+<section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
+  <div class="map-info--main">
+    <h1>Игра <Название></h1>
+  </div>
+  <div class="map-info--action">
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+      <button type="button" tabindex="4" class="btn btn-primary" >
+        <div class="btn-content">Закончить ход</div>
+      </button>
+    </fieldset>
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+      <button type="button" tabindex="4" class="btn btn-primary">
+        <div class="btn-content">Начать</div>
+      </button>
+    </fieldset>
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+      <button type="button" tabindex="4" class="btn btn-danger" [routerLink]="['/app/games']" >
+        <div class="btn-content">Выход</div>
+      </button>
+    </fieldset>
+  </div>
+</section>

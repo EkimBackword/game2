@@ -1,0 +1,32 @@
+
+.auth-header {
+  min-height: 120px;
+  .logo {
+    margin: 0;
+    padding: 16px;
+    font-size: 40px;
+    font-weight: 300;
+    color: $black;
+    text-decoration: none;
+
+    span {
+        color: $dark-primary;
+    }
+  }
+}
+
+.auth-content {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-bottom: 30px;
+  padding-top: 30px;
+  background-color: $white;
+
+  h2 {
+    text-align: center;
+    color: $dark-primary;
+    font-weight: 300;
+  }
+}

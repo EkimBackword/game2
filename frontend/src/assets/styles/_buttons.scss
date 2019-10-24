@@ -1,0 +1,46 @@
+.btn {
+    position: relative;
+}
+
+.btn .btn-content {
+    visibility: visible;
+}
+
+.btn .spinner {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn.btn-busy .spinner {
+    display: block;
+}
+
+
+.btn.btn-busy .btn-content {
+    visibility: hidden;
+}
+
+.btn-primary:not(:disabled):hover,
+.btn-primary:not(:disabled):active,
+.btn-primary:not(:disabled).active {
+  background: $primary;
+  border-color: $primary;
+}
+
+
+// state of btn
+.btn-primary.disabled, .btn-primary:disabled {
+    color: $white;
+    background-color: $gray;
+    border-color: $gray;
+}
+
+.btn-primary {
+    color: $primary;
+    background-color: $white;
+    border-color: $primary;
+}
+

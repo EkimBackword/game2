@@ -1,0 +1,63 @@
+html {
+  height: 100%;
+}
+body {
+  min-width: 970px;
+  min-height: 100%;
+}
+.btn {
+  padding-left: 18px;
+  padding-right: 18px;
+  text-transform: uppercase;
+}
+
+label {
+  text-transform: uppercase;
+}
+
+.btn:focus, .btn.focus {
+  box-shadow: none !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  text-transform: uppercase;
+}
+
+.container {
+  min-width: 940px;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+.navbar {
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+}
+
+.navbar-nav {
+  flex-direction: row;
+}
