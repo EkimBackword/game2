@@ -40,7 +40,7 @@ export class GameGateway implements OnGatewayDisconnect {
     @UseGuards(WsMyGuard)
     @SubscribeMessage('GetGames')
     async onGetGames(socket: Socket, req: IAuthRequest) {
-        const res = [];
+        const res: GameInfo[] = [];
         const games = this.gameService.findList();
         for (const game of games.values()) {
             if (game.state === GameState.WAITING) {

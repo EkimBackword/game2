@@ -39,28 +39,10 @@ export class GameSocketService {
     return this.onGetGamesSuccess();
   }
   private onGetGamesSuccess() {
-    return this.socket.fromEvent<any[]>('GetGamesSuccess')
-      .pipe(map(list => new Map<string, any>(list)));
+    return this.socket.fromOneTimeEvent<any[]>('GetGamesSuccess');
   }
   //#endregion GetGames
 
-
-  //#region GetMaps
-  GetMaps() {
-    this.socket.emit('GetMaps');
-    return merge(this.onGetMapsSuccess(), this.onGetMapsError())
-    .pipe(first(), map((data) => {
-      if (isString(data)) { throw new Error(data as string); }
-      return data as any[];
-    }));
-  }
-  private onGetMapsSuccess() {
-    return this.socket.fromEvent<any[]>('GetMapsSuccess');
-  }
-  private onGetMapsError() {
-    return this.socket.fromEvent<string>('GetMapsError');
-  }
-  //#endregion GetMaps
 
 
   //#region GetMaps
