@@ -135,6 +135,7 @@ export class GameGateway implements OnGatewayDisconnect {
             const game = this.gameService.findByID(req.gameId);
             if (game) {
                 // TODO: Применить событие
+                game.event(socket, req.event);
             }
             socket.emit('GameEventError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
         } catch (err) {

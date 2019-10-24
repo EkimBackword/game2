@@ -1,23 +1,16 @@
-import { Controller, Get, UseGuards, Request, Post } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { UserService } from './user/user.service';
+import { Controller, Get, Query } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
 
-  @UseGuards(AuthGuard('local'))
-  @Post('login')
-  async login(@Request() req) {
-    return this.userService.login(req.user);
+  @Get('')
+  get() {
+    return 'Hello world!';
   }
 
-  @UseGuards(AuthGuard())
-  @Get('session')
-  getProfile(@Request() req) {
-    return req.user;
+  @Get('hi')
+  getProfile(@Query('name') name: string) {
+    return `Hi, ${name ? name : 'Unknow'}!`;
   }
 
 }
