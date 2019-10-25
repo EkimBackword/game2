@@ -7,15 +7,13 @@
     [(ngModel)]="data.name"
     placeholder="Название"/>
 </fieldset>
-<fieldset class="form-group" *ngIf="maps$ | async; let maps">
+<fieldset class="form-group">
   <label for="name">Тип карты</label>
-  <ng-select id="map"
+  <ng-select id="size"
     [searchable]="false"
-    [(ngModel)]="data.mapId"
+    [(ngModel)]="data.size"
   >
-    <ng-option *ngFor="let map of maps"
-                [value]="map.id"
-    >{{map.name}}</ng-option>
+    <ng-option *ngFor="let map of maps" [value]="map.size">{{map.display}}</ng-option>
   </ng-select>
 </fieldset>
 <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">

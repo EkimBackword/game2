@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { IUser, UserService } from './../../share-services';
+import { UserService } from './../../share-services';
+import { IUser } from '../../share-services/models/game-info.dto';
 
 @Component({
   selector: 'app-menu-page',

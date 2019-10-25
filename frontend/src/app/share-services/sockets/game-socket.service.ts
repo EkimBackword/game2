@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { map, first } from 'rxjs/operators';
-import { merge } from 'rxjs';
+import { merge, Observable } from 'rxjs';
 import { isString } from 'util';
 import { UserService } from '../auth';
+import { ICreateGameRequest, IGameRequest } from '../models/gateway.model';
+import { IGameInfoResponse, IUser, GameInfo } from '../models/game-info.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,7 @@ export class GameSocket extends Socket {
 })
 export class GameSocketService {
 
-  private joinGameReq: any = null;
+  private joinGameReq: IGameRequest = null;
 
   constructor(private socket: GameSocket) {
     socket.on('reconnect', () => {
@@ -33,13 +35,20 @@ export class GameSocketService {
     });
   }
 
+  private mapResponse<T>(success: Observable<T>, error: Observable<string>) {
+    return merge(success, error) .pipe(first(), map((data) => {
+      if (isString(data)) { throw new Error(data as string); }
+      return data as T;
+    }));
+  }
+
   //#region GetGames
   GetGames() {
     this.socket.emit('GetGames', {});
     return this.onGetGamesSuccess();
   }
   private onGetGamesSuccess() {
-    return this.socket.fromOneTimeEvent<any[]>('GetGamesSuccess');
+    return this.socket.fromEvent<IGameInfoResponse[]>('GetGamesSuccess');
   }
   //#endregion GetGames
 
@@ -48,11 +57,7 @@ export class GameSocketService {
   //#region GetMaps
   GetGameData(req: any) {
     this.socket.emit('GetGameData', req);
-    return merge(this.onGetGameDataSuccess(), this.onGetGameDataError())
-    .pipe(first(), map((data) => {
-      if (isString(data)) { throw new Error(data as string); }
-      return data as any;
-    }));
+    return this.mapResponse<any>(this.onGetGameDataSuccess(), this.onGetGameDataError());
   }
   private onGetGameDataSuccess() {
     return this.socket.fromEvent<any>('GetGameDataSuccess');
@@ -66,68 +71,56 @@ export class GameSocketService {
 
 
   //#region CreateGame
-  CreateGame(req: any) {
+  CreateGame(req: ICreateGameRequest) {
     this.socket.emit('CreateGame', req);
-    return merge(this.onCreateGameSuccess(), this.onCreateGameError())
-      .pipe(first(), map((data) => {
-        if (isString(data)) { throw new Error(data as string); }
-        return data as any;
-      }));
+    return this.mapResponse<IGameInfoResponse>(this.onCreateGameSuccess(), this.onCreateGameError());
   }
   private onCreateGameSuccess() {
-    return this.socket.fromEvent<any>('CreateGameSuccess');
+    return this.socket.fromEvent<IGameInfoResponse>('CreateGameSuccess');
   }
   private onCreateGameError() {
     return this.socket.fromEvent<string>('CreateGameError');
   }
   onNewGameAdded() {
-    return this.socket.fromEvent<any>('NewGameAdded');
+    return this.socket.fromEvent<IGameInfoResponse>('NewGameAdded');
   }
   //#endregion CreateGame
 
 
 
   //#region JoinGame
-  JoinGame(req: any) {
+  JoinGame(req: IGameRequest) {
     this.joinGameReq = req;
     this.socket.emit('JoinGame', req);
-    return merge(this.onJoinGameSuccess(), this.onJoinGameError())
-    .pipe(first(), map((data) => {
-      if (isString(data)) { throw new Error(data as string); }
-      return data as any;
-    }));
+    return this.mapResponse<IGameInfoResponse>(this.onJoinGameSuccess(), this.onJoinGameError());
   }
   private onJoinGameSuccess() {
-    return this.socket.fromEvent<any>('JoinGameSuccess');
+    return this.socket.fromEvent<IGameInfoResponse>('JoinGameSuccess');
   }
   private onJoinGameError() {
     return this.socket.fromEvent<string>('JoinGameError');
   }
   onGamerJoined() {
-    return this.socket.fromEvent<any>('GamerJoined');
+    return this.socket.fromEvent<IUser>('GamerJoined');
   }
   //#endregion JoinGame
 
 
 
   //#region LeaveGame
-  LeaveGame(gameId: string) {
+  LeaveGame(req: IGameRequest) {
     this.joinGameReq = null;
-    this.socket.emit('LeaveGame', { gameId });
-    return merge(this.onLeaveSuccess(), this.onLeaveError())
-    .pipe(first(), map((data) => {
-      if (isString(data)) { throw new Error(data as string); }
-      return data as boolean;
-    }));
+    this.socket.emit('LeaveGame', req);
+    return this.mapResponse<boolean>(this.onLeaveSuccess(), this.onLeaveError());
   }
   private onLeaveSuccess() {
-    return this.socket.fromEvent<boolean>('LeaveSuccess');
+    return this.socket.fromEvent<boolean>('LeaveGameSuccess');
   }
   private onLeaveError() {
     return this.socket.fromEvent<string>('LeaveError');
   }
   onGamerLeaved() {
-    return this.socket.fromEvent<any>('GamerLeaved');
+    return this.socket.fromEvent<IUser>('GamerLeaved');
   }
   //#endregion LeaveGame
 

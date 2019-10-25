@@ -1,22 +1,65 @@
 <section class="d-flex flex-fill flex-column justify-content-center align-items-center" *ngIf="isLoading">
   <h1>Loading ...</h1>
 </section>
+
+
 <section id="scene" class="map-wrapper" *ngIf="!isLoading">
-  <div id="map" class='map'> </div>
+  <div id="map" class='map'>
+
+
+
+    <!-- gameMap -->
+    <div *ngIf="game && game.gameMap" class="layout map-layout layout-size-{{game.gameMap.size.height}}">
+      <div *ngFor="let row of game.gameMap.tiles; let n = index"
+        class="layout-row layout-row-{{n}}"
+      >
+        <div *ngFor="let tile of row"
+          class="layout-tile layout-tile-{{tile.x}}-{{tile.y}}"
+        >
+          <img src="/assets/img/grass.png" alt="grass">
+        </div>
+      </div>
+    </div>
+    <!-- gameMap -->
+
+    <div *ngIf="game && game.message" class="layout message-layout layout-size-{{game.Size.height}}">
+      <div class="message-layout--text">
+        <h1>{{game.message}}</h1>
+      </div>
+    </div>
+
+  </div>
 </section>
 
 
 <section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
   <div class="map-info--main">
-    <h1>Игра <Название></h1>
+    <h1>Игра: {{game.Name}}</h1>
+    <div class="user-list">
+      <div *ngFor="let item of game.Gamers | keyvalue"
+      class="
+        user-list_user
+        user-list_user--color-{{item.value.color}}
+      "
+      [class.user-list_user--connected]="item.value.isConnected"
+      [class.user-list_user--active]="item.value.id === game.currentUserId"
+      >
+        <p class="name">{{item.value.name}}</p>
+        <p class="score">0</p>
+      </div>
+    </div>
   </div>
   <div class="map-info--action">
-    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
-      <button type="button" tabindex="4" class="btn btn-primary" >
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+      *ngIf="game && game.currentUserId === user.id"
+    >
+      <button type="button" tabindex="4" class="btn btn-primary">
         <div class="btn-content">Закончить ход</div>
       </button>
     </fieldset>
-    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+      *ngIf="game && game.HostId === user.id && game.State === 'WAITING'"
+    >
       <button type="button" tabindex="4" class="btn btn-primary">
         <div class="btn-content">Начать</div>
       </button>

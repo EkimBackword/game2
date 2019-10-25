@@ -17,11 +17,13 @@ export interface IGameInfoResponse {
     id: string;
     name: string;
     hostId: string;
-    gamers: IGamer[];
+    gamers: Array<[string, IGamer]>;
+    size: ISize;
     state: GameState;
 
     gameMap: GameMap;
     currentUserId: string;
+    tmpCurrentUserId: string;
     events: IGameEvent[];
 }
 
@@ -55,31 +57,24 @@ export class GameInfo implements IGameInfoResponse {
     public tmpCurrentUserId: string;
     public events: IGameEvent[];
 
-    get id() {
-        return this.GameId;
-    }
-
-    get name() {
-        return this.Name;
-    }
-
-    get hostId() {
-        return this.HostId;
-    }
-
-    get state() {
-        return this.State;
-    }
-
-    get gamers() {
-        const gamers: IGamer[] = [];
-        this.Gamers.forEach(gamer => gamers.push(gamer));
-        return gamers;
-    }
-
-    get response(): IGameInfoResponse {
-        return { ...this };
-    }
+    get id() { return this.GameId; }
+    get name() { return this.Name; }
+    get hostId() { return this.HostId; }
+    get size() { return this.Size; }
+    get state() { return this.State; }
+    get gamers() { return Array.from(this.Gamers); }
+    get response(): IGameInfoResponse { return {
+        id: this.id,
+        name: this.name,
+        hostId: this.hostId,
+        gamers: this.gamers,
+        size: this.size,
+        state: this.state,
+        gameMap: this.gameMap,
+        currentUserId: this.currentUserId,
+        tmpCurrentUserId: this.tmpCurrentUserId,
+        events: this.events,
+    }; }
 
     constructor(name: string, hostId: string, size: ISize, socket?: Socket) {
         this.GameId = uuid4();

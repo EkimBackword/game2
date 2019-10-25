@@ -1,14 +1,14 @@
 <h3>Присоединиться игру</h3>
 
 <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
-  *ngFor="let item of games | keyvalue"
+  *ngFor="let item of games"
 >
-  <button type="button" class="btn btn-primary" (click)="join(item.value.id)"
-    [class.btn-primary]="item.value.state === 'waiting'"
-    [class.btn-info]="item.value.state !== 'waiting'"
+  <button type="button" class="btn btn-primary" (click)="join(item.id)"
+    [class.btn-primary]="item.state === 'WAITING'"
+    [class.btn-info]="item.state !== 'WAITING'"
   >
     <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
-    <div class="btn-content">{{item.value.name}}</div>
+    <div class="btn-content">{{item.name}}</div>
   </button>
 </fieldset>
 

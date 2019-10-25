@@ -6,7 +6,7 @@ import { ISize } from './models/game-map.model';
 @Injectable()
 export class GameService {
 
-    private games: Map<string, GameInfo>;
+    private games: Map<string, GameInfo> = new Map();
 
     findList(): Map<string, GameInfo> {
         return this.games;

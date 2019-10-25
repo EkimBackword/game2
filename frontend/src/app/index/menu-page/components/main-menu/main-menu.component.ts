@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, } from '@angular/core';
-import { IUser } from '../../../../share-services';
+import { IUser } from '../../../../share-services/models/game-info.dto';
 
 @Component({
   selector: 'app-main-menu',

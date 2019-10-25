@@ -1,12 +1,10 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { AuthServiceConfig } from './auth.types';
 import * as uuid4 from 'uuid4';
 
-export interface IUser {
-  id: string;
-  name: string;
-}
+import { AuthServiceConfig } from './auth.types';
+import { IUser } from '../models/game-info.dto';
+
 
 @Injectable({
   providedIn: 'root'

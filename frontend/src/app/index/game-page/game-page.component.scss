@@ -40,16 +40,66 @@
       align-items: flex-start;
     }
 
-    .layout-message {
-      justify-content: center;
-      align-items: center;
-      background-color: adjust-color($white, $alpha: -0.15);
+    .map-layout {
+      z-index: 100;
+    }
+
+    .object-layout {
+      z-index: 200;
+    }
+
+    .persone-layout {
+      z-index: 300;
+    }
+
+    .map-effect-layout {
+      z-index: 400;
+    }
+
+    .message-layout {
+      z-index: 500;
+    }
+
+    .message-layout--text {
+      background-color: adjust-color($white, $alpha: -0.25);
+      box-shadow: 0 0 16px 16px adjust-color($white, $alpha: -0.25);
 
       h1 {
-        background-color: $white;
+        background-color: $white-force;
         padding: 8px;
-        box-shadow: 0 0 50px 50px $white;
+        box-shadow: 0 0 50px 50px $white-force;
         text-align: center;
+      }
+    }
+
+    @for $x from 0 through 100 {
+
+      .layout-size-#{$x} {
+        display: grid;
+        height: 100%;
+        width: 100%;
+        grid-template-rows: repeat(#{$x}, 1fr);
+        grid-template-columns: 1fr;
+
+        .message-layout--text {
+          grid-row: 1 / span $x;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      .layout-row-#{$x} {
+        grid-row: $x + 1;
+      }
+
+      @for $y from 0 through 100 {
+        .layout-tile-#{$x}-#{$y} {
+          grid-column: $y + 1;
+          grid-row: $x + 1;
+        }
       }
     }
 
@@ -70,6 +120,7 @@
         }
       }
     }
+
     .layout-row {
       display: flex;
       flex-wrap: nowrap;
@@ -79,101 +130,8 @@
       width: 100%;
     }
 
-    $size-10: 10%;
-    $size-16: 6.25%;
-
-    .layout-size-10 {
-      .layout-row {
-        height: $size-10;
-        .layout-tile {
-          width: $size-10;
-        }
-      }
-    }
-    .layout-size-16 {
-      .layout-row {
-        height: $size-16;
-        .layout-tile {
-          width: $size-16;
-        }
-      }
-      .layout-row-10 {
-        height: $size-10;
-        .layout-tile {
-          width: $size-10;
-        }
-      }
-    }
 
 
-    .map-layout {
-      z-index: 250;
-    }
-    .object-layout {
-      z-index: 500;
-    }
-    .persone-layout {
-      z-index: 750;
-
-      // &.map-effect-layout {
-      //   z-index: 1000;
-      // }
-
-      .persone-layout--10-10 {
-        position: absolute;
-        display: grid;
-        height: 100%;
-        width: 100%;
-        grid-template-rows: repeat(10, 1fr);
-        grid-template-columns: repeat(10, 1fr);
-
-        .layout-tile {
-          width: 100%;
-
-          img.team-blue {
-            background-color: adjust-color($indigo, $alpha: -0.1);
-          }
-          img.team-green {
-            background-color: adjust-color($green, $alpha: -0.1);
-          }
-
-        }
-
-        @for $x from 0 through 9 {
-          .layout-row-n-#{$x} {
-            grid-row: $x + 1;
-          }
-          @for $y from 0 through 9 {
-            .layout-tile-#{$x}-#{$y} {
-              grid-column: $y + 1;
-              grid-row: $x + 1;
-            }
-          }
-        }
-      }
-    }
-    .map-effect-layout {
-      z-index: 1000;
-
-      @for $x from 0 through 100 {
-        .layout-size-#{$x} {
-          display: grid;
-          height: calc(100% / $x);
-          width: 100%;
-          grid-template-rows: repeat($x, 1fr);
-          grid-template-columns: 1fr;
-        }
-        .layout-row-n-#{$x} {
-          grid-row: $x + 1;
-        }
-        @for $y from 0 through 100 {
-          .layout-tile-#{$x}-#{$y} {
-            grid-column: $y + 1;
-            grid-row: $x + 1;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -216,56 +174,52 @@
       padding: 8px 16px 4px;
     }
 
-    .pirate-item {
-      background-color: $light-gray;
-      border: 1px solid $primary;
-      border-bottom: 2px solid $dark-primary;
-      padding: 4px 8px;
-      border-radius: 4px 4px 0 0;
-      width: 50%;
-      z-index: 500;
-
-      img {
-        height: 45px;
-        margin-right: 8px;
-      }
-
-      &.pirate-item--active {
-        font-weight: 600;
-        border: 2px solid $dark-primary;
-        border-bottom: none;
-        img {
-          height: 45px;
-          margin-right: 8px;
-        }
-      }
-
-      &.pirate-item--user {
-        border-bottom: 1px solid $primary;
-        border-radius: 4px;
-        width: 100%;
-        &.pirate-item--active {
-          border-bottom: 2px solid $dark-primary;
-        }
-      }
-    }
-    .pirate-list {
+    .user-list {
       margin: 4px 4px 0;
     }
-    .pirate-list--unactive {
-      .pirate-item {
-        border-bottom: 1px solid $primary;
-      }
-    }
 
-    .user-waiting {
-      text-align: center;
-      margin: 0 4px 4px;
-      padding: 4px 8px;
+    .user-list_user {
       border: 1px solid $primary;
-      border-top: none;
-      background-color: $light-gray;
+      border-radius: 2px;
+      margin-bottom: 2px;
+      width: 100%;
+      position: relative;
 
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      p {
+        line-height: 32px;
+        height: 32px;
+
+        &.name {
+          flex: 1 0 auto;
+          margin: 0 8px 0 32px;
+        }
+        &.score {
+          margin: 0 32px 0 8px;
+        }
+      }
+
+      &.user-list_user--active {
+        border-bottom: 2px solid $dark-primary;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 8px; height: 14px;
+        right: 8px; width: 14px;
+        background-color: $orange;
+        border-radius: 50%;
+        box-shadow: 1px 1px 2px $gray-100;
+      }
+
+      &.user-list_user--connected::after {
+        background-color: $green;
+      }
     }
   }
 
@@ -278,135 +232,23 @@
   }
 }
 
-.pirate-stats {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0; right: 0;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  background: $black;
-  color: $white;
-
-  .pirate-stat-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-  }
-}
-
-.layout-tile-pirate {
-  position: relative;
-
-
+.user-list_user--color- {
   &::before {
+    content: '';
     position: absolute;
-    top: 0; bottom: 0;
-    left: 0; right: 0;
-    z-index: 1;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 2em;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-
-    content: "\f6bb";
-    opacity: 1;
-  }
-
-  &.layout-tile-pirate--chosen {
-    &::before {
-      content: "\f0a6";
-    }
+    top: 8px; height: 14px;
+    left: 8px; width: 14px;
+    background-color: $dark-primary;
+    border-radius: 50%;
+    box-shadow: 1px 1px 2px $dark-primary;
   }
 }
-
-.layout-tile-shot {
-  position: relative;
-  cursor: pointer;
-
-  outline: 2px dashed $red;
-  background-color: adjust-color($red, $alpha: -0.55);
-  transition: background-color .125s linear;
-
-  &:hover {
-    background-color: adjust-color($red, $alpha: -0.2);
-  }
-
-  &::before {
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 0; right: 0;
-    z-index: 1;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 2em;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-
-    content: "\f05b";
-    opacity: 1;
-  }
-}
-
 @for $i from 0 through length($colors) - 1 {
   $color: nth($colors, $i + 1);
   $color-name: nth($colors-name, $i + 1);
-  .layout-tile-home-#{$color-name} {
-    // z-index: 1000;
-    outline: 2px solid $color;
-    background-color: adjust-color($color, $alpha: -0.75);
-    // box-shadow: 0 0 1px 1px $color;
-  }
 
-  .layout-tile-active-#{$color-name} {
-    outline: 2px dashed $dark-primary;
-    background-color: adjust-color($color, $alpha: -0.55);
-    transition: background-color .125s linear;
-    cursor: pointer;
-
-    &:hover {
-      background-color: adjust-color($color, $alpha: -0.2);
-    }
-  }
-
-  img.team-#{$color-name} {
-    outline: 2px solid $color;
-    background-color: adjust-color($color, $alpha: -0.35);
-
-    &.pirate--chosen {
-      outline: 4px solid $color;
-      background-color: adjust-color($color, $alpha: -0.15);
-
-      &::before {
-        content: "";
-      }
-
-    }
-  }
-
-  .layout-tile-pirate--#{$color-name} {
-    &::before {
-      color: $color;
-      text-shadow: 2px 0 0 $white,
-      -2px 0 0 $white,
-      0 2px 0 $white,
-      0 -2px 0 $white,
-      1px 1px $white,
-      -1px -1px 0 $white,
-      1px -1px 0 $white,
-      -1px 1px 0 $white;
-    }
-  }
-
-  .pirate-item--color-#{$color-name} {
-    position: relative;
+  .user-list_user--color-#{$color-name} {
     &::before {
       content: '';
       position: absolute;
@@ -419,15 +261,4 @@
   }
 }
 
-.pirat-info {
-  position: absolute;
-  display: none;
-  left: calc(100% + 8px);
-  top: 0px;
-  background-color: $white;
-  border-radius: 4px;
-  box-shadow: 0px 0px 4px 2px $black;
-  padding: 4px;
-  z-index: 9999999;
-}
 

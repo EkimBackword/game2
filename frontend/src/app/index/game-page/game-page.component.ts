@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subscription, Observable } from 'rxjs';
-import { switchMap, filter, share } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { isString } from 'util';
 import * as _ from 'lodash';
@@ -9,10 +9,11 @@ import * as _ from 'lodash';
 import {
   UiSnackService,
   GameSocketService,
-  IUser,
   UserService,
+  MessageDataType,
 } from '../../share-services';
 import { Scene } from './classes/scene';
+import { IUser, GameInfo, GameState } from '../../share-services/models/game-info.dto';
 
 
 @Component({
@@ -22,9 +23,10 @@ import { Scene } from './classes/scene';
 })
 export class GamePageComponent implements OnInit, OnDestroy {
 
-  public gameId: string;
   public isLoading = true;
   public user: IUser = null;
+  public game: GameInfo;
+  public gameId: string;
 
   private onGamerJoined$: Subscription;
   private onGamerLeaved$: Subscription;
@@ -38,33 +40,49 @@ export class GamePageComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
   ) { }
 
+
   ngOnInit() {
-    const init$ = this.Init().subscribe((game) => {
-      this.startHandlers();
-      // TODO: this.SetGameData(game);
-      this.isLoading = false;
-      setTimeout(() => {
-        const scene = new Scene('#scene', '#map');
-      }, 0);
-    }, (error) => {
-      this.uiSnack.showMessage({
-        title: 'Вы покинули игру',
-        message: `${error}`,
-        type: 'info'
-      });
-      this.router.navigate( [`/app/games`] );
-    }, () => init$.unsubscribe());
+    const init$ = this.Init().subscribe(
+      (gameInfo) => {
+        this.startHandlers();
+        this.game = new GameInfo(gameInfo);
+        this.gameId = gameInfo.id;
+        this.isLoading = false;
+        setTimeout(() => { const scene = new Scene('#scene', '#map'); }, 0);
+      },
+      (error) => {
+        this.handleError(error, 'Вы покинули игру', 'info');
+        this.router.navigate( [`/app/games`] );
+      },
+      () => init$.unsubscribe()
+    );
+  }
+
+  private Init() {
+    this.isLoading = true;
+    return this.route.paramMap.pipe(
+      switchMap((paramMap) => {
+        this.gameId = paramMap.get('gameId');
+        this.user = this.userService.getSession();
+        return this.gameSocket.JoinGame({ gameId: this.gameId });
+      })
+    );
   }
 
   public ngOnDestroy() {
-    const finish$ = this.gameSocket.LeaveGame(this.gameId).subscribe(() => {
-      this.uiSnack.showMessage({
-        title: 'Вы покинули игру',
-        message: ``,
-        type: 'info'
-      });
-      finish$.unsubscribe();
-    });
+    const finish$ = this.gameSocket.LeaveGame({gameId: this.gameId}).subscribe(
+      () => {
+        this.uiSnack.showMessage({
+          title: 'Вы покинули игру',
+          message: `${this.game.Name}`,
+          type: 'info'
+        });
+      },
+      err => {
+        console.warn(err);
+      },
+      () => finish$.unsubscribe()
+    );
 
     if (this.onGamerJoined$) { this.onGamerJoined$.unsubscribe(); }
     if (this.onGamerLeaved$) { this.onGamerLeaved$.unsubscribe(); }
@@ -78,24 +96,14 @@ export class GamePageComponent implements OnInit, OnDestroy {
       .subscribe(user => this.OnGamerLeaved(user));
   }
 
-  private Init() {
-    return this.route.paramMap.pipe(
-      switchMap((paramMap) => {
-        this.gameId = paramMap.get('gameId');
-        this.user = this.userService.getSession();
-        return this.gameSocket.JoinGame({ gameId: this.gameId });
-        // TODO: GetGameData in JoinGame
-      })
-    );
-  }
-
-
+  // Handlers
   private OnGamerJoined(user: IUser) {
     this.uiSnack.showMessage({
       title: 'Присоединился новый игрок',
       message: `${user.name}`,
       type: 'info'
     });
+    this.game.joinUser(user);
   }
 
   private OnGamerLeaved(user: IUser) {
@@ -104,13 +112,13 @@ export class GamePageComponent implements OnInit, OnDestroy {
       message: `${user.name}`,
       type: 'info'
     });
+    this.game.leaveUser(user);
   }
 
-  private handleError(err: string | Error) {
+  private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'warn') {
     this.uiSnack.showMessage({
-      title: 'Ошибка',
+      title, type,
       message: isString(err) ? err as string : (err as Error).message,
-      type: 'warn'
     });
   }
 }

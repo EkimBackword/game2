@@ -8,7 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { WsMyGuard } from './ws-my.guard';
 
 import { GameService } from './game.service';
-import { GameInfo, IUser, GameState } from './models/game-info.dto';
+import { IUser, GameState, IGameInfoResponse } from './models/game-info.dto';
 import { IAuthRequest, ICreateGameRequest, IGameRequest, IGameEventRequest } from './models/gateway.model';
 
 @WebSocketGateway(1082, { namespace: 'games' })
@@ -40,13 +40,13 @@ export class GameGateway implements OnGatewayDisconnect {
     @UseGuards(WsMyGuard)
     @SubscribeMessage('GetGames')
     async onGetGames(socket: Socket, req: IAuthRequest) {
-        const res: GameInfo[] = [];
+        const res: IGameInfoResponse[] = [];
         const games = this.gameService.findList();
         for (const game of games.values()) {
             if (game.state === GameState.WAITING) {
-                res.push(game);
+                res.push(game.response);
             } else if (game.getUser(req.user.id) !== null) {
-                res.push(game);
+                res.push(game.response);
             }
         }
         socket.emit('GetGamesSuccess', res);
@@ -76,7 +76,7 @@ export class GameGateway implements OnGatewayDisconnect {
                     socket.emit('JoinGameError', 'Игра уже началась');
                     return;
                 }
-                game.toUsers(socket).emit('GamerJoined', req.user.id);
+                game.toUsers(socket).emit('GamerJoined', req.user);
                 socket.emit('JoinGameSuccess', game.response);
                 return;
             }
@@ -97,7 +97,7 @@ export class GameGateway implements OnGatewayDisconnect {
                     socket.emit('LeaveGameError', 'Такого игрока небыло в игре');
                     return;
                 }
-                game.toUsers(socket).emit('GamerLeaved', game.gamers);
+                game.toUsers(socket).emit('GamerLeaved', req.user);
                 socket.emit('LeaveGameSuccess', true);
                 return;
             }
