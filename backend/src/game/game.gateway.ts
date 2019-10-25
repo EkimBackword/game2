@@ -111,19 +111,20 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('StartGame')
     async onStartGame(socket: Socket, req: IGameRequest) {
         try {
-            let game = this.gameService.findByID(req.gameId);
+            const game = this.gameService.findByID(req.gameId);
             if (game && game.hostId === req.user.id) {
                 if (game.state !== GameState.WAITING) {
                     socket.emit('StartGameError', 'Игра уже началась');
                     return;
                 }
-                game = this.gameService.startGame(req.gameId, socket);
+                game.start();
                 socket.broadcast.emit('GameStarted', game.response);
                 socket.emit('StartGameSuccess', game.response);
                 return;
             }
             socket.emit('StartGameError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
         } catch (err) {
+            console.log(err);
             socket.emit('StartGameError', 'Игра не найдена');
         }
     }
@@ -135,7 +136,7 @@ export class GameGateway implements OnGatewayDisconnect {
             const game = this.gameService.findByID(req.gameId);
             if (game) {
                 // TODO: Применить событие
-                game.event(socket, req.event);
+                game.event(req.event);
             }
             socket.emit('GameEventError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
         } catch (err) {

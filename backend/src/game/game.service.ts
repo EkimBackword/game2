@@ -16,24 +16,9 @@ export class GameService {
         return this.games.get(id);
     }
 
-    // TODO: createGame
     createGame(name: string, hostId: string, size: ISize, socket?: Socket) {
         const game = new GameInfo(name, hostId, size, socket);
         this.games.set(game.id, game);
-        return game;
-    }
-
-    // TODO: startGame
-    startGame(id: string, socket: Socket) {
-        const game = this.findByID(id);
-        game.start(socket);
-        return game;
-    }
-
-    // TODO: finishGame
-    finishGame(id: string, socket: Socket) {
-        const game = this.findByID(id);
-        game.finish(socket);
         return game;
     }
 

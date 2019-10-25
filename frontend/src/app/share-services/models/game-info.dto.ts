@@ -1,4 +1,3 @@
-import * as uuid4 from 'uuid4';
 import { IGameEvent } from './game-event.model';
 import { GameMap, ISize } from './game-map.model';
 
@@ -110,10 +109,11 @@ export class GameInfo {
 
     // TODO: start
     start(dto: IGameInfoResponse) {
-      this.State = dto.state;
-      this.Gamers = new Map(dto.gamers);
       this.gameMap = new GameMap(dto.gameMap);
+      this.Gamers = new Map(dto.gamers);
       this.currentUserId = this.HostId;
+      this.State = dto.state;
+      this.message = null;
     }
 
     // TODO: event

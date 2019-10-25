@@ -124,4 +124,22 @@ export class GameSocketService {
   }
   //#endregion LeaveGame
 
+
+  //#region LeaveGame
+  StartGame(req: IGameRequest) {
+    this.joinGameReq = null;
+    this.socket.emit('StartGame', req);
+    return this.mapResponse<IGameInfoResponse>(this.onStartGameSuccess(), this.onStartGameError());
+  }
+  private onStartGameSuccess() {
+    return this.socket.fromEvent<IGameInfoResponse>('StartGameSuccess');
+  }
+  private onStartGameError() {
+    return this.socket.fromEvent<string>('StartGameError');
+  }
+  onGameStarted() {
+    return this.socket.fromEvent<IGameInfoResponse>('GameStarted');
+  }
+  //#endregion LeaveGame
+
 }

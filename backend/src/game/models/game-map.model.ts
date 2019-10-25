@@ -49,7 +49,9 @@ export class GameMap {
 
         // gen map
         const positions: IPosition[] = [];
+        this.tiles = [];
         for (let x = 0; x < size.width; x++) {
+            this.tiles[x] = [];
             for (let y = 0; y < size.height; y++) {
                 positions.push({x, y});
                 this.tiles[x][y] = this.createTile(x, y);

@@ -22,11 +22,13 @@ export class Scene {
     if (transform) {
       const match = /scale\((.*)\)/.exec(transform);
       let value = parseFloat(match[1]);
-      value -= delta / 1000;
-      this.map.style.transform = `scale(${value})`;
+      value -= delta / 1500;
+      if (value > 0 && value < 3) {
+        this.map.style.transform = `scale(${value})`;
+      }
     } else {
       let value = 1;
-      value -= delta / 1000;
+      value -= delta / 1500;
       this.map.style.transform = `scale(${value})`;
     }
   }

@@ -13,6 +13,7 @@ import { MainMenuComponent } from './menu-page/components/main-menu/main-menu.co
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatDialogModule } from '@angular/material';
+import { TileComponent } from './game-page/components/tile/tile.component';
 
 
 
@@ -25,6 +26,7 @@ import { MatDialogModule } from '@angular/material';
     CreateGameComponent,
     FindGameComponent,
     MainMenuComponent,
+    TileComponent,
   ],
   imports: [
     CommonModule,

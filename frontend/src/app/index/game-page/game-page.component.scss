@@ -72,34 +72,45 @@
       }
     }
 
-    @for $x from 0 through 100 {
+    @for $x from 0 through 16 {
 
-      .layout-size-#{$x} {
+      $tile-size: calc(100vh / #{$x});
+
+
+      .layout-column-size--#{$x} {
         display: grid;
-        height: 100%;
-        width: 100%;
-        grid-template-rows: repeat(#{$x}, 1fr);
-        grid-template-columns: 1fr;
-
-        .message-layout--text {
-          grid-row: 1 / span $x;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+        grid-template-rows: $tile-size;
+        grid-template-columns: repeat(#{$x}, $tile-size);
       }
 
       .layout-row-#{$x} {
         grid-row: $x + 1;
       }
 
-      @for $y from 0 through 100 {
-        .layout-tile-#{$x}-#{$y} {
-          grid-column: $y + 1;
-          grid-row: $x + 1;
+      .layout-tile-#{$x} {
+        grid-column: $x + 1;
+        grid-row: 1;
+      }
+
+      @for $y from 0 through 16 {
+        $columns-size: calc((100vh * $y) / #{$x});
+
+        .layout-row-size--#{$x}-#{$y} {
+          display: grid;
+          grid-template-rows: repeat(#{$x}, $tile-size);
+          grid-template-columns: $columns-size;
+
+          .message-layout--text {
+            grid-row: 1 / span #{$x};
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
         }
+
+
       }
     }
 

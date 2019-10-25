@@ -125,31 +125,25 @@ export class GameInfo implements IGameInfoResponse {
     }
 
     // TODO: start
-    start(socket: Socket) {
+    start() {
+        this.gameMap = new GameMap(this.Size);
+        this.currentUserId = this.hostId;
         this.State = GameState.STARTED;
         let index = 0;
         for (const gamer of this.Gamers.values()) {
             gamer.color = GAME_COLORS[index];
             index++;
         }
-        this.gameMap = new GameMap(this.Size);
-        this.currentUserId = this.hostId;
-        this.toUsers(socket).emit('GameStarted', this.response);
-        socket.emit('GameStarted', this.response);
     }
 
     // TODO: event
-    event(socket: Socket, event: IGameEvent) {
+    event(event: IGameEvent) {
         this.gameMap.mapEvent(event);
-        this.toUsers(socket).emit('GameEvent', event);
-        socket.emit('GameEvent', event);
     }
 
     // TODO: finish
-    finish(socket: Socket) {
+    finish() {
         this.State = GameState.FINISHED;
-        this.toUsers(socket).emit('GameFinished', this.response);
-        socket.emit('GameFinished', this.response);
     }
 
 }

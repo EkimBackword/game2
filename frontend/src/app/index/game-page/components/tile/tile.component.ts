@@ -1,0 +1,30 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { ITile } from '../../../../share-services/models/game-map.model';
+import { UserService } from '../../../../share-services';
+import { IUser } from '../../../../share-services/models/game-info.dto';
+
+@Component({
+  selector: 'app-tile',
+  templateUrl: './tile.component.html',
+  styleUrls: ['./tile.component.scss']
+})
+export class TileComponent implements OnInit {
+
+  @Input() tile: ITile;
+  public user: IUser = null;
+
+  constructor(private userApi: UserService) { }
+
+  ngOnInit() {
+    this.user = this.userApi.getSession();
+  }
+
+  get visible() {
+    return this.tile.visibleFor.indexOf(this.user.id) > -1;
+  }
+
+  get type() {
+    return this.tile.isCastle ? 'castle' : 'grass' ;
+  }
+
+}

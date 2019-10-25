@@ -13,7 +13,7 @@ import {
   MessageDataType,
 } from '../../share-services';
 import { Scene } from './classes/scene';
-import { IUser, GameInfo, GameState } from '../../share-services/models/game-info.dto';
+import { IUser, GameInfo, GameState, IGameInfoResponse } from '../../share-services/models/game-info.dto';
 
 
 @Component({
@@ -30,6 +30,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   private onGamerJoined$: Subscription;
   private onGamerLeaved$: Subscription;
+  private onGameStarted$: Subscription;
 
   constructor(
     protected route: ActivatedRoute,
@@ -88,12 +89,23 @@ export class GamePageComponent implements OnInit, OnDestroy {
     if (this.onGamerLeaved$) { this.onGamerLeaved$.unsubscribe(); }
   }
 
-  public startHandlers() {
+  startHandlers() {
     this.onGamerJoined$ = this.gameSocket.onGamerJoined()
       .subscribe(user => this.OnGamerJoined(user));
 
     this.onGamerLeaved$ = this.gameSocket.onGamerLeaved()
       .subscribe(user => this.OnGamerLeaved(user));
+
+    this.onGameStarted$ = this.gameSocket.onGameStarted()
+      .subscribe(user => this.OnGameStarted(user));
+  }
+
+  startGame() {
+    const start$ = this.gameSocket.StartGame({ gameId: this.gameId }).subscribe(
+      data => this.game.start(data),
+      err => this.handleError(err),
+      () => start$.unsubscribe()
+    );
   }
 
   // Handlers
@@ -113,6 +125,10 @@ export class GamePageComponent implements OnInit, OnDestroy {
       type: 'info'
     });
     this.game.leaveUser(user);
+  }
+
+  private OnGameStarted(data: IGameInfoResponse) {
+    this.game.start(data);
   }
 
   private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'warn') {
