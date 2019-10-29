@@ -14,6 +14,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatDialogModule } from '@angular/material';
 import { TileComponent } from './game-page/components/tile/tile.component';
+import { UserInfoComponent } from './game-page/components/user-info/user-info.component';
+import { GameUnitComponent } from './game-page/components/game-unit/game-unit.component';
 
 
 
@@ -27,6 +29,8 @@ import { TileComponent } from './game-page/components/tile/tile.component';
     FindGameComponent,
     MainMenuComponent,
     TileComponent,
+    UserInfoComponent,
+    GameUnitComponent,
   ],
   imports: [
     CommonModule,

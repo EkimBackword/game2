@@ -14,6 +14,8 @@ import {
 } from '../../share-services';
 import { Scene } from './classes/scene';
 import { IUser, GameInfo, GameState, IGameInfoResponse } from '../../share-services/models/game-info.dto';
+import { IGameEvent, GameEventType } from '../../share-services/models/game-event.model';
+import { IGameEventRequest } from '../../share-services/models/gateway.model';
 
 
 @Component({
@@ -28,9 +30,10 @@ export class GamePageComponent implements OnInit, OnDestroy {
   public game: GameInfo;
   public gameId: string;
 
-  private onGamerJoined$: Subscription;
-  private onGamerLeaved$: Subscription;
-  private onGameStarted$: Subscription;
+  public tileEvents: IGameEvent[];
+  public hasTakeUnitEvent: boolean;
+
+  private subscriptions: Map<string, Subscription>;
 
   constructor(
     protected route: ActivatedRoute,
@@ -41,13 +44,15 @@ export class GamePageComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
   ) { }
 
-
   ngOnInit() {
+    this.subscriptions = new Map();
+    this.setActiveEvents(true);
     const init$ = this.Init().subscribe(
       (gameInfo) => {
         this.startHandlers();
         this.game = new GameInfo(gameInfo);
         this.gameId = gameInfo.id;
+        this.setActiveEvents();
         this.isLoading = false;
         setTimeout(() => { const scene = new Scene('#scene', '#map'); }, 0);
       },
@@ -85,26 +90,55 @@ export class GamePageComponent implements OnInit, OnDestroy {
       () => finish$.unsubscribe()
     );
 
-    if (this.onGamerJoined$) { this.onGamerJoined$.unsubscribe(); }
-    if (this.onGamerLeaved$) { this.onGamerLeaved$.unsubscribe(); }
+    for (const sub$ of this.subscriptions.values()) {
+      sub$.unsubscribe();
+    }
   }
 
   startHandlers() {
-    this.onGamerJoined$ = this.gameSocket.onGamerJoined()
+    const onGamerJoined$ = this.gameSocket.onGamerJoined()
       .subscribe(user => this.OnGamerJoined(user));
+    this.subscriptions.set('onGamerJoined', onGamerJoined$);
 
-    this.onGamerLeaved$ = this.gameSocket.onGamerLeaved()
+    const onGamerLeaved$ = this.gameSocket.onGamerLeaved()
       .subscribe(user => this.OnGamerLeaved(user));
+    this.subscriptions.set('onGamerLeaved', onGamerLeaved$);
 
-    this.onGameStarted$ = this.gameSocket.onGameStarted()
+    const onGameStarted$ = this.gameSocket.onGameStarted()
       .subscribe(user => this.OnGameStarted(user));
+    this.subscriptions.set('onGameStarted', onGameStarted$);
+
+    const onGameEvent$ = this.gameSocket.onGameEvent()
+      .subscribe(event => this.OnGameEvent(event));
+    this.subscriptions.set('onGameEvent', onGameEvent$);
   }
 
   startGame() {
     const start$ = this.gameSocket.StartGame({ gameId: this.gameId }).subscribe(
-      data => this.game.start(data),
+      data => this.OnGameStarted(data),
       err => this.handleError(err),
       () => start$.unsubscribe()
+    );
+  }
+
+  click(event: IGameEvent) {
+    // TODO: Некоторые события нужно изменить перед отправкой
+    if ([
+      GameEventType.capture,
+      GameEventType.attackCastle,
+      GameEventType.attackUser,
+      GameEventType.defense,
+      GameEventType.takeUnit,
+    ].indexOf(event.type) > -1) {
+      console.log('Не отправил', event);
+      return;
+    }
+    const click$ = this.gameSocket.GameEvent({
+      event, gameId: this.gameId
+    }).subscribe(
+      data => { console.log(data, event); },
+      err => this.handleError(err),
+      () => click$.unsubscribe()
     );
   }
 
@@ -129,6 +163,12 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   private OnGameStarted(data: IGameInfoResponse) {
     this.game.start(data);
+    this.setActiveEvents();
+  }
+
+  private OnGameEvent(data: IGameEventRequest) {
+    this.game.event(data.event);
+    this.setActiveEvents();
   }
 
   private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'warn') {
@@ -136,5 +176,15 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title, type,
       message: isString(err) ? err as string : (err as Error).message,
     });
+  }
+
+  private setActiveEvents(isInit = false) {
+    this.tileEvents = null;
+    this.hasTakeUnitEvent = false;
+    if (!isInit) {
+      const activeEvents = this.game.getActions(this.user);
+      this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit);
+      this.hasTakeUnitEvent = activeEvents.some(e => e.type === GameEventType.takeUnit);
+    }
   }
 }

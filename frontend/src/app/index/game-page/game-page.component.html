@@ -22,7 +22,37 @@
     </div>
     <!-- gameMap -->
 
-    <div *ngIf="game && game.message" class="layout map-layout layout-row-size--{{game.Size.height}}-{{game.Size.width}}">
+
+    <!-- gameMap -->
+    <div *ngIf="game && game.gameMap" class="layout map-layout--without-row map-layout layout-row-size--{{game.gameMap.size.height}}-{{game.gameMap.size.width}}">
+      <div *ngFor="let item of game.gameMap.gameUsers | keyvalue;"
+        class="
+          layout-tile
+          layout-tile-{{item.value.x}}-{{item.value.y}}
+          layout-tile-user
+          layout-tile-user--{{item.value.color}}
+        "
+      > </div>
+    </div>
+    <!-- gameMap -->
+
+
+    <!-- map-effect-layout -->
+    <div *ngIf="game && game.gameMap && tileEvents" class="layout map-layout--without-row map-effect-layout layout-row-size--{{game.gameMap.size.height}}-{{game.gameMap.size.width}}">
+      <div *ngFor="let event of tileEvents;"
+        class="
+          layout-tile
+          layout-tile-{{event.data.to.x}}-{{event.data.to.y}}
+          layout-tile-event
+          layout-tile-event--{{event.type}}
+        "
+        (click)="click(event)"
+      > </div>
+    </div>
+    <!-- map-effect-layout -->
+
+
+    <div *ngIf="game && game.message" class="layout message-layout layout-row-size--{{game.Size.height}}-{{game.Size.width}}">
       <div class="message-layout--text">
         <h1>{{game.message}}</h1>
       </div>
@@ -48,6 +78,9 @@
         <p class="score">0</p>
       </div>
     </div>
+    <app-user-info *ngIf="game && game.gameMap && game.gameMap.gameUsers"
+      [users]="game.gameMap.gameUsers"
+    ></app-user-info>
   </div>
   <div class="map-info--action">
     <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"

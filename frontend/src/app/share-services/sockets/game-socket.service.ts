@@ -4,7 +4,7 @@ import { map, first } from 'rxjs/operators';
 import { merge, Observable } from 'rxjs';
 import { isString } from 'util';
 import { UserService } from '../auth';
-import { ICreateGameRequest, IGameRequest } from '../models/gateway.model';
+import { ICreateGameRequest, IGameRequest, IGameEventRequest } from '../models/gateway.model';
 import { IGameInfoResponse, IUser, GameInfo } from '../models/game-info.dto';
 
 @Injectable({
@@ -125,9 +125,8 @@ export class GameSocketService {
   //#endregion LeaveGame
 
 
-  //#region LeaveGame
+  //#region StartGame
   StartGame(req: IGameRequest) {
-    this.joinGameReq = null;
     this.socket.emit('StartGame', req);
     return this.mapResponse<IGameInfoResponse>(this.onStartGameSuccess(), this.onStartGameError());
   }
@@ -140,6 +139,22 @@ export class GameSocketService {
   onGameStarted() {
     return this.socket.fromEvent<IGameInfoResponse>('GameStarted');
   }
-  //#endregion LeaveGame
+  //#endregion StartGame
+
+  //#region StartGame
+  GameEvent(req: IGameEventRequest) {
+    this.socket.emit('GameEvent', req);
+    return this.mapResponse<boolean>(this.onGameEventSuccess(), this.onGameEventError());
+  }
+  private onGameEventSuccess() {
+    return this.socket.fromEvent<boolean>('StartGameSuccess');
+  }
+  private onGameEventError() {
+    return this.socket.fromEvent<string>('StartGameError');
+  }
+  onGameEvent() {
+    return this.socket.fromEvent<IGameEventRequest>('GameEvent');
+  }
+  //#endregion StartGame
 
 }

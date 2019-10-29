@@ -40,6 +40,10 @@
       align-items: flex-start;
     }
 
+    .map-layout--without-row {
+      // Нужен дальше в цикле
+    }
+
     .map-layout {
       z-index: 100;
     }
@@ -93,7 +97,7 @@
       }
 
       @for $y from 0 through 16 {
-        $columns-size: calc((100vh * $y) / #{$x});
+        $columns-size: calc((100vh * #{$y}) / #{$x});
 
         .layout-row-size--#{$x}-#{$y} {
           display: grid;
@@ -110,7 +114,16 @@
           }
         }
 
+        .map-layout--without-row {
+          &.layout-row-size--#{$x}-#{$y} {
+            grid-template-columns: repeat(#{$y}, $tile-size);
+          }
 
+          .layout-tile-#{$x}-#{$y} {
+            grid-column: $y + 1;
+            grid-row: $x + 1;
+          }
+        }
       }
     }
 
@@ -146,23 +159,121 @@
   }
 }
 
-.layout-tile--box img {
-  background-color: adjust-color($black, $alpha: -0.75);
+.layout-tile-event {
+  position: relative;
+  cursor: pointer;
+  background-color: adjust-color($gray, $alpha: -0.8);
+
+  &::before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1;
+
+    content: "";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 2.5em;
+    color: $gray;
+    text-shadow: 0px 0px 4px $white;
+
+
+    margin-bottom: 32px;
+    transition: all 0.2s linear;
+  }
+
+  &:hover {
+    background-color: adjust-color($gray, $alpha: -0.6);
+    &::before {
+      margin-bottom: 0px;
+    }
+  }
 }
-.layout-tile--chest img {
-  background-color: adjust-color($black, $alpha: -0.75);
+
+.layout-tile-event--chooseTile {
+  &::before {
+    content: "\f21d";
+    opacity: .5;
+  }
+
+  &:hover {
+    &::before {
+      color: $green;
+      opacity: 1;
+    }
+  }
 }
-.layout-tile--trap img {
-  background-color: adjust-color($black, $alpha: -0.75);
+.layout-tile-event--move {
+  &::before {
+    content: "\f3c5";
+  }
+
+  &:hover {
+    &::before {
+    }
+  }
 }
-.layout-tile--wall img {
-  background-color: adjust-color($black, $alpha: -0.35);
+.layout-tile-event--capture {
+  &::before {
+    content: "\f78c";
+    margin-bottom: 0px;
+    font-size: 3em;
+  }
+
+  &:hover {
+    &::before {
+      font-size: 2em;
+    }
+  }
 }
-.layout-tile--empty img {
-  background-color: adjust-color($black, $alpha: -0.75);
+.layout-tile-event--attackCastle {
+
 }
-.layout-tile--question img {
-  background-color: adjust-color($black, $alpha: -0.75);
+.layout-tile-event--attackUser {
+  &::before {
+    content: "\f05b";
+    margin-bottom: 0px;
+    color: $red;
+    // align-items: flex-end;
+  }
+
+  &:hover {
+    &::before {
+      margin-bottom: -32px;
+    }
+  }
+}
+.layout-tile-event--defense {
+
+}
+
+.layout-tile-user {
+  position: relative;
+  cursor: pointer;
+  background-color: adjust-color($white, $alpha: -0.5);
+  margin: 4px;
+
+  &::before {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1;
+
+    content: "\f505";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 4em;
+    color: $gray;
+    text-shadow: 0px 0px 4px $black;
+  }
 }
 
 
@@ -268,6 +379,13 @@
       background-color: $color;
       border-radius: 50%;
       box-shadow: 1px 1px 2px $dark-primary;
+    }
+  }
+
+  .layout-tile-user--#{$color-name} {
+    // background-color: adjust-color($color, $alpha: -0.8);
+    &::before {
+      color: $color;
     }
   }
 }

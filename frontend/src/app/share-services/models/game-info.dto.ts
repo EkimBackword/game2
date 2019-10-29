@@ -116,9 +116,29 @@ export class GameInfo {
       this.message = null;
     }
 
+    getActions(user: IUser) {
+      if (this.currentUserId !== user.id && this.tmpCurrentUserId !== user.id ) {
+        return [];
+      }
+      if (this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id) {
+        return [];
+      }
+      const gamer = this.getUser(user.id);
+      return this.gameMap.getActions(gamer, this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id ? this.currentUserId : null);
+    }
+
     // TODO: event
+    get gamers() { return Array.from(this.Gamers); }
     event(event: IGameEvent) {
-      this.gameMap.mapEvent(event);
+      const result = this.gameMap.mapEvent(event);
+      if (result.isNext) {
+          this.tmpCurrentUserId = null;
+          let index = this.gamers.findIndex(g => g[0] === this.currentUserId);
+          index++;
+          this.currentUserId = index >= this.gamers.length ? this.gamers[0][0] : this.gamers[index][0];
+      } else {
+          this.tmpCurrentUserId = result.tmpId;
+      }
     }
 
     // TODO: finish

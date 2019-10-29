@@ -70,7 +70,7 @@ export class GameInfo implements IGameInfoResponse {
         gamers: this.gamers,
         size: this.size,
         state: this.state,
-        gameMap: this.gameMap,
+        gameMap: this.gameMap ? this.gameMap.response : this.gameMap,
         currentUserId: this.currentUserId,
         tmpCurrentUserId: this.tmpCurrentUserId,
         events: this.events,
@@ -138,7 +138,15 @@ export class GameInfo implements IGameInfoResponse {
 
     // TODO: event
     event(event: IGameEvent) {
-        this.gameMap.mapEvent(event);
+        const result = this.gameMap.mapEvent(event);
+        if (result.isNext) {
+            this.tmpCurrentUserId = null;
+            let index = this.gamers.findIndex(g => g[0] === this.currentUserId);
+            index++;
+            this.currentUserId = index >= this.gamers.length ? this.gamers[0][0] : this.gamers[index][0];
+        } else {
+            this.tmpCurrentUserId = result.tmpId;
+        }
     }
 
     // TODO: finish

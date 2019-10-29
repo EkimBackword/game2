@@ -1,0 +1,13 @@
+<div>
+  <p>{{userInfo.userId}}</p>
+  <p>{{userInfo.color}}</p>
+  <p>{{userInfo.x}}</p>
+  <p>{{userInfo.y}}</p>
+  <p>Армия</p>
+  <p *ngFor="let unit of userInfo.army">
+    <app-game-unit
+      [unit]="unit"
+      [userColor]="userInfo.color"
+    ></app-game-unit>
+  </p>
+</div>

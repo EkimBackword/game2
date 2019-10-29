@@ -1,5 +1,5 @@
 import { randomizer, getNearPoints } from './functions';
-import { IUnit } from './game-unit.model';
+import { IUnit, GameUnitType, genGameUnit } from './game-unit.model';
 import {
     IGameEvent,
     GameEventType,
@@ -28,6 +28,7 @@ export interface ITile extends IPosition {
     visibleFor: string[]; // список id пользователей, которые выдят тайл.
     isCastle: boolean;
     castleInfo?: ICastleInfo;
+    hasUser?: boolean;
 }
 
 export interface ICastleInfo {
@@ -36,16 +37,35 @@ export interface ICastleInfo {
     units: IUnit[];
 }
 
+export interface IEffect {
+    unitTypeBonus: GameUnitType;
+    deathCount: number;
+    maxArmy: number;
+}
+
 export class GameMap {
 
     public tiles: ITile[][];
     public size: ISize;
     public gameUsers: Map<string, IGameUser>;
     public battle: Map<string, IGameUserInBattle>;
+    public effect: IEffect;
+
+    get response() {
+        return Object.assign({}, this, {
+            gameUsers: Array.from(this.gameUsers),
+            battle: this.battle ? Array.from(this.battle) : this.battle,
+        });
+    }
 
     constructor(size: ISize) {
         this.size = size;
         this.gameUsers = new Map();
+        this.effect = {
+            deathCount: 0,
+            maxArmy: 6,
+            unitTypeBonus: null,
+        };
 
         // gen map
         const positions: IPosition[] = [];
@@ -126,23 +146,39 @@ export class GameMap {
         this.tiles[x][y].castleInfo = castle;
     }
 
+    private setVisibleFor(to: IPosition, userId: string) {
+        this.tiles[to.x][to.y].visibleFor.push(userId);
+        getNearPoints(to).forEach(point => {
+            if (this.tiles[point.x] && this.tiles[point.x][point.y] && this.tiles[point.x][point.y].visibleFor) {
+                if (this.tiles[point.x][point.y].visibleFor.indexOf(userId) === -1) {
+                    this.tiles[point.x][point.y].visibleFor.push(userId);
+                }
+            }
+        });
+    }
+
     // EVENTS
 
     private chooseTile(data: IGameEventChooseTileData): IEventResponse {
         this.gameUsers.set(data.userId, {
             color: data.color,
             userId: data.userId,
-            army: [],
+            army: [genGameUnit(), genGameUnit()],
             x: data.to.x,
             y: data.to.y,
         });
+        this.tiles[data.to.x][data.to.y].hasUser = true;
+        this.setVisibleFor(data.to, data.userId);
         return { isNext: true, tmpId: null };
     }
 
     private move(data: IGameEventMoveData): IEventResponse {
         const user = this.gameUsers.get(data.userId);
+        this.tiles[user.x][user.y].hasUser = false;
         user.x = data.to.x;
         user.y = data.to.y;
+        this.tiles[data.to.x][data.to.y].hasUser = true;
+        this.setVisibleFor(data.to, data.userId);
         return { isNext: true, tmpId: null };
     }
 
@@ -153,12 +189,16 @@ export class GameMap {
             userId: data.userId,
             units: data.units,
         };
+        this.tiles[user.x][user.y].hasUser = false;
         user.x = data.to.x;
         user.y = data.to.y;
+        this.tiles[data.to.x][data.to.y].hasUser = true;
+        this.setVisibleFor(data.to, data.userId);
         return { isNext: true, tmpId: null };
     }
 
     private attackCastle(data: IGameEventAttackCastleData): IEventResponse {
+        // TODO: Произвести битву
         return { isNext: true, tmpId: null };
     }
 

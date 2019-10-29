@@ -61,6 +61,7 @@ export class GameGateway implements OnGatewayDisconnect {
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
+            console.log(err);
             socket.emit('CreateGameError', `Необработанная ошибка`);
         }
     }
@@ -135,11 +136,14 @@ export class GameGateway implements OnGatewayDisconnect {
         try {
             const game = this.gameService.findByID(req.gameId);
             if (game) {
-                // TODO: Применить событие
                 game.event(req.event);
+                socket.broadcast.emit('GameEvent', req);
+                socket.emit('GameEvent', req);
             }
             socket.emit('GameEventError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
         } catch (err) {
+            console.log(err);
+
             socket.emit('GameEventError', 'Игра не найдена');
         }
     }

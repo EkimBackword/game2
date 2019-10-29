@@ -2,7 +2,7 @@ import { IPosition } from './game-map.model';
 import { IUnit } from './game-unit.model';
 
 export interface IGameEvent {
-    type: string;
+    type: GameEventType;
     // tslint:disable-next-line: max-line-length
     data: IGameEventData | IGameEventChooseTileData | IGameEventMoveData | IGameEventCaptureData | IGameEventAttackCastleData | IGameEventAttackUserData | IGameEventDefenseData | IGameEventTakeUnitData;
 }
@@ -20,6 +20,7 @@ export enum GameEventType {
 export interface IGameEventData {
     userId: string;
     color: string;
+    to?: IPosition;
 }
 export interface IGameEventChooseTileData extends IGameEventData {
     to: IPosition;
@@ -35,15 +36,19 @@ export interface IGameEventAttackCastleData extends IGameEventData {
     from: IPosition;
     to: IPosition;
     units: IUnit[];
+    army: IUnit[];
 }
 export interface IGameEventAttackUserData extends IGameEventData {
     from: IPosition;
     to: IPosition;
     units: IUnit[];
+    army: IUnit[];
     attackedUserId: string;
 }
 export interface IGameEventDefenseData extends IGameEventData {
+    attackUnits: IUnit[];
     units: IUnit[];
+    army: IUnit[];
 }
 export interface IGameEventTakeUnitData extends IGameEventData {
     units: IUnit[];
