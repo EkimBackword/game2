@@ -4,8 +4,7 @@ import { map, first } from 'rxjs/operators';
 import { merge, Observable } from 'rxjs';
 import { isString } from 'util';
 import { UserService } from '../auth';
-import { ICreateGameRequest, IGameRequest, IGameEventRequest } from '../models/gateway.model';
-import { IGameInfoResponse, IUser, GameInfo } from '../models/game-info.dto';
+import { ICreateGameRequest, IGameRequest, IGameEventRequest, IGameInfoResponse, IUser, GameInfo  } from '../models';
 
 @Injectable({
   providedIn: 'root'

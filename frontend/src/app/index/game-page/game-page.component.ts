@@ -11,11 +11,14 @@ import {
   GameSocketService,
   UserService,
   MessageDataType,
+  IUser,
+  GameInfo,
+  IGameInfoResponse,
+  IGameEvent,
+  GameEventType,
+  IGameEventRequest
 } from '../../share-services';
 import { Scene } from './classes/scene';
-import { IUser, GameInfo, GameState, IGameInfoResponse } from '../../share-services/models/game-info.dto';
-import { IGameEvent, GameEventType } from '../../share-services/models/game-event.model';
-import { IGameEventRequest } from '../../share-services/models/gateway.model';
 
 
 @Component({

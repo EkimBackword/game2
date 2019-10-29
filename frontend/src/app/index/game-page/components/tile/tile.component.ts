@@ -1,7 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ITile } from '../../../../share-services/models/game-map.model';
-import { UserService } from '../../../../share-services';
-import { IUser } from '../../../../share-services/models/game-info.dto';
+import { ITile, IUser, UserService } from '../../../../share-services';
 
 @Component({
   selector: 'app-tile',

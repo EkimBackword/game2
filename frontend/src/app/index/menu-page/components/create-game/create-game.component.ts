@@ -1,9 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { GameSocketService } from '../../../../share-services';
 import { Router } from '@angular/router';
-import { IUser } from '../../../../share-services/models/game-info.dto';
-import { ICreateGameRequest } from '../../../../share-services/models/gateway.model';
-import { ISize } from '../../../../share-services/models/game-map.model';
+import { IUser, ICreateGameRequest, ISize} from '../../../../share-services';
 
 @Component({
   selector: 'app-create-game',

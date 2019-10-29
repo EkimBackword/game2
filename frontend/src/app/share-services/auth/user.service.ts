@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import * as uuid4 from 'uuid4';
 
 import { AuthServiceConfig } from './auth.types';
-import { IUser } from '../models/game-info.dto';
+import { IUser } from '../models';
 
 
 @Injectable({

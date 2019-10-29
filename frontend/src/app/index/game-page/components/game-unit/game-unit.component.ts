@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IUnit } from '../../../../share-services/models/game-unit.model';
+import { IUnit } from '../../../../share-services';
 
 @Component({
   selector: 'app-game-unit',

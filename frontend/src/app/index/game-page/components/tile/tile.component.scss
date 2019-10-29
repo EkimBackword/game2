@@ -25,6 +25,8 @@
   height: 100%;
   width: 100%;
   backface-visibility: hidden;
+  object-fit: cover;
+  object-position: center center;
 
   img {
     height: 100%;

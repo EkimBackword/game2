@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { GameSocketService } from '../../../../share-services';
 import { Router } from '@angular/router';
-import { IGameInfoResponse } from '../../../../share-services/models/game-info.dto';
+import { IGameInfoResponse } from '../../../../share-services';
 
 @Component({
   selector: 'app-find-game',

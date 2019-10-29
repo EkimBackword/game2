@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IUser } from '../../../../share-services/models/game-info.dto';
-import { IGameUser } from '../../../../share-services/models/game-user.model';
+import { IUser, IGameUser } from '../../../../share-services';
 
 @Component({
   selector: 'app-user-info',
