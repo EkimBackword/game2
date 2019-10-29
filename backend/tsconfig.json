@@ -8,6 +8,10 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDirs": [
+      "./src",
+      "../shared"
+    ],
     "baseUrl": "./",
     "incremental": true
   },

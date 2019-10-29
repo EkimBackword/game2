@@ -53,7 +53,10 @@ export class GamePageComponent implements OnInit, OnDestroy {
     const init$ = this.Init().subscribe(
       (gameInfo) => {
         this.startHandlers();
-        this.game = new GameInfo(gameInfo);
+        this.game = new GameInfo({
+          isFrontend: true,
+          frontendDTO: gameInfo
+        });
         this.gameId = gameInfo.id;
         this.setActiveEvents();
         this.isLoading = false;
@@ -164,6 +167,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     this.game.leaveUser(user);
   }
 
+  
   private OnGameStarted(data: IGameInfoResponse) {
     this.game.start(data);
     this.setActiveEvents();

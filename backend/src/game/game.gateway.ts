@@ -8,8 +8,15 @@ import { UseGuards } from '@nestjs/common';
 import { WsMyGuard } from './ws-my.guard';
 
 import { GameService } from './game.service';
-import { IUser, GameState, IGameInfoResponse } from './models/game-info.dto';
-import { IAuthRequest, ICreateGameRequest, IGameRequest, IGameEventRequest } from './models/gateway.model';
+import {
+    IUser,
+    GameState,
+    IGameInfoResponse,
+    IAuthRequest,
+    ICreateGameRequest,
+    IGameRequest,
+    IGameEventRequest,
+} from './models';
 
 @WebSocketGateway(1082, { namespace: 'games' })
 export class GameGateway implements OnGatewayDisconnect {
@@ -57,12 +64,11 @@ export class GameGateway implements OnGatewayDisconnect {
     async onCreateGame(socket: Socket, req: ICreateGameRequest) {
         try {
             const game = this.gameService.createGame(req.name, req.user.id, req.size, socket);
-            game.joinUser(socket, req.user);
+            game.joinUser(req.user, socket);
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
-            console.log(err);
-            socket.emit('CreateGameError', `Необработанная ошибка`);
+            socket.emit('CreateGameError', `${JSON.parse(JSON.stringify(err))}`);
         }
     }
 
@@ -72,7 +78,7 @@ export class GameGateway implements OnGatewayDisconnect {
         try {
             const game = this.gameService.findByID(req.gameId);
             if (game && req.user) {
-                const flag = game.joinUser(socket, req.user);
+                const flag = game.joinUser(req.user, socket);
                 if (!flag) {
                     socket.emit('JoinGameError', 'Игра уже началась');
                     return;
@@ -93,7 +99,7 @@ export class GameGateway implements OnGatewayDisconnect {
         try {
             const game = this.gameService.findByID(req.gameId);
             if (game && req.user) {
-                const flag = game.leaveUser(socket, req.user);
+                const flag = game.leaveUser(req.user, socket);
                 if (!flag) {
                     socket.emit('LeaveGameError', 'Такого игрока небыло в игре');
                     return;
@@ -118,7 +124,7 @@ export class GameGateway implements OnGatewayDisconnect {
                     socket.emit('StartGameError', 'Игра уже началась');
                     return;
                 }
-                game.start();
+                game.startBackend();
                 socket.broadcast.emit('GameStarted', game.response);
                 socket.emit('StartGameSuccess', game.response);
                 return;

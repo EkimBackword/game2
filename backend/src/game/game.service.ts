@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { GameInfo } from './models/game-info.dto';
+import { GameInfo, ISize } from './models';
 import { Socket } from 'socket.io';
-import { ISize } from './models/game-map.model';
 
 @Injectable()
 export class GameService {
@@ -17,7 +16,10 @@ export class GameService {
     }
 
     createGame(name: string, hostId: string, size: ISize, socket?: Socket) {
-        const game = new GameInfo(name, hostId, size, socket);
+        const game = new GameInfo( {
+            isFrontend: false,
+            backendDTO: { name, hostId, size, socket },
+        });
         this.games.set(game.id, game);
         return game;
     }
