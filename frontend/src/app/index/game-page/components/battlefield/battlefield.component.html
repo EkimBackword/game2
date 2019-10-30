@@ -1,0 +1,36 @@
+<div class="battlefield_container">
+    <div class="container_title">Отряд</div>
+    <div
+        cdkDropList
+        #unitsList="cdkDropList"
+        [cdkDropListData]="units"
+        [cdkDropListConnectedTo]="[armyList]"
+        class="battlefield_list battlefield_list--castle"
+        cdkDropListSortingDisabled
+        [cdkDropListEnterPredicate]="checkUnits"
+        (cdkDropListDropped)="drop($event)">
+        <app-game-unit
+        *ngFor="let item of units" cdkDrag
+        [unit]="item"
+        [userColor]="color"
+        ></app-game-unit>
+    </div>
+</div>
+
+<div class="battlefield_container">
+    <div class="container_title">Войско</div>
+    <div
+        cdkDropList
+        #armyList="cdkDropList"
+        [cdkDropListData]="army"
+        [cdkDropListConnectedTo]="[unitsList]"
+        class="battlefield_list battlefield_list--grass"
+        cdkDropListSortingDisabled
+        (cdkDropListDropped)="drop($event)">
+        <app-game-unit
+        *ngFor="let item of army" cdkDrag
+        [unit]="item"
+        [userColor]="color"
+        ></app-game-unit>
+    </div>
+</div>

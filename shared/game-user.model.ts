@@ -5,6 +5,7 @@ export interface IGameUser extends IPosition {
     userId: string;
     color: string;
     army: IUnit[];
+    castleCount: number;
 }
 
 export interface IGameUserInBattle extends IGameUser {

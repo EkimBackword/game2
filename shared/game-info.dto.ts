@@ -10,6 +10,7 @@ export interface IUser {
 
 export interface IGamer extends IUser {
     isConnected: boolean;
+    isDeath: false;
     color?: string;
 }
 
@@ -36,6 +37,7 @@ export enum GameState {
 export interface IEventResponse {
     isNext: boolean;
     tmpId: string;
+    tmpEvents?: IGameEvent[];
 }
 
 export const GAME_COLORS = [
@@ -70,6 +72,7 @@ export class GameInfo implements IGameInfoResponse {
     public gameMap: GameMap;
     public currentUserId: string;
     public tmpCurrentUserId: string;
+    public tmpEvents: IGameEvent[];
     public events: IGameEvent[];
 
     public message: string;
@@ -117,7 +120,7 @@ export class GameInfo implements IGameInfoResponse {
 
     joinUser(user: IUser, socket?: Socket) {
         if (this.State === GameState.WAITING) {
-            this.Gamers.set(user.id, { ...user, isConnected: true });
+            this.Gamers.set(user.id, { ...user, isConnected: true, isDeath: false });
         } else if (this.Gamers.has(user.id)) {
             const gamer = this.Gamers.get(user.id);
             gamer.isConnected = true;
@@ -182,14 +185,16 @@ export class GameInfo implements IGameInfoResponse {
     }
     
     getActions(user: IUser) {
-        if (this.currentUserId !== user.id && this.tmpCurrentUserId !== user.id ) {
-          return [];
-        }
         if (this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id) {
-          return [];
+            return [];
+        } else if (this.tmpCurrentUserId && this.tmpCurrentUserId === user.id) {
+            return this.tmpEvents;
+        } else if (this.currentUserId !== user.id) {
+            return [];
+        } else {
+            const gamer = this.getUser(user.id);
+            return this.gameMap.getActions(gamer);
         }
-        const gamer = this.getUser(user.id);
-        return this.gameMap.getActions(gamer, this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id ? this.currentUserId : null);
       }
 
     // TODO: event
@@ -199,12 +204,15 @@ export class GameInfo implements IGameInfoResponse {
         this.events.push(event);
         if (result.isNext) {
             this.tmpCurrentUserId = null;
+            this.tmpEvents = null;
             let index = this.gamers.findIndex(g => g[0] === this.currentUserId);
             index++;
             this.currentUserId = index >= this.gamers.length ? this.gamers[0][0] : this.gamers[index][0];
         } else {
             this.tmpCurrentUserId = result.tmpId;
+            this.tmpEvents = result.tmpEvents;
         }
+        // TODO: Простовить IsDeath игроку если у него нет замков и воинов или он не может покинуть заваёвонный замок
     }
 
     // TODO: finish

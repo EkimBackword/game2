@@ -1,0 +1,74 @@
+@import "./src/assets/styles/_variables";
+
+.battlefield_container {
+    width: 620px;
+    max-width: 100%;
+    margin: 0 0 25px 0;
+    display: inline-block;
+    vertical-align: top;
+  
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+  
+.container_title {
+    -webkit-transform: rotate(-90deg) translateX(-70px);
+    transform: rotate(-90deg) translateX(-70px);
+    height: 30px;
+    width: 20px;
+  
+}
+  
+.battlefield_list {
+    border: solid 1px $gray;
+    min-height: 140px;
+    width: 600px;
+    border-radius: 4px;
+    overflow: hidden;
+  
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+  
+.battlefield_list--castle {
+    background-color: $white;
+    background-image: url('/assets/img/bgc_castle.png');
+    background-repeat: repeat;
+    background-position: bottom;
+    padding-bottom: 16px;
+}
+  
+.battlefield_list--grass {
+    background-color: $green;
+    background-image: url('/assets/img/bgc_grass.png');
+    background-repeat: repeat;
+    background-position: top;
+    align-items: flex-end;
+    padding-top: 32px;
+}
+  
+app-game-unit {
+    cursor: grab;
+}
+  
+.cdk-drag-preview {
+    cursor: grabbing;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+                0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+  
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+  
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

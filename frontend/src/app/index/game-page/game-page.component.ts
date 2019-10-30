@@ -17,10 +17,13 @@ import {
   IGameEvent,
   GameEventType,
   IGameEventRequest,
-  IGamer
+  IGamer,
+  ITile,
+  IGameEventAttackCastleData
 } from '../../share-services';
 import { Scene } from './classes/scene';
 import { DialogCaptureComponent } from './components/dialog-capture/dialog-capture.component';
+import { DialogAttackCastleComponent } from './components/dialog-attack-castle/dialog-attack-castle.component';
 
 
 @Component({
@@ -150,21 +153,17 @@ export class GamePageComponent implements OnInit, OnDestroy {
     // TODO: Некоторые события нужно изменить перед отправкой
     switch (event.type) {
       case GameEventType.capture: {
-        const dialogRef = this.dialog.open(DialogCaptureComponent, {
-          width: '650px',
-          data: event.data
-        });
+        const dialogRef = this.dialog.open(DialogCaptureComponent, { width: '650px', data: event.data });
         const result = await dialogRef.afterClosed().toPromise();
-        if (result) {
-          event.data = result;
-          console.log('Отправил', result);
-          break;
-        }
-        console.log('Не отправил', result, event);
+        if (result) { event.data = result; break; }
         return;
       }
       case GameEventType.attackCastle: {
-        console.log('Не отправил', event);
+        const data = event.data as IGameEventAttackCastleData;
+        const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
+        const dialogRef = this.dialog.open(DialogAttackCastleComponent, { width: '650px', data: { data, tile } });
+        const result = await dialogRef.afterClosed().toPromise();
+        if (result) { event.data = result; break; }
         return;
       }
       case GameEventType.attackUser: {

@@ -1,13 +1,14 @@
-<h1 mat-dialog-title>Захват замка</h1>
-<p>Сформируйте отряд для захвата</p>
+<h1 mat-dialog-title>Атака замок противника</h1>
+<p>
+    Разведчики насчитали на защите замка {{data.tile.castleInfo.units.length}} вражеских юнитов.
+    Сформируйте свой отряд для захвата замка.
+</p>
 <div mat-dialog-content>
-
   <app-battlefield
     [army]="army"
     [units]="units"
-    [color]="data.color"
+    [color]="data.data.color"
   ></app-battlefield>
-
 </div>
 <div mat-dialog-actions>
     <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"

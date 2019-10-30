@@ -18,6 +18,8 @@ import { TileComponent } from './game-page/components/tile/tile.component';
 import { UserInfoComponent } from './game-page/components/user-info/user-info.component';
 import { GameUnitComponent } from './game-page/components/game-unit/game-unit.component';
 import { DialogCaptureComponent } from './game-page/components/dialog-capture/dialog-capture.component';
+import { DialogAttackCastleComponent } from './game-page/components/dialog-attack-castle/dialog-attack-castle.component';
+import { BattlefieldComponent } from './game-page/components/battlefield/battlefield.component';
 
 
 
@@ -34,6 +36,8 @@ import { DialogCaptureComponent } from './game-page/components/dialog-capture/di
     UserInfoComponent,
     GameUnitComponent,
     DialogCaptureComponent,
+    DialogAttackCastleComponent,
+    BattlefieldComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +49,7 @@ import { DialogCaptureComponent } from './game-page/components/dialog-capture/di
     DragDropModule
   ],
   entryComponents: [
-  DialogCaptureComponent]
+  DialogCaptureComponent,
+  DialogAttackCastleComponent]
 })
 export class IndexModule { }
