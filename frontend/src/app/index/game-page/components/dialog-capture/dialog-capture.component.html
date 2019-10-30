@@ -1,0 +1,54 @@
+<h1 mat-dialog-title>Захват замка</h1>
+<p>Сформируйте отряд для захвата</p>
+<div mat-dialog-content>
+
+    <div class="example-container">
+      <div class="container_title">Отряд</div>
+      <div
+        cdkDropList
+        #unitsList="cdkDropList"
+        [cdkDropListData]="units"
+        [cdkDropListConnectedTo]="[armyList]"
+        class="example-list list_castle"
+        cdkDropListSortingDisabled
+        [cdkDropListEnterPredicate]="checkUnits"
+        (cdkDropListDropped)="drop($event)">
+        <app-game-unit
+          *ngFor="let item of units" cdkDrag
+          [unit]="item"
+          [userColor]="data.color"
+        ></app-game-unit>
+      </div>
+    </div>
+
+    <div class="example-container">
+      <div class="container_title">Войско</div>
+      <div
+        cdkDropList
+        #armyList="cdkDropList"
+        [cdkDropListData]="army"
+        [cdkDropListConnectedTo]="[unitsList]"
+        class="example-list list_grass"
+        cdkDropListSortingDisabled
+        (cdkDropListDropped)="drop($event)">
+        <app-game-unit
+          *ngFor="let item of army" cdkDrag
+          [unit]="item"
+          [userColor]="data.color"
+        ></app-game-unit>
+      </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
+    (click)="onSubmit()"
+  >
+    <div class="btn-content">Захватить</div>
+  </button>
+  <button type="button" tabindex="2" class="btn btn-danger"
+    (click)="onCancel()"
+  >
+    <div class="btn-content">Отмена</div>
+  </button>
+</div>

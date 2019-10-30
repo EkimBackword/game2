@@ -8,12 +8,19 @@ import { IUser, IGameUser } from '../../../../share-services';
 })
 export class UserInfoComponent implements OnInit {
 
-  public userInfo: IGameUser = null;
+  @Input() users: Map<string, IGameUser>;
 
-  @Input('users')
-  set users(gameUsers: Map<string, IGameUser>) {
-    const user: IUser = JSON.parse(localStorage.getItem('user'));
-    this.userInfo = gameUsers.get(user.id);
+  get userInfo(): IGameUser {
+    if (this.users) {
+      const user: IUser = JSON.parse(localStorage.getItem('user'));
+      return this.users.get(user.id);
+    } else {
+      return null;
+    }
+  }
+
+  get user(): IUser {
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   constructor() { }

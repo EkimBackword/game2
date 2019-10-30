@@ -16,9 +16,11 @@ import {
   IGameInfoResponse,
   IGameEvent,
   GameEventType,
-  IGameEventRequest
+  IGameEventRequest,
+  IGamer
 } from '../../share-services';
 import { Scene } from './classes/scene';
+import { DialogCaptureComponent } from './components/dialog-capture/dialog-capture.component';
 
 
 @Component({
@@ -34,9 +36,26 @@ export class GamePageComponent implements OnInit, OnDestroy {
   public gameId: string;
 
   public tileEvents: IGameEvent[];
-  public hasTakeUnitEvent: boolean;
+  public takeUnitEvent: IGameEvent;
 
   private subscriptions: Map<string, Subscription>;
+
+  private typesRus = {
+    chooseTile: 'Выбор места',
+    move: 'Передвижение',
+    capture: 'Захват замка',
+    attackCastle: 'Нападение на замок',
+    attackUser: 'Нападение на игрока',
+    defense: 'Защита',
+    takeUnit: 'Получение юнита'
+  };
+
+  get curUser(): IGamer {
+    if (this.game && this.game.currentUserId) {
+      return this.game.Gamers.get(this.game.currentUserId);
+    }
+    return null;
+  }
 
   constructor(
     protected route: ActivatedRoute,
@@ -127,18 +146,40 @@ export class GamePageComponent implements OnInit, OnDestroy {
     );
   }
 
-  click(event: IGameEvent) {
+  async click(event: IGameEvent) {
     // TODO: Некоторые события нужно изменить перед отправкой
-    if ([
-      GameEventType.capture,
-      GameEventType.attackCastle,
-      GameEventType.attackUser,
-      GameEventType.defense,
-      GameEventType.takeUnit,
-    ].indexOf(event.type) > -1) {
-      console.log('Не отправил', event);
-      return;
+    switch (event.type) {
+      case GameEventType.capture: {
+        const dialogRef = this.dialog.open(DialogCaptureComponent, {
+          width: '650px',
+          data: event.data
+        });
+        const result = await dialogRef.afterClosed().toPromise();
+        if (result) {
+          event.data = result;
+          console.log('Отправил', result);
+          break;
+        }
+        console.log('Не отправил', result, event);
+        return;
+      }
+      case GameEventType.attackCastle: {
+        console.log('Не отправил', event);
+        return;
+      }
+      case GameEventType.attackUser: {
+        console.log('Не отправил', event);
+        return;
+      }
+      case GameEventType.defense: {
+        console.log('Не отправил', event);
+        return;
+      }
+      default: {
+        break;
+      }
     }
+
     const click$ = this.gameSocket.GameEvent({
       event, gameId: this.gameId
     }).subscribe(
@@ -167,7 +208,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
     this.game.leaveUser(user);
   }
 
-  
   private OnGameStarted(data: IGameInfoResponse) {
     this.game.start(data);
     this.setActiveEvents();
@@ -175,6 +215,11 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   private OnGameEvent(data: IGameEventRequest) {
     this.game.event(data.event);
+    this.uiSnack.showMessage({
+      type: 'info',
+      title: `${this.typesRus[data.event.type]}`,
+      message: `Игрок - ${this.game.Gamers.get(data.event.data.userId).name}`,
+    });
     this.setActiveEvents();
   }
 
@@ -187,11 +232,11 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   private setActiveEvents(isInit = false) {
     this.tileEvents = null;
-    this.hasTakeUnitEvent = false;
+    this.takeUnitEvent = undefined;
     if (!isInit) {
       const activeEvents = this.game.getActions(this.user);
       this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit);
-      this.hasTakeUnitEvent = activeEvents.some(e => e.type === GameEventType.takeUnit);
+      this.takeUnitEvent = activeEvents.find(e => e.type === GameEventType.takeUnit);
     }
   }
 }

@@ -155,9 +155,18 @@ export class GameMap {
                   color: gamer.color,
                   userId: gamer.userId,
                   to: {x: tile.x, y: tile.y},
-                  units: []
+                  units: [],
+                  army: gamer.army,
                 };
                 event = { type: GameEventType.capture, data };
+                return event;
+              } else if (tile.castleInfo.userId === gamer.userId) {
+                const data: IGameEventMoveData = {
+                  color: gamer.color,
+                  userId: gamer.userId,
+                  to: {x: tile.x, y: tile.y}
+                };
+                event = { type: GameEventType.move, data };
                 return event;
               } else {
                 const data: IGameEventAttackCastleData = {
@@ -177,7 +186,7 @@ export class GameMap {
               const data: IGameEventTakeUnitData = {
                 color: gamer.color,
                 userId: gamer.userId,
-                units: []
+                units: [genGameUnit()]
               };
               events.push({ type: GameEventType.takeUnit, data });
             }
@@ -309,6 +318,7 @@ export class GameMap {
             userId: data.userId,
             units: data.units,
         };
+        user.army = data.army;
         this.tiles[user.x][user.y].hasUser = false;
         user.x = data.to.x;
         user.y = data.to.y;

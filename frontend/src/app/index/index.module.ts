@@ -13,9 +13,11 @@ import { MainMenuComponent } from './menu-page/components/main-menu/main-menu.co
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatDialogModule } from '@angular/material';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TileComponent } from './game-page/components/tile/tile.component';
 import { UserInfoComponent } from './game-page/components/user-info/user-info.component';
 import { GameUnitComponent } from './game-page/components/game-unit/game-unit.component';
+import { DialogCaptureComponent } from './game-page/components/dialog-capture/dialog-capture.component';
 
 
 
@@ -31,6 +33,7 @@ import { GameUnitComponent } from './game-page/components/game-unit/game-unit.co
     TileComponent,
     UserInfoComponent,
     GameUnitComponent,
+    DialogCaptureComponent,
   ],
   imports: [
     CommonModule,
@@ -38,9 +41,10 @@ import { GameUnitComponent } from './game-page/components/game-unit/game-unit.co
     FormsModule,
     ReactiveFormsModule,
     NgSelectModule,
-    MatDialogModule
+    MatDialogModule,
+    DragDropModule
   ],
   entryComponents: [
-  ]
+  DialogCaptureComponent]
 })
 export class IndexModule { }

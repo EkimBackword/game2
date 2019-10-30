@@ -22,7 +22,13 @@ export class TileComponent implements OnInit {
   }
 
   get type() {
-    return this.tile.isCastle ? 'castle' : 'grass' ;
+    return this.tile.isCastle ?
+    (this.tile.castleInfo.userId === null ? 'castle' : 'castle-user')
+    : 'grass';
+  }
+
+  get userColor() {
+    return this.tile.isCastle ? this.tile.castleInfo.color : '';
   }
 
 }

@@ -1,13 +1,13 @@
-<div>
-  <p>{{userInfo.userId}}</p>
-  <p>{{userInfo.color}}</p>
-  <p>{{userInfo.x}}</p>
-  <p>{{userInfo.y}}</p>
-  <p>Армия</p>
-  <p *ngFor="let unit of userInfo.army">
+<div class="user_info" *ngIf="userInfo">
+  <div class="user_info__name user_info__name--{{userInfo.color}}">
+    <h2>{{user.name}}</h2>
+  </div>
+  <h3>Армия:</h3>
+  <div class="user_info__army">
     <app-game-unit
+      *ngFor="let unit of userInfo.army"
       [unit]="unit"
       [userColor]="userInfo.color"
     ></app-game-unit>
-  </p>
+  </div>
 </div>

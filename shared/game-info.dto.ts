@@ -155,6 +155,7 @@ export class GameInfo implements IGameInfoResponse {
 
     // TODO: start
     start(dto: IGameInfoResponse) {
+        this.gameMap = null;
         this.gameMap = new GameMap({
             isFrontend: true,
             dto: dto.gameMap,
@@ -163,6 +164,7 @@ export class GameInfo implements IGameInfoResponse {
         this.currentUserId = this.HostId;
         this.State = dto.state;
         this.message = null;
+        this.events = [];
     }
     startBackend() {
         this.gameMap = new GameMap({
@@ -171,6 +173,7 @@ export class GameInfo implements IGameInfoResponse {
         });
         this.currentUserId = this.hostId;
         this.State = GameState.STARTED;
+        this.events = [];
         let index = 0;
         for (const gamer of this.Gamers.values()) {
             gamer.color = GAME_COLORS[index];
@@ -193,6 +196,7 @@ export class GameInfo implements IGameInfoResponse {
     get gamers() { return Array.from(this.Gamers); }
     event(event: IGameEvent) {
         const result = this.gameMap.mapEvent(event);
+        this.events.push(event);
         if (result.isNext) {
             this.tmpCurrentUserId = null;
             let index = this.gamers.findIndex(g => g[0] === this.currentUserId);

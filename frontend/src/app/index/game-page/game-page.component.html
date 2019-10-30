@@ -2,8 +2,22 @@
   <h1>Loading ...</h1>
 </section>
 
+<div class="scene_info scene_info__user" *ngIf="game && curUser">
+    <p>Ход игрока:</p>
+    <p><strong>{{curUser.name}}</strong></p>
+  </div>
+  <div class="scene_info scene_info__game_events" *ngIf="game && game.events">
+    <div *ngFor="let event of game.events"
+      class="
+        event
+        event_color_{{event.data.color}}
+        event_type_{{event.type}}
+      "
+  ></div>
+</div>
 
 <section id="scene" class="map-wrapper" *ngIf="!isLoading">
+
   <div id="map" class='map'>
 
 
@@ -78,22 +92,31 @@
         <p class="score">0</p>
       </div>
     </div>
-    <app-user-info *ngIf="game && game.gameMap && game.gameMap.gameUsers"
-      [users]="game.gameMap.gameUsers"
-    ></app-user-info>
+    <div *ngIf="game && game.gameMap && game.gameMap.gameUsers">
+      <app-user-info
+        [users]="game.gameMap.gameUsers"
+      ></app-user-info>
+    </div>
   </div>
   <div class="map-info--action">
     <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+      *ngIf="game && game.currentUserId === user.id && takeUnitEvent"
+    >
+      <button type="button" tabindex="4" class="btn btn-success" (click)="click(takeUnitEvent)">
+        <div class="btn-content">Усилить войско</div>
+      </button>
+    </fieldset>
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
       *ngIf="game && game.currentUserId === user.id"
     >
-      <button type="button" tabindex="4" class="btn btn-primary">
+      <button type="button" tabindex="4" class="btn btn-secondary">
         <div class="btn-content">Закончить ход</div>
       </button>
     </fieldset>
     <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
       *ngIf="game && game.HostId === user.id && game.State === 'WAITING'"
     >
-      <button type="button" tabindex="4" class="btn btn-primary" (click)="startGame()">
+      <button type="button" tabindex="4" class="btn btn-success" (click)="startGame()">
         <div class="btn-content">Начать</div>
       </button>
     </fieldset>

@@ -1,4 +1,3 @@
-
 <div class="scene">
   <div class="card"
     [class.is-flipped]="visible"
@@ -6,7 +5,11 @@
     <div class="card__face card__face--front">
       <img src="/assets/img/question.png" alt="question">
     </div>
-    <div class="card__face card__face--back">
+    <div class="
+      card__face
+      card__face--back
+      card__face__color--{{userColor}}
+    ">
       <img src="/assets/img/{{type}}.png" alt="{{type}}">
     </div>
   </div>

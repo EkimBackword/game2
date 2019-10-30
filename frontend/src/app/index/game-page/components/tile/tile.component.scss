@@ -4,6 +4,7 @@
   display: block;
   height: 100%;
   width: 100%;
+
 }
 
 .scene {
@@ -42,4 +43,13 @@
 
 .card.is-flipped {
   transform: rotateY(180deg);
+}
+
+@for $i from 0 through length($colors) - 1 {
+  $color: nth($colors, $i + 1);
+  $color-name: nth($colors-name, $i + 1);
+
+  .card__face__color--#{$color-name} {
+    background-color: $color;
+  }
 }

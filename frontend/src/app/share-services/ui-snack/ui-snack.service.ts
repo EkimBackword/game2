@@ -11,9 +11,9 @@ export class UiSnackService {
 
   constructor(protected snackBar: MatSnackBar) {
     this.defaultConfig = {
-      duration: 2500,
+      duration: 1000,
       panelClass: ['snack-bar--no-padding'],
-      horizontalPosition: 'right',
+      horizontalPosition: 'left',
       verticalPosition: 'top'
     };
   }

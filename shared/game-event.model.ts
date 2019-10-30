@@ -31,6 +31,7 @@ export interface IGameEventMoveData extends IGameEventData {
 export interface IGameEventCaptureData extends IGameEventData {
     to: IPosition;
     units: IUnit[];
+    army: IUnit[];
 }
 export interface IGameEventAttackCastleData extends IGameEventData {
     from: IPosition;
