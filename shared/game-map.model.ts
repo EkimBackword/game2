@@ -102,115 +102,137 @@ export class GameMap {
     }
 
     public getActions(user: IGamer, attackId?: string) {
-        const gamer = this.gameUsers.get(user.id);
-        if (gamer) {
-          if (attackId) {
-            const data: IGameEventDefenseData = {
-              userId: gamer.userId,
-              color: gamer.color,
-              units: [],
-              army: gamer.army,
-              attackUnits: this.battle.get(attackId).units
-            };
-            const event: IGameEvent = {
-              type: GameEventType.defense,
-              data
-            };
-            return [event];
-          } else {
-            const events: IGameEvent[] = getNearPoints({x: gamer.x, y: gamer.y})
-            .filter(point => {
-              return !!this.tiles[point.x] && !!this.tiles[point.x][point.y];
-            })
-            .map(point => {
-              const tile = this.tiles[point.x][point.y];
-              let event: IGameEvent = {
-                type: null,
-                data: null,
-              };
-              if (!tile.isCastle) {
-                if (tile.hasUser) {
-                  const data: IGameEventAttackUserData = {
-                    color: gamer.color,
-                    userId: gamer.userId,
-                    army: gamer.army,
-                    units: [],
-                    from: { x: gamer.x, y: gamer.y },
-                    to: { x: tile.x, y: tile.y },
-                    attackedUserId: tile.userId,
-                  };
-                  event = { type: GameEventType.attackUser, data };
-                  return event;
-                } else {
-                  const data: IGameEventMoveData = {
-                    color: gamer.color,
-                    userId: gamer.userId,
-                    to: {x: tile.x, y: tile.y}
-                  };
-                  event = { type: GameEventType.move, data };
-                  return event;
-                }
-              } else if (tile.castleInfo.userId === null) {
-                const data: IGameEventCaptureData = {
-                  color: gamer.color,
-                  userId: gamer.userId,
-                  to: {x: tile.x, y: tile.y},
-                  units: [],
-                  army: gamer.army,
-                };
-                event = { type: GameEventType.capture, data };
-                return event;
-              } else if (tile.castleInfo.userId === gamer.userId) {
-                const data: IGameEventMoveData = {
-                  color: gamer.color,
-                  userId: gamer.userId,
-                  to: {x: tile.x, y: tile.y}
-                };
-                event = { type: GameEventType.move, data };
-                return event;
-              } else {
-                const data: IGameEventAttackCastleData = {
-                  color: gamer.color,
-                  userId: gamer.userId,
-                  from: { x: gamer.x, y: gamer.y },
-                  to: {x: tile.x, y: tile.y},
-                  units: [],
-                  army: gamer.army,
-                };
-                event = { type: GameEventType.attackCastle, data };
-                return event;
-              }
-            });
-            const userTile = this.tiles[gamer.x][gamer.y];
-            if (userTile.isCastle && gamer.army.length < this.effect.maxArmy) {
-              const data: IGameEventTakeUnitData = {
-                color: gamer.color,
-                userId: gamer.userId,
-                units: [genGameUnit()]
-              };
-              events.push({ type: GameEventType.takeUnit, data });
-            }
-            return events;
-          }
+      const gamer = this.gameUsers.get(user.id);
+      if (gamer) {
+        if (attackId) {
+          return this.getAttckedAction(gamer, attackId);
         } else {
-          const events: IGameEvent[] = [];
-          for (const row of this.tiles) {
-            for (const tile of row) {
-              if (!tile.hasUser) {
-                events.push({
-                  type: GameEventType.chooseTile,
-                  data: {
-                    userId: user.id,
-                    color: user.color,
-                    to: { x: tile.x, y: tile.y }
-                  } as IGameEventChooseTileData
-                });
+          const events: IGameEvent[] = getNearPoints({x: gamer.x, y: gamer.y}).filter(point => {
+            return !!this.tiles[point.x] && !!this.tiles[point.x][point.y];
+          }).map(point => {
+            const tile = this.tiles[point.x][point.y];
+            let event: IGameEvent = {
+              type: null,
+              data: null,
+            };
+            if (!tile.isCastle) {
+              if (tile.hasUser) {
+                return this.getActionAttackUser(gamer, tile, event);
+              } else {
+                return this.getActionMove(gamer, tile, event);
               }
+            } else if (tile.castleInfo.userId === null) {
+              return this.getActionCaptureCastle(gamer, tile, event);
+            } else if (tile.castleInfo.userId === gamer.userId) {
+              return this.getActionMove(gamer, tile, event);
+            } else {
+              return this.getActionAttackCastle(gamer, tile, event);
             }
+          });
+          const userTile = this.tiles[gamer.x][gamer.y];
+          if (userTile.isCastle && gamer.army.length < this.effect.maxArmy) {
+            const event = this.getActionTakeUnit(gamer);
+            events.push(event);
           }
           return events;
         }
+      } else {
+        return this.getStartActions(user);
       }
+    }
+
+  private getStartActions(user: IGamer) {
+    const events: IGameEvent[] = [];
+    for (const row of this.tiles) {
+      for (const tile of row) {
+        if (!tile.hasUser) {
+          events.push({
+            type: GameEventType.chooseTile,
+            data: {
+              userId: user.id,
+              color: user.color,
+              to: { x: tile.x, y: tile.y }
+            } as IGameEventChooseTileData
+          });
+        }
+      }
+    }
+    return events;
+  }
+
+  private getActionTakeUnit(gamer: IGameUser) {
+    const data: IGameEventTakeUnitData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      units: [genGameUnit()]
+    };
+    const event = { type: GameEventType.takeUnit, data };
+    return event;
+  }
+
+  private getActionAttackCastle(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+    const data: IGameEventAttackCastleData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      from: { x: gamer.x, y: gamer.y },
+      to: { x: tile.x, y: tile.y },
+      units: [],
+      army: gamer.army,
+    };
+    event = { type: GameEventType.attackCastle, data };
+    return event;
+  }
+
+  private getActionCaptureCastle(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+    const data: IGameEventCaptureData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      to: { x: tile.x, y: tile.y },
+      units: [],
+      army: gamer.army,
+    };
+    event = { type: GameEventType.capture, data };
+    return event;
+  }
+
+  private getActionMove(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+    const data: IGameEventMoveData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      to: { x: tile.x, y: tile.y }
+    };
+    event = { type: GameEventType.move, data };
+    return event;
+  }
+
+  private getActionAttackUser(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+    const data: IGameEventAttackUserData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      army: gamer.army,
+      units: [],
+      from: { x: gamer.x, y: gamer.y },
+      to: { x: tile.x, y: tile.y },
+      attackedUserId: tile.userId,
+    };
+    event = { type: GameEventType.attackUser, data };
+    return event;
+  }
+
+  private getAttckedAction(gamer: IGameUser, attackId: string) {
+    const data: IGameEventDefenseData = {
+      userId: gamer.userId,
+      color: gamer.color,
+      units: [],
+      army: gamer.army,
+      attackUnits: this.battle.get(attackId).units
+    };
+    const event: IGameEvent = {
+      type: GameEventType.defense,
+      data
+    };
+    return [event];
+  }
 
     public mapEvent(event: IGameEvent): IEventResponse {
         switch (event.type) {
