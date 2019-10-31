@@ -26,3 +26,45 @@
   justify-content: flex-start;
   align-items: flex-start;
 }
+
+$height: 100px;
+$width: 84px;
+
+.user_info__army-take_unit_event {
+  display: block;
+  height: $height;
+  width: $width;
+
+  margin: 4px;
+  border-radius: 4px;
+  border: 2px dashed $black;
+  position: relative;
+  transition: all 0.15s linear;
+
+  &::before {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1;
+
+    content: "\f2b5";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 1.5em;
+    color: $black;
+    background-color: $white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.15s linear;
+  }
+
+  &:hover{
+    box-shadow: 2px 2px 4px $black;
+    cursor: pointer;
+    &::before {
+      background-color: $white-force;
+    }
+  }
+}

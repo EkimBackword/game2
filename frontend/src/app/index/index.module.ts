@@ -20,6 +20,8 @@ import { GameUnitComponent } from './game-page/components/game-unit/game-unit.co
 import { DialogCaptureComponent } from './game-page/components/dialog-capture/dialog-capture.component';
 import { DialogAttackCastleComponent } from './game-page/components/dialog-attack-castle/dialog-attack-castle.component';
 import { BattlefieldComponent } from './game-page/components/battlefield/battlefield.component';
+import { DialogAttackUserComponent } from './game-page/components/dialog-attack-user/dialog-attack-user.component';
+import { DialogDefenseComponent } from './game-page/components/dialog-defense/dialog-defense.component';
 
 
 
@@ -38,6 +40,8 @@ import { BattlefieldComponent } from './game-page/components/battlefield/battlef
     DialogCaptureComponent,
     DialogAttackCastleComponent,
     BattlefieldComponent,
+    DialogAttackUserComponent,
+    DialogDefenseComponent,
   ],
   imports: [
     CommonModule,
@@ -50,6 +54,8 @@ import { BattlefieldComponent } from './game-page/components/battlefield/battlef
   ],
   entryComponents: [
   DialogCaptureComponent,
-  DialogAttackCastleComponent]
+  DialogAttackCastleComponent,
+  DialogAttackUserComponent,
+  DialogDefenseComponent]
 })
 export class IndexModule { }

@@ -6,35 +6,35 @@
     margin: 0 0 25px 0;
     display: inline-block;
     vertical-align: top;
-  
+
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: stretch;
 }
-  
+
 .container_title {
     -webkit-transform: rotate(-90deg) translateX(-70px);
     transform: rotate(-90deg) translateX(-70px);
     height: 30px;
     width: 20px;
-  
+
 }
-  
+
 .battlefield_list {
     border: solid 1px $gray;
     min-height: 140px;
     width: 600px;
     border-radius: 4px;
     overflow: hidden;
-  
+
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
 }
-  
+
 .battlefield_list--castle {
     background-color: $white;
     background-image: url('/assets/img/bgc_castle.png');
@@ -42,7 +42,14 @@
     background-position: bottom;
     padding-bottom: 16px;
 }
-  
+.battlefield_list--grass_revers {
+    background-color: $white;
+    background-image: url('/assets/img/bgc_grass_revers.png');
+    background-repeat: repeat;
+    background-position: bottom;
+    padding-bottom: 16px;
+}
+
 .battlefield_list--grass {
     background-color: $green;
     background-image: url('/assets/img/bgc_grass.png');
@@ -51,11 +58,11 @@
     align-items: flex-end;
     padding-top: 32px;
 }
-  
+
 app-game-unit {
     cursor: grab;
 }
-  
+
 .cdk-drag-preview {
     cursor: grabbing;
     box-sizing: border-box;
@@ -64,11 +71,11 @@ app-game-unit {
                 0 8px 10px 1px rgba(0, 0, 0, 0.14),
                 0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
-  
+
 .cdk-drag-placeholder {
     opacity: 0;
 }
-  
+
 .cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

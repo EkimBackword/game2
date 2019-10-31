@@ -5,7 +5,9 @@
         #unitsList="cdkDropList"
         [cdkDropListData]="units"
         [cdkDropListConnectedTo]="[armyList]"
-        class="battlefield_list battlefield_list--castle"
+        class="battlefield_list"
+        [class.battlefield_list--grass_revers]="isUser"
+        [class.battlefield_list--castle]="!isUser"
         cdkDropListSortingDisabled
         [cdkDropListEnterPredicate]="checkUnits"
         (cdkDropListDropped)="drop($event)">

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material';
 
 export interface IUiSnackData {
   title: string;
@@ -16,7 +16,10 @@ export declare type MessageDataType = 'success' | 'warn' | 'error' | 'info';
 })
 export class UiSnackComponent implements OnInit {
 
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: IUiSnackData) { }
+  constructor(
+    public snackBarRef: MatSnackBarRef<UiSnackComponent>,
+    @Inject(MAT_SNACK_BAR_DATA) public data: IUiSnackData
+  ) { }
 
   ngOnInit() {
   }

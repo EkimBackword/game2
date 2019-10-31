@@ -89,23 +89,19 @@
       [class.user-list_user--active]="item.value.id === game.currentUserId"
       >
         <p class="name">{{item.value.name}}</p>
-        <p class="score">0</p>
+        <p class="score">{{getCastleCount(item.value.id)}}</p>
       </div>
     </div>
     <div *ngIf="game && game.gameMap && game.gameMap.gameUsers">
       <app-user-info
         [users]="game.gameMap.gameUsers"
+        [effect]="game.gameMap.effect"
+        [takeUnitEvent]="takeUnitEvent"
+        (takeUnit)="click($event)"
       ></app-user-info>
     </div>
   </div>
   <div class="map-info--action">
-    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
-      *ngIf="game && game.currentUserId === user.id && takeUnitEvent"
-    >
-      <button type="button" tabindex="4" class="btn btn-success" (click)="click(takeUnitEvent)">
-        <div class="btn-content">Усилить войско</div>
-      </button>
-    </fieldset>
     <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
       *ngIf="game && game.currentUserId === user.id"
     >

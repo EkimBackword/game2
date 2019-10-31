@@ -9,4 +9,9 @@
     <h6 class="snack-bar__title">{{data.title}}</h6>
     <p class="snack-bar__info">{{data.message}}</p>
   </div>
+  <div class="snack-bar__icon snack-bar__icon--close"
+    (click)="snackBarRef.dismiss()"
+  >
+    <i class="material-icons">close</i>
+  </div>
 </div>

@@ -1,21 +1,21 @@
-<h1 mat-dialog-title>Атака замок противника</h1>
+<h1 mat-dialog-title>Защита от нападения</h1>
 <p>
-    Разведчики насчитали на защите замка {{data.tile.castleInfo.units.length}} вражеских юнитов.
-    Сформируйте свой отряд для захвата замка.
+  Разведчики насчитали {{data.data.attackUnits.length}} вражеских юнитов.
+  Сформируйте отряд для защиты.
 </p>
 <div mat-dialog-content>
   <app-battlefield
     [army]="army"
     [units]="units"
     [color]="data.data.color"
-    [isUser]="false"
+    [isUser]="true"
   ></app-battlefield>
 </div>
 <div mat-dialog-actions>
     <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
   >
-    <div class="btn-content">Начать атаку</div>
+    <div class="btn-content">Защититься</div>
   </button>
   <button type="button" tabindex="2" class="btn btn-danger"
     (click)="onCancel()"

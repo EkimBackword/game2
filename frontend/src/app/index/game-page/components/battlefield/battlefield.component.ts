@@ -11,6 +11,7 @@ export class BattlefieldComponent {
   @Input() units: IUnit[];
   @Input() army: IUnit[];
   @Input() color: string;
+  @Input() isUser: boolean;
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {

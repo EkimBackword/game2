@@ -61,7 +61,6 @@ export class GameMap {
   public tiles: ITile[][];
   public size: ISize;
   public gameUsers: Map<string, IGameUser>;
-  public battle: Map<string, IGameUserInBattle>;
   public effect: IEffect;
 
   constructor(option: IGameMapOption) {
@@ -104,7 +103,6 @@ export class GameMap {
       this.tiles = dto.tiles;
       this.size = dto.size;
       this.gameUsers = dto.gameUsers instanceof Map ? dto.gameUsers : new Map(dto.gameUsers);
-      this.battle = dto.battle instanceof Map ? dto.battle : new Map(dto.battle);
       this.effect = dto.effect;
   }
   //#endregion init
@@ -219,19 +217,21 @@ export class GameMap {
     return { type: GameEventType.attackUser, data };
   }
 
-  private getActionDefense(gamer: IGameUser, attackId: string): IGameEvent[] {
+  private getActionDefense(defenseGamer: IGameUser, attackGamer: IGameUser, attackUnits: IUnit[]): IGameEvent {
     const data: IGameEventDefenseData = {
-      userId: gamer.userId,
-      color: gamer.color,
+      userId: defenseGamer.userId,
+      color: defenseGamer.color,
       units: [],
-      army: gamer.army,
-      attackUnits: this.battle.get(attackId).units
+      army: defenseGamer.army,
+      to: { x: defenseGamer.x, y: defenseGamer.y },
+      attackUnits,
+      attackUserId: attackGamer.userId
     };
     const event: IGameEvent = {
       type: GameEventType.defense,
       data
     };
-    return [event];
+    return event;
   }
   //#endregion getAction
 
@@ -283,12 +283,14 @@ export class GameMap {
 
   protected moveUserTo(user: IGameUser, to: IPosition): void {
     this.tiles[user.x][user.y].hasUser = false;
+    this.tiles[user.x][user.y].userId = null;
     user.x = to.x;
     user.y = to.y;
     this.tiles[to.x][to.y].hasUser = true;
+    this.tiles[to.x][to.y].userId = user.userId;
   }
 
-  protected getBattleResult(attackUnits: IUnit[], defenseUnits: IUnit[]): IBattleResult {
+  public getBattleResult(attackUnits: IUnit[], defenseUnits: IUnit[]): IBattleResult {
     const attackPower: number = attackUnits.reduce((prev, unit) => prev + unit.power, 0);
     const defensePower: number = defenseUnits.reduce((prev, unit) => prev + unit.power, 0);
     return { attackPower, defensePower,
@@ -325,21 +327,30 @@ export class GameMap {
   }
 
   private chooseTile(data: IGameEventChooseTileData): IEventResponse {
-    this.gameUsers.set(data.userId, {
-        color: data.color,
-        userId: data.userId,
-        army: [genGameUnit(), genGameUnit()],
-        x: data.to.x,
-        y: data.to.y,
-        castleCount: 0
-    });
-    this.tiles[data.to.x][data.to.y].hasUser = true;
+    const user: IGameUser = {
+      color: data.color,
+      userId: data.userId,
+      army: [genGameUnit(), genGameUnit()],
+      x: data.to.x,
+      y: data.to.y,
+      castleCount: 0
+    };
+    this.gameUsers.set(data.userId, user);
+
+    const tile: ITile = this.tiles[data.to.x][data.to.y];
+    tile.hasUser = true;
+    tile.userId = data.userId;
     this.setVisibleFor(data.to, data.userId);
 
-    if(this.tiles[data.to.x][data.to.y].isCastle) {
-      // get
+    const response: IEventResponse = { isNext: true, tmpId: null };
+    if(tile.isCastle) {
+      response.isNext = false;
+      response.tmpId = user.userId;
+      response.tmpEvents = [
+        this.getActionCaptureCastle(user, tile)
+      ];
     }
-    return { isNext: true, tmpId: null };
+    return response;
   }
 
   private move(data: IGameEventMoveData): IEventResponse {
@@ -368,15 +379,13 @@ export class GameMap {
     user.army = data.army;
     const tile: ITile = this.tiles[data.to.x][data.to.y];
     const result: IBattleResult = this.getBattleResult(data.units, tile.castleInfo.units);
+    const eventResult: IEventResponse = { isNext: true, tmpId: null };
     if (result.isWin) {
-      const eventResult: IEventResponse = {
-        isNext: true,
-        tmpId: null
-      };
+      const defenseUser: IGameUser = this.gameUsers.get(tile.castleInfo.userId);
+      defenseUser.castleCount--;
       if (tile.hasUser) {
-        eventResult.tmpId = tile.castleInfo.userId;
-        const defenseUser: IGameUser = this.gameUsers.get(tile.castleInfo.userId);
-        defenseUser.castleCount--;
+        eventResult.isNext = false;
+        eventResult.tmpId = defenseUser.userId;
         eventResult.tmpEvents = this.getGamerActions(defenseUser).filter(e => e.type === GameEventType.move);
       }
       this.tiles[data.to.x][data.to.y].castleInfo = {
@@ -387,24 +396,31 @@ export class GameMap {
       user.castleCount++;
       this.moveUserTo(user, data.to);
       this.setVisibleFor(data.to, data.userId);
-      return eventResult;
     }
-    return { isNext: true, tmpId: null };
+    return eventResult;
   }
 
   private attackUser(data: IGameEventAttackUserData): IEventResponse {
-    const user: IGameUser = this.gameUsers.get(data.userId);
-    user.army = data.army;
-    this.battle = new Map();
-    this.battle.set(user.userId, { ...user, units: data.units });
-    return { isNext: false, tmpId: data.attackedUserId };
+    const attackUser: IGameUser = this.gameUsers.get(data.userId);
+    attackUser.army = data.army;
+    const defenseUser: IGameUser = this.gameUsers.get(data.attackedUserId);
+    return {
+      isNext: false,
+      tmpId: defenseUser.userId,
+      tmpEvents: [this.getActionDefense(defenseUser, attackUser, data.units)]
+    };
   }
 
   private defense(data: IGameEventDefenseData): IEventResponse {
-    const user: IGameUser = this.gameUsers.get(data.userId);
-    user.army = data.army;
-    this.battle.set(user.userId, { ...user, units: data.units });
-    // TODO: Произвести битву
+    const defenseUser: IGameUser = this.gameUsers.get(data.userId);
+    const attackUser: IGameUser = this.gameUsers.get(data.attackUserId);
+    defenseUser.army = data.army;
+    const BattleResult: IBattleResult = this.getBattleResult(data.attackUnits, data.units);
+    if (BattleResult.isWin) {
+      attackUser.army = attackUser.army.concat(data.attackUnits);
+    } else {
+      defenseUser.army = defenseUser.army.concat(data.units);
+    }
     return { isNext: true, tmpId: null };
   }
 
@@ -418,7 +434,6 @@ export class GameMap {
   get response() {
     return Object.assign({}, this, {
         gameUsers: Array.from(this.gameUsers),
-        battle: this.battle ? Array.from(this.battle) : this.battle,
     });
   }
 }

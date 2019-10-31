@@ -47,9 +47,10 @@ export interface IGameEventAttackUserData extends IGameEventData {
     attackedUserId: string;
 }
 export interface IGameEventDefenseData extends IGameEventData {
-    attackUnits: IUnit[];
     units: IUnit[];
     army: IUnit[];
+    attackUnits: IUnit[];
+    attackUserId: string;
 }
 export interface IGameEventTakeUnitData extends IGameEventData {
     units: IUnit[];

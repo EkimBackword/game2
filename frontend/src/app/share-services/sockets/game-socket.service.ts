@@ -146,10 +146,10 @@ export class GameSocketService {
     return this.mapResponse<boolean>(this.onGameEventSuccess(), this.onGameEventError());
   }
   private onGameEventSuccess() {
-    return this.socket.fromEvent<boolean>('StartGameSuccess');
+    return this.socket.fromEvent<boolean>('GameEventSuccess');
   }
   private onGameEventError() {
-    return this.socket.fromEvent<string>('StartGameError');
+    return this.socket.fromEvent<string>('GameEventError');
   }
   onGameEvent() {
     return this.socket.fromEvent<IGameEventRequest>('GameEvent');

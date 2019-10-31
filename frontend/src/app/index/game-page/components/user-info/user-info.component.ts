@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { IUser, IGameUser } from '../../../../share-services';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { IUser, IGameUser, IGameEvent, IEffect } from '../../../../share-services';
 
 @Component({
   selector: 'app-user-info',
@@ -9,6 +9,9 @@ import { IUser, IGameUser } from '../../../../share-services';
 export class UserInfoComponent implements OnInit {
 
   @Input() users: Map<string, IGameUser>;
+  @Input() effect: IEffect;
+  @Input() takeUnitEvent: IGameEvent;
+  @Output() takeUnit = new EventEmitter<IGameEvent>();
 
   get userInfo(): IGameUser {
     if (this.users) {

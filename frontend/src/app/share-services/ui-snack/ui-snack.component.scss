@@ -31,6 +31,20 @@ $color-massage-success: $green;
         align-items: center;
         padding-left: 16px;
 
+        &.snack-bar__icon--close {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          justify-self: flex-end;
+          align-items: center;
+          cursor: pointer;
+          padding-right: 16px;
+
+          &:hover {
+            color: $black;
+          }
+        }
+
         .material-icons {
             $custom-icon-size: 36px;
             width: $custom-icon-size;
@@ -43,6 +57,7 @@ $color-massage-success: $green;
     .snack-bar__body {
         display: flex;
         flex-direction: column;
+        flex: 1 1 auto;
         justify-content: flex-start;
         align-items: stretch;
         padding: 8px 16px;

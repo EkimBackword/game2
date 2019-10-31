@@ -25,6 +25,7 @@ export interface IGameInfoResponse {
     gameMap: GameMap;
     currentUserId: string;
     tmpCurrentUserId: string;
+    tmpEvents: IGameEvent[];
     events: IGameEvent[];
 }
 
@@ -114,6 +115,7 @@ export class GameInfo implements IGameInfoResponse {
           });
           this.currentUserId = dto.currentUserId;
           this.tmpCurrentUserId = dto.tmpCurrentUserId;
+          this.tmpEvents = dto.tmpEvents;
           this.events = dto.events;
         }
       }
@@ -243,6 +245,7 @@ export class GameInfo implements IGameInfoResponse {
         gameMap: this.gameMap ? this.gameMap.response : this.gameMap,
         currentUserId: this.currentUserId,
         tmpCurrentUserId: this.tmpCurrentUserId,
+        tmpEvents: this.tmpEvents,
         events: this.events,
     }; }
 

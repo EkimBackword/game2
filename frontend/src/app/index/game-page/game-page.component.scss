@@ -242,7 +242,7 @@ $sidebar_size: 400px;
     z-index: 1;
 
     content: "";
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
     font-weight: 900;
     font-size: 2em;
     color: $white;
@@ -276,9 +276,6 @@ $sidebar_size: 400px;
   &::before {
     content: "\f3c5";
   }
-
-  &:hover::before {
-  }
 }
 .layout-tile-event--capture {
   &::before {
@@ -292,12 +289,15 @@ $sidebar_size: 400px;
 }
 .layout-tile-event--attackCastle {
   &::before {
-    content: "\f3ed";
+    content: "\f286";
+    color: $white-force;
+    text-shadow: 0px 0px 4px $black;
     margin-bottom: 0px;
   }
 
   &:hover::before {
     font-size: 2.75em;
+    text-shadow: 4px 4px 8px $black;
   }
 
 }
@@ -313,7 +313,14 @@ $sidebar_size: 400px;
   }
 }
 .layout-tile-event--defense {
+  &::before {
+    content: "\f3ed";
+    margin-bottom: 0px;
+  }
 
+  &:hover::before {
+    font-size: 2.75em;
+  }
 }
 
 .layout-tile-user {
@@ -485,7 +492,7 @@ $sidebar_size: 400px;
 
 
 $event_types: ('chooseTile', 'move', 'capture', 'attackCastle', 'attackUser', 'defense', 'takeUnit');
-$event_types_icon: ('\f21d', '\f3c5', '\f78c', '\f3ed', '\f05b', 'defense', '\f2b5');
+$event_types_icon: ('\f21d', '\f3c5', '\f78c', '\f286', '\f05b', '\f3ed', '\f2b5');
 @for $i from 0 through length($event_types) - 1 {
   $event_type: nth($event_types, $i + 1);
   $event_type_icon: nth($event_types_icon, $i + 1);

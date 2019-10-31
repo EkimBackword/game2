@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { isString } from 'util';
-import * as _ from 'lodash';
 
 import {
   UiSnackService,
@@ -19,11 +18,19 @@ import {
   IGameEventRequest,
   IGamer,
   ITile,
-  IGameEventAttackCastleData
+  IGameEventAttackCastleData,
+  IGameEventAttackUserData,
+  IGameEventChooseTileData,
+  IGameEventMoveData,
+  IGameEventCaptureData,
+  IGameEventDefenseData,
+  IGameEventTakeUnitData
 } from '../../share-services';
 import { Scene } from './classes/scene';
 import { DialogCaptureComponent } from './components/dialog-capture/dialog-capture.component';
 import { DialogAttackCastleComponent } from './components/dialog-attack-castle/dialog-attack-castle.component';
+import { DialogAttackUserComponent } from './components/dialog-attack-user/dialog-attack-user.component';
+import { DialogDefenseComponent } from './components/dialog-defense/dialog-defense.component';
 
 
 @Component({
@@ -58,6 +65,14 @@ export class GamePageComponent implements OnInit, OnDestroy {
       return this.game.Gamers.get(this.game.currentUserId);
     }
     return null;
+  }
+
+  getCastleCount(id: string): number {
+    const user = this.game.gameMap.gameUsers.get(id);
+    if (user) {
+      return user.castleCount;
+    }
+    return -1;
   }
 
   constructor(
@@ -150,7 +165,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
   }
 
   async click(event: IGameEvent) {
-    // TODO: Некоторые события нужно изменить перед отправкой
     switch (event.type) {
       case GameEventType.capture: {
         const dialogRef = this.dialog.open(DialogCaptureComponent, { width: '650px', data: event.data });
@@ -167,17 +181,26 @@ export class GamePageComponent implements OnInit, OnDestroy {
         return;
       }
       case GameEventType.attackUser: {
-        console.log('Не отправил', event);
+        const data = event.data as IGameEventAttackUserData;
+        const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
+        const dialogRef = this.dialog.open(DialogAttackUserComponent, { width: '650px', data: { data, tile } });
+        const result = await dialogRef.afterClosed().toPromise();
+        if (result) { event.data = result; break; }
         return;
       }
       case GameEventType.defense: {
-        console.log('Не отправил', event);
+        const data = event.data as IGameEventAttackUserData;
+        const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
+        const dialogRef = this.dialog.open(DialogDefenseComponent, { width: '650px', data: { data, tile } });
+        const result = await dialogRef.afterClosed().toPromise();
+        if (result) { event.data = result; break; }
         return;
       }
       default: {
         break;
       }
     }
+
 
     const click$ = this.gameSocket.GameEvent({
       event, gameId: this.gameId
@@ -213,12 +236,8 @@ export class GamePageComponent implements OnInit, OnDestroy {
   }
 
   private OnGameEvent(data: IGameEventRequest) {
+    this.uiSnackEvent(data.event);
     this.game.event(data.event);
-    this.uiSnack.showMessage({
-      type: 'info',
-      title: `${this.typesRus[data.event.type]}`,
-      message: `Игрок - ${this.game.Gamers.get(data.event.data.userId).name}`,
-    });
     this.setActiveEvents();
   }
 
@@ -237,5 +256,94 @@ export class GamePageComponent implements OnInit, OnDestroy {
       this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit);
       this.takeUnitEvent = activeEvents.find(e => e.type === GameEventType.takeUnit);
     }
+  }
+
+  private uiSnackEvent(event: IGameEvent): any {
+    switch (event.type) {
+      case GameEventType.chooseTile: {
+          return this.uiSnackEventChooseTile(event.data as IGameEventChooseTileData);
+      }
+      case GameEventType.move: {
+          return this.uiSnackEventMove(event.data as IGameEventMoveData);
+      }
+      case GameEventType.capture: {
+          return this.uiSnackEventCapture(event.data as IGameEventCaptureData);
+      }
+      case GameEventType.attackCastle: {
+          return this.uiSnackEventAttackCastle(event.data as IGameEventAttackCastleData);
+      }
+      case GameEventType.attackUser: {
+          return this.uiSnackEventAttackUser(event.data as IGameEventAttackUserData);
+      }
+      case GameEventType.defense: {
+          return this.uiSnackEventDefense(event.data as IGameEventDefenseData);
+      }
+      case GameEventType.takeUnit: {
+          return this.uiSnackEventTakeUnit(event.data as IGameEventTakeUnitData);
+      }
+    }
+  }
+
+  uiSnackEventChooseTile(data: IGameEventChooseTileData) {
+    const user = this.game.Gamers.get(data.userId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${user.name}`,
+      message: `Выбрал стартовую позицию`,
+      type: 'success'
+    }, { duration: 2000 });
+  }
+  uiSnackEventMove(data: IGameEventMoveData) {
+    const user = this.game.Gamers.get(data.userId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${user.name}`,
+      message: `Переместился`,
+      type: 'success'
+    }, { duration: 2000 });
+  }
+  uiSnackEventCapture(data: IGameEventCaptureData) {
+    const user = this.game.Gamers.get(data.userId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${user.name}`,
+      message: `Захватил замок`,
+      type: 'success'
+    }, { duration: 2000 });
+  }
+  uiSnackEventAttackCastle(data: IGameEventAttackCastleData) {
+    const user = this.game.Gamers.get(data.userId);
+    const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
+    const defenseUser = this.game.Gamers.get(tile.castleInfo.userId);
+    const BattleResult = this.game.gameMap.getBattleResult(data.units, tile.castleInfo.units);
+    this.uiSnack.showMessage({
+      title: BattleResult.isWin ? `Игрок ${user.name} захватил замок` : `Игрок ${user.name} проиграл при захвате`,
+      message: `Счёт: Атака ${user.name} ${BattleResult.attackPower} - ${BattleResult.defensePower} ${defenseUser.name} Защита`,
+      type: BattleResult.isWin ? 'success' : 'warn'
+    }, { duration: 10000 });
+  }
+  uiSnackEventAttackUser(data: IGameEventAttackUserData) {
+    const attackUser = this.game.Gamers.get(data.userId);
+    const defenseUser = this.game.Gamers.get(data.attackedUserId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${attackUser.name}`,
+      message: `Совершает атаку на ${defenseUser.name}`,
+      type: 'info'
+    }, { duration: 2000 });
+  }
+  uiSnackEventDefense(data: IGameEventDefenseData) {
+    const attackUser = this.game.Gamers.get(data.attackUserId);
+    const defenseUser = this.game.Gamers.get(data.userId);
+    const BattleResult = this.game.gameMap.getBattleResult(data.attackUnits, data.units);
+    this.uiSnack.showMessage({
+      title: BattleResult.isWin ? `Игрок ${attackUser.name} победил` : `Игрок ${attackUser.name} проиграл`,
+      message: `Счёт: Атака ${attackUser.name} ${BattleResult.attackPower} - ${BattleResult.defensePower} ${defenseUser.name} Защита`,
+      type: BattleResult.isWin ? 'success' : 'warn'
+    }, { duration: 10000 });
+  }
+  uiSnackEventTakeUnit(data: IGameEventTakeUnitData) {
+    const user = this.game.Gamers.get(data.userId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${user.name}`,
+      message: `Услил армию`,
+      type: 'success'
+    }, { duration: 2000 });
   }
 }
