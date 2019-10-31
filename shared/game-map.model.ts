@@ -65,14 +65,15 @@ export class GameMap {
   public effect: IEffect;
 
   constructor(option: IGameMapOption) {
-      if (option.isFrontend) {
-          this.initFrontend(option.dto);
-      } else {
-          this.initBackend(option.size);
-      }
+    if (option.isFrontend) {
+      this.initFrontend(option.dto);
+    } else {
+      this.initBackend(option.size);
+    }
   }
 
-  initBackend(size: ISize) {
+  //#region init
+  initBackend(size: ISize): void {
       this.size = size;
       this.gameUsers = new Map();
       this.effect = {
@@ -84,31 +85,33 @@ export class GameMap {
       // gen map
       const positions: IPosition[] = [];
       this.tiles = [];
-      for (let x = 0; x < size.width; x++) {
+      for (let x: number = 0; x < size.width; x++) {
           this.tiles[x] = [];
-          for (let y = 0; y < size.height; y++) {
+          for (let y: number = 0; y < size.height; y++) {
               positions.push({x, y});
               this.tiles[x][y] = this.createTile(x, y);
           }
       }
 
       // gen castle
-      const CastlesPoints = this.genCastlesPoints(positions);
+      const CastlesPoints: IPosition[] = this.genCastlesPoints(positions);
       for (const point of CastlesPoints) {
           this.createCastle(point.x, point.y);
       }
   }
 
-  initFrontend(dto: GameMap) {
+  initFrontend(dto: GameMap): void {
       this.tiles = dto.tiles;
       this.size = dto.size;
       this.gameUsers = dto.gameUsers instanceof Map ? dto.gameUsers : new Map(dto.gameUsers);
       this.battle = dto.battle instanceof Map ? dto.battle : new Map(dto.battle);
       this.effect = dto.effect;
   }
+  //#endregion init
 
-  public getActions(user: IGamer) {
-    const gamer = this.gameUsers.get(user.id);
+  //#region getAction
+  public getActions(user: IGamer): IGameEvent[] {
+    const gamer: IGameUser = this.gameUsers.get(user.id);
     if (gamer) {
       return this.getGamerActions(gamer);
     } else {
@@ -116,42 +119,34 @@ export class GameMap {
     }
   }
 
-  private getGamerActions(gamer: IGameUser) {
+  private getGamerActions(gamer: IGameUser): IGameEvent[] {
     const events: IGameEvent[] = getNearPoints({ x: gamer.x, y: gamer.y }).filter(point => {
       return !!this.tiles[point.x] && !!this.tiles[point.x][point.y];
     }).map(point => {
-      const tile = this.tiles[point.x][point.y];
-      let event: IGameEvent = {
-        type: null,
-        data: null,
-      };
+      const tile: ITile = this.tiles[point.x][point.y];
       if (!tile.isCastle) {
         if (tile.hasUser) {
-          return this.getActionAttackUser(gamer, tile, event);
+          return this.getActionAttackUser(gamer, tile);
+        } else {
+          return this.getActionMove(gamer, tile);
         }
-        else {
-          return this.getActionMove(gamer, tile, event);
-        }
-      }
-      else if (tile.castleInfo.userId === null) {
-        return this.getActionCaptureCastle(gamer, tile, event);
-      }
-      else if (tile.castleInfo.userId === gamer.userId) {
-        return this.getActionMove(gamer, tile, event);
-      }
-      else {
-        return this.getActionAttackCastle(gamer, tile, event);
+      } else if (tile.castleInfo.userId === null) {
+        return this.getActionCaptureCastle(gamer, tile);
+      } else if (tile.castleInfo.userId === gamer.userId) {
+        return this.getActionMove(gamer, tile);
+      } else {
+        return this.getActionAttackCastle(gamer, tile);
       }
     });
-    const userTile = this.tiles[gamer.x][gamer.y];
+    const userTile: ITile = this.tiles[gamer.x][gamer.y];
     if (userTile.isCastle && gamer.army.length < this.effect.maxArmy) {
-      const event = this.getActionTakeUnit(gamer);
+      const event: IGameEvent = this.getActionTakeUnit(gamer);
       events.push(event);
     }
     return events;
   }
 
-  private getStartActions(user: IGamer) {
+  private getStartActions(user: IGamer): IGameEvent[] {
     const events: IGameEvent[] = [];
     for (const row of this.tiles) {
       for (const tile of row) {
@@ -170,17 +165,16 @@ export class GameMap {
     return events;
   }
 
-  private getActionTakeUnit(gamer: IGameUser) {
+  private getActionTakeUnit(gamer: IGameUser): IGameEvent {
     const data: IGameEventTakeUnitData = {
       color: gamer.color,
       userId: gamer.userId,
       units: [genGameUnit()]
     };
-    const event = { type: GameEventType.takeUnit, data };
-    return event;
+    return { type: GameEventType.takeUnit, data };
   }
 
-  private getActionAttackCastle(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+  private getActionAttackCastle(gamer: IGameUser, tile: ITile): IGameEvent {
     const data: IGameEventAttackCastleData = {
       color: gamer.color,
       userId: gamer.userId,
@@ -189,11 +183,10 @@ export class GameMap {
       units: [],
       army: gamer.army,
     };
-    event = { type: GameEventType.attackCastle, data };
-    return event;
+    return { type: GameEventType.attackCastle, data };
   }
 
-  private getActionCaptureCastle(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+  private getActionCaptureCastle(gamer: IGameUser, tile: ITile): IGameEvent {
     const data: IGameEventCaptureData = {
       color: gamer.color,
       userId: gamer.userId,
@@ -201,21 +194,19 @@ export class GameMap {
       units: [],
       army: gamer.army,
     };
-    event = { type: GameEventType.capture, data };
-    return event;
+    return { type: GameEventType.capture, data };
   }
 
-  private getActionMove(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+  private getActionMove(gamer: IGameUser, tile: ITile): IGameEvent {
     const data: IGameEventMoveData = {
       color: gamer.color,
       userId: gamer.userId,
       to: { x: tile.x, y: tile.y }
     };
-    event = { type: GameEventType.move, data };
-    return event;
+    return { type: GameEventType.move, data };
   }
 
-  private getActionAttackUser(gamer: IGameUser, tile: ITile, event: IGameEvent) {
+  private getActionAttackUser(gamer: IGameUser, tile: ITile): IGameEvent {
     const data: IGameEventAttackUserData = {
       color: gamer.color,
       userId: gamer.userId,
@@ -225,11 +216,10 @@ export class GameMap {
       to: { x: tile.x, y: tile.y },
       attackedUserId: tile.userId,
     };
-    event = { type: GameEventType.attackUser, data };
-    return event;
+    return { type: GameEventType.attackUser, data };
   }
 
-  private getAttckedAction(gamer: IGameUser, attackId: string) {
+  private getActionDefense(gamer: IGameUser, attackId: string): IGameEvent[] {
     const data: IGameEventDefenseData = {
       userId: gamer.userId,
       color: gamer.color,
@@ -243,138 +233,149 @@ export class GameMap {
     };
     return [event];
   }
+  //#endregion getAction
 
-  public mapEvent(event: IGameEvent): IEventResponse {
-      switch (event.type) {
-          case GameEventType.chooseTile: {
-              return this.chooseTile(event.data as IGameEventChooseTileData);
-          }
-          case GameEventType.move: {
-              return this.move(event.data as IGameEventMoveData);
-          }
-          case GameEventType.capture: {
-              return this.capture(event.data as IGameEventCaptureData);
-          }
-          case GameEventType.attackCastle: {
-              return this.attackCastle(event.data as IGameEventAttackCastleData);
-          }
-          case GameEventType.attackUser: {
-              return this.attackUser(event.data as IGameEventAttackUserData);
-          }
-          case GameEventType.defense: {
-              return this.defense(event.data as IGameEventDefenseData);
-          }
-          case GameEventType.takeUnit: {
-              return this.takeUnit(event.data as IGameEventTakeUnitData);
-          }
-      }
+  //#region protected
+  protected createTile(x: number, y: number): ITile {
+    const tile: ITile = {
+      x, y,
+      visibleFor: [],
+      isCastle: false,
+    };
+    return tile;
   }
 
-  //#region private
-  private createTile(x: number, y: number) {
-      const tile: ITile = {
-          x, y,
-          visibleFor: [],
-          isCastle: false,
-      };
-      return tile;
-  }
-
-  private genCastlesPoints(positions: IPosition[]) {
-      const count = this.size.width === 6 ? 4 : 7;
-      const result: IPosition[] = [];
-      for (let i = 0; i < count; i++) {
-          const point = positions[randomizer(0, positions.length - 1)];
-          const nearPoints = getNearPoints(point);
-          positions = positions.filter(p => {
-              if (p.x === point.x && p.y === point.y) { return false; }
-              return !nearPoints.some(near =>  p.x === near.x && p.y === near.y );
-          });
-          result.push(point);
-      }
-      return result;
-  }
-
-  private createCastle(x: number, y: number) {
-      const castle: ICastleInfo = {
-          color: null,
-          userId: null,
-          units: [],
-      };
-      this.tiles[x][y].isCastle = true;
-      this.tiles[x][y].castleInfo = castle;
-  }
-
-
-
-  // EVENTS
-
-  private chooseTile(data: IGameEventChooseTileData): IEventResponse {
-      this.gameUsers.set(data.userId, {
-          color: data.color,
-          userId: data.userId,
-          army: [genGameUnit(), genGameUnit()],
-          x: data.to.x,
-          y: data.to.y,
-          castleCount: 0
+  protected genCastlesPoints(positions: IPosition[]): IPosition[] {
+    const count: number = this.size.width === 6 ? 4 : 7;
+    const result: IPosition[] = [];
+    for (let i: number = 0; i < count; i++) {
+      const point: IPosition = positions[randomizer(0, positions.length - 1)];
+      const nearPoints: IPosition[] = getNearPoints(point);
+      positions = positions.filter(p => {
+        if (p.x === point.x && p.y === point.y) { return false; }
+        return !nearPoints.some(near =>  p.x === near.x && p.y === near.y );
       });
-      this.tiles[data.to.x][data.to.y].hasUser = true;
-      this.setVisibleFor(data.to, data.userId);
-      return { isNext: true, tmpId: null };
+      result.push(point);
+    }
+    return result;
   }
 
-  private setVisibleFor(to: IPosition, userId: string) {
-      this.tiles[to.x][to.y].visibleFor.push(userId);
-      getNearPoints(to).forEach(point => {
-          if (this.tiles[point.x] && this.tiles[point.x][point.y] && this.tiles[point.x][point.y].visibleFor) {
-              if (this.tiles[point.x][point.y].visibleFor.indexOf(userId) === -1) {
-                  this.tiles[point.x][point.y].visibleFor.push(userId);
-              }
-          }
-      });
+  protected createCastle(x: number, y: number): void {
+    const castle: ICastleInfo = {
+      color: null,
+      userId: null,
+      units: [],
+    };
+    this.tiles[x][y].isCastle = true;
+    this.tiles[x][y].castleInfo = castle;
   }
 
-  private move(data: IGameEventMoveData): IEventResponse {
-      const user = this.gameUsers.get(data.userId);
-      this.moveUserTo(user, data.to);
-      this.setVisibleFor(data.to, data.userId);
-      return { isNext: true, tmpId: null };
+  protected setVisibleFor(to: IPosition, userId: string): void {
+    this.tiles[to.x][to.y].visibleFor.push(userId);
+    getNearPoints(to).forEach(point => {
+      if (this.tiles[point.x] && this.tiles[point.x][point.y] && this.tiles[point.x][point.y].visibleFor) {
+        if (this.tiles[point.x][point.y].visibleFor.indexOf(userId) === -1) {
+          this.tiles[point.x][point.y].visibleFor.push(userId);
+        }
+      }
+    });
   }
 
-  private moveUserTo(user: IGameUser, to: IPosition) {
+  protected moveUserTo(user: IGameUser, to: IPosition): void {
     this.tiles[user.x][user.y].hasUser = false;
     user.x = to.x;
     user.y = to.y;
     this.tiles[to.x][to.y].hasUser = true;
   }
 
-  private capture(data: IGameEventCaptureData): IEventResponse {
-      const user = this.gameUsers.get(data.userId);
-      user.army = data.army;
-      this.tiles[data.to.x][data.to.y].castleInfo = {
+  protected getBattleResult(attackUnits: IUnit[], defenseUnits: IUnit[]): IBattleResult {
+    const attackPower: number = attackUnits.reduce((prev, unit) => prev + unit.power, 0);
+    const defensePower: number = defenseUnits.reduce((prev, unit) => prev + unit.power, 0);
+    return { attackPower, defensePower,
+      isWin: attackPower > defensePower
+    };
+  }
+  //#endregion protected
+
+  //#region Events
+  public mapEvent(event: IGameEvent): IEventResponse {
+    switch (event.type) {
+      case GameEventType.chooseTile: {
+          return this.chooseTile(event.data as IGameEventChooseTileData);
+      }
+      case GameEventType.move: {
+          return this.move(event.data as IGameEventMoveData);
+      }
+      case GameEventType.capture: {
+          return this.capture(event.data as IGameEventCaptureData);
+      }
+      case GameEventType.attackCastle: {
+          return this.attackCastle(event.data as IGameEventAttackCastleData);
+      }
+      case GameEventType.attackUser: {
+          return this.attackUser(event.data as IGameEventAttackUserData);
+      }
+      case GameEventType.defense: {
+          return this.defense(event.data as IGameEventDefenseData);
+      }
+      case GameEventType.takeUnit: {
+          return this.takeUnit(event.data as IGameEventTakeUnitData);
+      }
+    }
+  }
+
+  private chooseTile(data: IGameEventChooseTileData): IEventResponse {
+    this.gameUsers.set(data.userId, {
         color: data.color,
         userId: data.userId,
-        units: data.units,
-      };
-      this.moveUserTo(user, data.to);
-      this.setVisibleFor(data.to, data.userId);
-      user.castleCount++;
-      return { isNext: true, tmpId: null };
+        army: [genGameUnit(), genGameUnit()],
+        x: data.to.x,
+        y: data.to.y,
+        castleCount: 0
+    });
+    this.tiles[data.to.x][data.to.y].hasUser = true;
+    this.setVisibleFor(data.to, data.userId);
+
+    if(this.tiles[data.to.x][data.to.y].isCastle) {
+      // get
+    }
+    return { isNext: true, tmpId: null };
+  }
+
+  private move(data: IGameEventMoveData): IEventResponse {
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    this.moveUserTo(user, data.to);
+    this.setVisibleFor(data.to, data.userId);
+    return { isNext: true, tmpId: null };
+  }
+
+  private capture(data: IGameEventCaptureData): IEventResponse {
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    user.army = data.army;
+    this.tiles[data.to.x][data.to.y].castleInfo = {
+      color: data.color,
+      userId: data.userId,
+      units: data.units,
+    };
+    this.moveUserTo(user, data.to);
+    this.setVisibleFor(data.to, data.userId);
+    user.castleCount++;
+    return { isNext: true, tmpId: null };
   }
 
   private attackCastle(data: IGameEventAttackCastleData): IEventResponse {
-    const user = this.gameUsers.get(data.userId);
+    const user: IGameUser = this.gameUsers.get(data.userId);
     user.army = data.army;
-    const tile = this.tiles[data.to.x][data.to.y];
-    const result = this.getBattleResult(data.units, tile.castleInfo.units);
+    const tile: ITile = this.tiles[data.to.x][data.to.y];
+    const result: IBattleResult = this.getBattleResult(data.units, tile.castleInfo.units);
     if (result.isWin) {
       const eventResult: IEventResponse = {
         isNext: true,
         tmpId: null
-      }
+      };
       if (tile.hasUser) {
         eventResult.tmpId = tile.castleInfo.userId;
-        const defenseUser = this.gameUsers.get(tile.castleInfo.userId);
+        const defenseUser: IGameUser = this.gameUsers.get(tile.castleInfo.userId);
         defenseUser.castleCount--;
         eventResult.tmpEvents = this.getGamerActions(defenseUser).filter(e => e.type === GameEventType.move);
       }
@@ -391,41 +392,33 @@ export class GameMap {
     return { isNext: true, tmpId: null };
   }
 
-  private getBattleResult(attackUnits: IUnit[], defenseUnits: IUnit[]): IBattleResult {
-    const attackPower = attackUnits.reduce((prev, unit) => prev + unit.power, 0);
-    const defensePower = defenseUnits.reduce((prev, unit) => prev + unit.power, 0);
-    return { attackPower, defensePower,
-      isWin: attackPower > defensePower
-    }
-  }
-
   private attackUser(data: IGameEventAttackUserData): IEventResponse {
-      const user = this.gameUsers.get(data.userId);
-      user.army = data.army;
-      this.battle = new Map();
-      this.battle.set(user.userId, { ...user, units: data.units });
-      return { isNext: false, tmpId: data.attackedUserId };
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    user.army = data.army;
+    this.battle = new Map();
+    this.battle.set(user.userId, { ...user, units: data.units });
+    return { isNext: false, tmpId: data.attackedUserId };
   }
 
   private defense(data: IGameEventDefenseData): IEventResponse {
-      const user = this.gameUsers.get(data.userId);
-      user.army = data.army;
-      this.battle.set(user.userId, { ...user, units: data.units });
-      // TODO: Произвести битву
-      return { isNext: true, tmpId: null };
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    user.army = data.army;
+    this.battle.set(user.userId, { ...user, units: data.units });
+    // TODO: Произвести битву
+    return { isNext: true, tmpId: null };
   }
 
   private takeUnit(data: IGameEventTakeUnitData): IEventResponse {
-      const user = this.gameUsers.get(data.userId);
-      user.army.push(...data.units);
-      return { isNext: true, tmpId: null };
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    user.army.push(...data.units);
+    return { isNext: true, tmpId: null };
   }
-  //#endregion private
+  //#endregion Events
 
   get response() {
-      return Object.assign({}, this, {
-          gameUsers: Array.from(this.gameUsers),
-          battle: this.battle ? Array.from(this.battle) : this.battle,
-      });
+    return Object.assign({}, this, {
+        gameUsers: Array.from(this.gameUsers),
+        battle: this.battle ? Array.from(this.battle) : this.battle,
+    });
   }
 }
