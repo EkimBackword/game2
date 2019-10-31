@@ -1,0 +1,160 @@
+@import "./src/assets/styles/_variables";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 4px;
+
+  p {
+    margin-bottom: .2em;
+  }
+}
+
+.mana_list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 0 8px;
+
+  .mana {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: adjust-color($blue, $alpha: -0.6);
+    box-shadow: 1px 1px 2px adjust-color($black, $alpha: -0.4);
+    margin: 0 4px;
+
+    &.mana_active {
+      background-color: $blue;
+      box-shadow: 2px 2px 4px $black;
+    }
+  }
+}
+
+$height: 200px;
+$width: 160px;
+
+.periods_info {
+  padding-bottom: 8px;
+  margin: 0 16px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: relative;
+}
+
+.periods_info__deck {
+  flex-shrink: 0;
+  height: $height;
+  width: $width;
+  background-image: url('/assets/img/period_deck_back.png');
+  background-repeat: repeat;
+  background-position: bottom;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 2px 2px 4px $black;
+  background-color: $gray;
+
+  &::before {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    z-index: -1;
+    content: "";
+    height: $height;
+    width: $width;
+    background-image: url('/assets/img/period_deck_back.png');
+    background-repeat: repeat;
+    background-position: bottom;
+    border-radius: 4px;
+    box-shadow: 1px 1px 4px $black;
+  }
+
+  &::after {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    z-index: -2;
+    content: "";
+    height: $height;
+    width: $width;
+    background-image: url('/assets/img/period_deck_back.png');
+    background-repeat: repeat;
+    background-position: bottom;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px $black;
+  }
+}
+
+.periods_info__card {
+  height: $height;
+  width: $width;
+  background-image: url('/assets/img/period_deck_front.png');
+  background-repeat: repeat;
+  background-position: bottom;
+  border-radius: 4px;
+  box-shadow: 2px 2px 4px $black;
+  padding: 20px;
+
+
+  &.periods_info__card--empty {
+    position: relative;
+
+    &::before {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 0; right: 0;
+      z-index: 1;
+
+      content: "\f128";
+      font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+      font-weight: 900;
+      font-size: 4em;
+      color: $black;
+    }
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: 400;
+    color: $dark-primary;
+    border-bottom: 1px solid black;
+  }
+
+  .description {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  position: absolute;
+  top: 0;
+  left: $width + 20;
+  animation-duration: 0.4s;
+  animation-name: cardup;
+}
+
+
+@keyframes cardup {
+  from {
+    position: absolute;
+    left: 0;
+    margin-right: $width;
+    color: $white-force;
+    z-index: -1;
+  }
+
+  to {
+    left: $width + 20;
+    color: $black;
+    z-index: -1;
+  }
+}

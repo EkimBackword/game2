@@ -131,7 +131,6 @@ export class GameGateway implements OnGatewayDisconnect {
             }
             socket.emit('StartGameError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
         } catch (err) {
-            // console.log(err);
             socket.emit('StartGameError', 'Игра не найдена');
         }
     }

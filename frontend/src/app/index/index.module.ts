@@ -22,6 +22,7 @@ import { DialogAttackCastleComponent } from './game-page/components/dialog-attac
 import { BattlefieldComponent } from './game-page/components/battlefield/battlefield.component';
 import { DialogAttackUserComponent } from './game-page/components/dialog-attack-user/dialog-attack-user.component';
 import { DialogDefenseComponent } from './game-page/components/dialog-defense/dialog-defense.component';
+import { MapEffectComponent } from './game-page/components/map-effect/map-effect.component';
 
 
 
@@ -42,6 +43,7 @@ import { DialogDefenseComponent } from './game-page/components/dialog-defense/di
     BattlefieldComponent,
     DialogAttackUserComponent,
     DialogDefenseComponent,
+    MapEffectComponent,
   ],
   imports: [
     CommonModule,

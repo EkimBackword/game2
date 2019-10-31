@@ -10,7 +10,7 @@ export interface IUser {
 
 export interface IGamer extends IUser {
     isConnected: boolean;
-    isDeath: false;
+    isDeath: boolean;
     color?: string;
 }
 
@@ -185,7 +185,7 @@ export class GameInfo implements IGameInfoResponse {
             index++;
         }
     }
-    
+
     getActions(user: IUser) {
         if (this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id) {
             return [];
@@ -197,32 +197,62 @@ export class GameInfo implements IGameInfoResponse {
             const gamer = this.getUser(user.id);
             return this.gameMap.getActions(gamer);
         }
-      }
+    }
 
-    // TODO: event
     get gamers() { return Array.from(this.Gamers); }
     event(event: IGameEvent) {
         const result = this.gameMap.mapEvent(event);
         this.events.push(event);
         if (result.isNext) {
-            this.tmpCurrentUserId = null;
-            this.tmpEvents = null;
-            let index = this.gamers.findIndex(g => g[0] === this.currentUserId);
-            index++;
-            this.currentUserId = index >= this.gamers.length ? this.gamers[0][0] : this.gamers[index][0];
+            const user: IGamer = this.Gamers.get(event.data.userId);
+            this.setNextUser(user, (user) => {
+                return this.gameMap.checkDeathStatusOfUser(user);
+            });
         } else {
-            this.tmpCurrentUserId = result.tmpId;
-            this.tmpEvents = result.tmpEvents;
+            if (result.tmpEvents.length === 0) {
+                const user: IGamer = this.Gamers.get(result.tmpId);
+                this.setNextUser(user, (user) => {
+                    return this.gameMap.setDeathToUser(user);
+                });
+            } else {
+                this.tmpCurrentUserId = result.tmpId;
+                this.tmpEvents = result.tmpEvents;
+            }
         }
-        // TODO: Простовить IsDeath игроку если у него нет замков и воинов или он не может покинуть заваёвонный замок
     }
 
-    // TODO: finish
-    finish(dto: IGameInfoResponse) {
-        this.State = dto.state;
+    private setNextUser(user: IGamer, funcDeath: (user: IGamer) => boolean) {
+        let gamers = this.gamers.filter(g => !g[1].isDeath);
+        let index: number = gamers.findIndex(g => g[0] === this.currentUserId);
+        index++;
+        if (index >= gamers.length) {
+            this.newPeriod();
+            this.currentUserId = gamers[0][0];
+        } else {
+            this.currentUserId = gamers[index][0];
+        }
+        this.tmpCurrentUserId = null;
+        this.tmpEvents = null;
+
+        user.isDeath = funcDeath(user);
+        if (user.isDeath && this.gamers.filter(g => !g[1].isDeath).length === 1) {
+            this.finish();
+        }
     }
-    finishBackend() {
+
+    private newPeriod() {
+        this.gameMap.setNewPeriodEffects();
+        if (this.gameMap.effect.deathCount === 3) {
+            this.finish();
+        }
+    }
+
+    finish() {
         this.State = GameState.FINISHED;
+        let gamers = this.gamers.filter(g => !g[1].isDeath)
+                                .map(g => ({...this.gameMap.gameUsers.get(g[0]), name: g[1].name}))
+                                .sort((a, b) => a.castleCount > b.castleCount ? -1 : a.castleCount < b.castleCount ? 1 : 0);
+        this.message = `Победитель ${gamers[0].name}`;
     }
 
     // BACKERND

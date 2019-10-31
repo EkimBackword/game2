@@ -1,4 +1,4 @@
-import { randomizer, getNearPoints } from './functions';
+import { randomizer, getNearPoints, genPeriodEffects, IPeriodEffects } from './functions';
 import { IUnit, GameUnitType, genGameUnit } from './game-unit.model';
 import {
     IGameEvent,
@@ -42,6 +42,7 @@ export interface IEffect {
     unitTypeBonus: GameUnitType;
     deathCount: number;
     maxArmy: number;
+    nextEffect: number;
 }
 
 export interface IGameMapOption {
@@ -54,6 +55,7 @@ export interface IBattleResult {
   isWin: boolean;
   attackPower: number;
   defensePower: number;
+  survivorsUnits: IUnit[];
 }
 
 export class GameMap {
@@ -62,6 +64,11 @@ export class GameMap {
   public size: ISize;
   public gameUsers: Map<string, IGameUser>;
   public effect: IEffect;
+  public deckPeriodEffects: IPeriodEffects[];
+  public currentPeriodEffects: IPeriodEffects;
+
+  readonly NEXT_EFFECT = 4;
+
 
   constructor(option: IGameMapOption) {
     if (option.isFrontend) {
@@ -75,11 +82,15 @@ export class GameMap {
   initBackend(size: ISize): void {
       this.size = size;
       this.gameUsers = new Map();
+      this.deckPeriodEffects = genPeriodEffects(size);
+      this.currentPeriodEffects = null;
       this.effect = {
           deathCount: 0,
           maxArmy: 6,
           unitTypeBonus: null,
+          nextEffect: this.NEXT_EFFECT
       };
+
 
       // gen map
       const positions: IPosition[] = [];
@@ -104,6 +115,8 @@ export class GameMap {
       this.size = dto.size;
       this.gameUsers = dto.gameUsers instanceof Map ? dto.gameUsers : new Map(dto.gameUsers);
       this.effect = dto.effect;
+      this.deckPeriodEffects = dto.deckPeriodEffects;
+      this.currentPeriodEffects = dto.currentPeriodEffects;
   }
   //#endregion init
 
@@ -290,12 +303,78 @@ export class GameMap {
     this.tiles[to.x][to.y].userId = user.userId;
   }
 
+  public checkDeathStatusOfUser(user: IGamer): boolean {
+    const gamer: IGameUser = this.gameUsers.get(user.id);
+    if (gamer.army.length === 0 && gamer.castleCount === 0) {
+      return this.setDeathToUser(user);
+    }
+    return false;
+  }
+
+  public setDeathToUser(user: IGamer): boolean {
+    const gamer: IGameUser = this.gameUsers.get(user.id);
+    this.tiles[gamer.x][gamer.y].hasUser = false;
+    this.tiles[gamer.x][gamer.y].userId = null;
+    this.gameUsers.delete(user.id);
+    return true;
+  }
+
   public getBattleResult(attackUnits: IUnit[], defenseUnits: IUnit[]): IBattleResult {
-    const attackPower: number = attackUnits.reduce((prev, unit) => prev + unit.power, 0);
-    const defensePower: number = defenseUnits.reduce((prev, unit) => prev + unit.power, 0);
-    return { attackPower, defensePower,
+    const attackPower: number = attackUnits.reduce((prev, unit) => {
+      const bonus: number = unit.type === this.effect.unitTypeBonus ? 1 : 0;
+      return prev + unit.power + bonus;
+    }, 0);
+    const defensePower: number = defenseUnits.reduce((prev, unit) => {
+      const bonus: number = unit.type === this.effect.unitTypeBonus ? 1 : 0;
+      return prev + unit.power + bonus;
+    }, 0);
+    const diffPower: number = Math.abs(attackPower - defensePower);
+    const survivorsUnits: IUnit[] = attackPower > defensePower ?
+      this.getSurvivorsUnits(attackUnits, diffPower) :
+      this.getSurvivorsUnits(defenseUnits, diffPower);
+    return { attackPower, defensePower, survivorsUnits,
       isWin: attackPower > defensePower
     };
+  }
+
+  public setNewPeriodEffects() {
+    this.effect.nextEffect--;
+    if (this.effect.nextEffect === 0) {
+      // TODO: Ошибка игра не найдена
+      this.effect.nextEffect = this.NEXT_EFFECT;
+      this.currentPeriodEffects = null;
+      const currentPeriodEffects = this.deckPeriodEffects.pop();
+      setTimeout(() => {
+        this.currentPeriodEffects = currentPeriodEffects;
+      }, 0);
+      this.effect.deathCount += currentPeriodEffects.deathCount;
+      this.effect.maxArmy += currentPeriodEffects.maxArmyUp;
+      this.effect.unitTypeBonus = currentPeriodEffects.unitTypeBonus;
+      if (this.currentPeriodEffects.title === 'Боевое усиление') {
+        for (const user of this.gameUsers.values()) {
+          if (user.army.length < this.effect.maxArmy) {
+            user.army.push(genGameUnit());
+          }
+        }
+      } else if (this.currentPeriodEffects.title === 'Засуха') {
+        for (const user of this.gameUsers.values()) {
+          user.army.sort((a, b) => a.power > b.power ? 1 : a.power < b.power ? -1 : 0)
+              .splice(0, 1);
+        }
+      }
+    }
+  }
+
+  protected getSurvivorsUnits(units: IUnit[], diffPower: number): IUnit[] {
+    let survivorsPower: number = 0;
+    return units.sort((a, b) => a.power > b.power ? 1 : a.power < b.power ? -1 : 0)
+                .filter(unit => {
+                  if (survivorsPower < diffPower) {
+                    survivorsPower += unit.power;
+                    return true;
+                  }
+                  return false;
+                });
   }
   //#endregion protected
 
@@ -417,9 +496,9 @@ export class GameMap {
     defenseUser.army = data.army;
     const BattleResult: IBattleResult = this.getBattleResult(data.attackUnits, data.units);
     if (BattleResult.isWin) {
-      attackUser.army = attackUser.army.concat(data.attackUnits);
+      attackUser.army = attackUser.army.concat(BattleResult.survivorsUnits);
     } else {
-      defenseUser.army = defenseUser.army.concat(data.units);
+      defenseUser.army = defenseUser.army.concat(BattleResult.survivorsUnits);
     }
     return { isNext: true, tmpId: null };
   }

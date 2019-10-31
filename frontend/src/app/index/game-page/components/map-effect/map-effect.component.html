@@ -1,0 +1,21 @@
+<p>Максимальный рамер армии: <strong>{{effect.maxArmy}}</strong></p>
+<p>Бонус получают: <strong>{{effect.unitTypeBonus ? typeRus[effect.unitTypeBonus] : 'Никто'}}</strong></p>
+<p>Количество тёмных веков: <strong>{{effect.deathCount}}/5</strong></p>
+<div class="mana_list">
+  <div class="mana" [class.mana_active]="effect.nextEffect >= 1"></div>
+  <div class="mana" [class.mana_active]="effect.nextEffect >= 2"></div>
+  <div class="mana" [class.mana_active]="effect.nextEffect >= 3"></div>
+  <div class="mana" [class.mana_active]="effect.nextEffect >= 4"></div>
+</div>
+<div class="periods_info">
+  <div class="periods_info__deck" title="Осталось {{deckPeriodEffects.length}}"></div>
+  <div class="periods_info__card"
+    *ngIf="currentPeriodEffects"
+  >
+    <!-- [class.periods_info__card--empty]="!currentPeriodEffects" -->
+    <div *ngIf="currentPeriodEffects">
+      <p class="title">{{currentPeriodEffects.title}}</p>
+      <p class="description">{{currentPeriodEffects.description}}</p>
+    </div>
+  </div>
+</div>

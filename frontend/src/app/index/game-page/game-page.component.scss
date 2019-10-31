@@ -50,9 +50,15 @@ $sidebar_size: 400px;
   width: 100px;
   overflow-y: scroll;
 
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  align-items: center;
+
   .event {
+    flex-shrink: 0;
     width: 60px;
-    height: 60px;
+    height: 40px;
     background-color: adjust-color($gray, $alpha: -0.35);
     margin: 4px auto;
     border-radius: 4px;

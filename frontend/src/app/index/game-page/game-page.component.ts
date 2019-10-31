@@ -24,7 +24,8 @@ import {
   IGameEventMoveData,
   IGameEventCaptureData,
   IGameEventDefenseData,
-  IGameEventTakeUnitData
+  IGameEventTakeUnitData,
+  GameState
 } from '../../share-services';
 import { Scene } from './classes/scene';
 import { DialogCaptureComponent } from './components/dialog-capture/dialog-capture.component';
@@ -67,13 +68,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  getCastleCount(id: string): number {
-    const user = this.game.gameMap.gameUsers.get(id);
-    if (user) {
-      return user.castleCount;
-    }
-    return -1;
-  }
+
 
   constructor(
     protected route: ActivatedRoute,
@@ -238,7 +233,9 @@ export class GamePageComponent implements OnInit, OnDestroy {
   private OnGameEvent(data: IGameEventRequest) {
     this.uiSnackEvent(data.event);
     this.game.event(data.event);
-    this.setActiveEvents();
+    setTimeout(() => {
+      this.setActiveEvents();
+    }, 0);
   }
 
   private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'warn') {
@@ -251,11 +248,22 @@ export class GamePageComponent implements OnInit, OnDestroy {
   private setActiveEvents(isInit = false) {
     this.tileEvents = null;
     this.takeUnitEvent = undefined;
-    if (!isInit) {
+    if (!isInit && this.game.State !== GameState.FINISHED) {
       const activeEvents = this.game.getActions(this.user);
       this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit);
       this.takeUnitEvent = activeEvents.find(e => e.type === GameEventType.takeUnit);
     }
+  }
+
+  getCastleCount(id: string): number {
+    if (this.game.State === GameState.WAITING) {
+      return 0;
+    }
+    const user = this.game.gameMap.gameUsers.get(id);
+    if (user) {
+      return user.castleCount;
+    }
+    return -1;
   }
 
   private uiSnackEvent(event: IGameEvent): any {
