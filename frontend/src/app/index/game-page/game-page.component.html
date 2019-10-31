@@ -78,8 +78,8 @@
 
 <section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
   <div class="map-info--main">
-    <h1>Игра: {{game.Name}}</h1>
-    <h1>Статус: {{game.State}}</h1>
+    <small>Игра: <strong>{{game.Name}}</strong> </small>
+    <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
     <div class="user-list">
       <div *ngFor="let item of game.Gamers | keyvalue"
       class="
@@ -103,17 +103,11 @@
     </div>
   </div>
   <div class="map-info--action">
-    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
-      *ngIf="game && game.currentUserId === user.id"
-    >
-      <button type="button" tabindex="4" class="btn btn-secondary">
-        <div class="btn-content">Закончить ход</div>
-      </button>
-    </fieldset>
     <div *ngIf="game && game.gameMap && game.gameMap.deckPeriodEffects">
       <app-map-effect
         [effect]="game.gameMap.effect"
         [deckPeriodEffects]="game.gameMap.deckPeriodEffects"
+        [deckOldEffects]="game.gameMap.deckOldEffects"
         [currentPeriodEffects]="game.gameMap.currentPeriodEffects"
       ></app-map-effect>
     </div>

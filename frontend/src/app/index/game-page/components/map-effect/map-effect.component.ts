@@ -10,6 +10,7 @@ export class MapEffectComponent implements OnInit {
 
   @Input() effect: IEffect;
   @Input() deckPeriodEffects: IPeriodEffects[];
+  @Input() deckOldEffects: IPeriodEffects[];
   @Input() currentPeriodEffects: IPeriodEffects;
 
   public typeRus = {

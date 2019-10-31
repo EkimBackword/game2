@@ -255,15 +255,15 @@ export class GamePageComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCastleCount(id: string): number {
+  getCastleCount(id: string): string {
     if (this.game.State === GameState.WAITING) {
-      return 0;
+      return '';
     }
     const user = this.game.gameMap.gameUsers.get(id);
     if (user) {
-      return user.castleCount;
+      return `${user.castleCount}`;
     }
-    return -1;
+    return '';
   }
 
   private uiSnackEvent(event: IGameEvent): any {
@@ -350,7 +350,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     const user = this.game.Gamers.get(data.userId);
     this.uiSnack.showMessage({
       title: `Игрок ${user.name}`,
-      message: `Услил армию`,
+      message: `Усилил армию`,
       type: 'success'
     }, { duration: 2000 });
   }

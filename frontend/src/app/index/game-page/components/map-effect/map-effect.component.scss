@@ -63,7 +63,7 @@ $width: 160px;
   &::before {
     position: absolute;
     bottom: -2px;
-    right: -2px;
+    right: -3px;
     z-index: -1;
     content: "";
     height: $height;
@@ -72,13 +72,13 @@ $width: 160px;
     background-repeat: repeat;
     background-position: bottom;
     border-radius: 4px;
-    box-shadow: 1px 1px 4px $black;
+    box-shadow: 1px 2px 4px $black;
   }
 
   &::after {
     position: absolute;
     bottom: -4px;
-    right: -4px;
+    right: -5px;
     z-index: -2;
     content: "";
     height: $height;
@@ -88,6 +88,16 @@ $width: 160px;
     background-position: bottom;
     border-radius: 4px;
     box-shadow: 1px 1px 2px $black;
+  }
+
+  &.periods_info__deck--last {
+    &::before,
+    &::after {
+      content: none;
+    }
+  }
+  &.periods_info__deck--empty {
+    border: 2px dashed $black;
   }
 }
 
@@ -100,26 +110,44 @@ $width: 160px;
   border-radius: 4px;
   box-shadow: 2px 2px 4px $black;
   padding: 20px;
+  
+  position: absolute;
+  top: 0;
+  left: $width + 20;
+  animation-duration: 0.4s;
+  animation-name: cardup;
 
+  &::before, &::after {
+    position: absolute;
+    content: none;
+    height: $height;
+    width: $width;
+    background-color: $white-force;
+    border-radius: 4px;
+  }
+  &::before {
+    bottom: -2px;
+    right: -4px;
+    z-index: -1;
+    box-shadow: 1px 2px 4px $black;
+  }
+  &::after {
+    bottom: -4px;
+    right: -6px;
+    z-index: -2;
+    box-shadow: 1px 1px 2px $black;
+  }
 
-  &.periods_info__card--empty {
-    position: relative;
-
+  &.periods_info__card--2 {
+    // position: relative;
     &::before {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 0; right: 0;
-      z-index: 1;
-
-      content: "\f128";
-      font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-      font-weight: 900;
-      font-size: 4em;
-      color: $black;
+      content: "";
+    }
+  }
+  &.periods_info__card--3 {
+    // position: relative;
+    &::after {
+      content: "";
     }
   }
 
@@ -134,14 +162,7 @@ $width: 160px;
     font-size: 12px;
     font-weight: 600;
   }
-
-  position: absolute;
-  top: 0;
-  left: $width + 20;
-  animation-duration: 0.4s;
-  animation-name: cardup;
 }
-
 
 @keyframes cardup {
   from {
@@ -149,12 +170,10 @@ $width: 160px;
     left: 0;
     margin-right: $width;
     color: $white-force;
-    z-index: -1;
   }
 
   to {
     left: $width + 20;
     color: $black;
-    z-index: -1;
   }
 }

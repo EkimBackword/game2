@@ -1,8 +1,5 @@
 <div class="user_info" *ngIf="userInfo">
-  <div class="user_info__name user_info__name--{{userInfo.color}}">
-    <h2>{{user.name}}</h2>
-  </div>
-  <h3>Армия ({{userInfo.army.length}}/{{effect.maxArmy}}):</h3>
+  <small>Армия ({{userInfo.army.length}}/{{effect.maxArmy}}):</small>
   <div class="user_info__army">
     <app-game-unit
       *ngFor="let unit of userInfo.army"

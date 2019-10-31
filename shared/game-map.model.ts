@@ -65,9 +65,8 @@ export class GameMap {
   public gameUsers: Map<string, IGameUser>;
   public effect: IEffect;
   public deckPeriodEffects: IPeriodEffects[];
+  public deckOldEffects: IPeriodEffects[];
   public currentPeriodEffects: IPeriodEffects;
-
-  readonly NEXT_EFFECT = 4;
 
 
   constructor(option: IGameMapOption) {
@@ -83,12 +82,13 @@ export class GameMap {
       this.size = size;
       this.gameUsers = new Map();
       this.deckPeriodEffects = genPeriodEffects(size);
+      this.deckOldEffects = [];
       this.currentPeriodEffects = null;
       this.effect = {
           deathCount: 0,
           maxArmy: 6,
           unitTypeBonus: null,
-          nextEffect: this.NEXT_EFFECT
+          nextEffect: 4
       };
 
 
@@ -116,6 +116,7 @@ export class GameMap {
       this.gameUsers = dto.gameUsers instanceof Map ? dto.gameUsers : new Map(dto.gameUsers);
       this.effect = dto.effect;
       this.deckPeriodEffects = dto.deckPeriodEffects;
+      this.deckOldEffects = dto.deckOldEffects;
       this.currentPeriodEffects = dto.currentPeriodEffects;
   }
   //#endregion init
@@ -341,22 +342,23 @@ export class GameMap {
     this.effect.nextEffect--;
     if (this.effect.nextEffect === 0) {
       // TODO: Ошибка игра не найдена
-      this.effect.nextEffect = this.NEXT_EFFECT;
+      this.effect.nextEffect = 4;
       this.currentPeriodEffects = null;
       const currentPeriodEffects = this.deckPeriodEffects.pop();
       setTimeout(() => {
         this.currentPeriodEffects = currentPeriodEffects;
+        this.deckOldEffects.push(JSON.parse(JSON.stringify(currentPeriodEffects)));
       }, 0);
       this.effect.deathCount += currentPeriodEffects.deathCount;
       this.effect.maxArmy += currentPeriodEffects.maxArmyUp;
       this.effect.unitTypeBonus = currentPeriodEffects.unitTypeBonus;
-      if (this.currentPeriodEffects.title === 'Боевое усиление') {
+      if (currentPeriodEffects.title === 'Боевое усиление') {
         for (const user of this.gameUsers.values()) {
           if (user.army.length < this.effect.maxArmy) {
             user.army.push(genGameUnit());
           }
         }
-      } else if (this.currentPeriodEffects.title === 'Засуха') {
+      } else if (currentPeriodEffects.title === 'Засуха') {
         for (const user of this.gameUsers.values()) {
           user.army.sort((a, b) => a.power > b.power ? 1 : a.power < b.power ? -1 : 0)
               .splice(0, 1);
