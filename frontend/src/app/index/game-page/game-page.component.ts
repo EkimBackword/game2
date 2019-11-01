@@ -51,7 +51,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   private subscriptions: Map<string, Subscription>;
 
-  private typesRus = {
+  public typesRus = {
     chooseTile: 'Выбор места',
     move: 'Передвижение',
     capture: 'Захват замка',
@@ -68,7 +68,9 @@ export class GamePageComponent implements OnInit, OnDestroy {
     return null;
   }
 
-
+  get Gamers() {
+    return Array.from(this.game.Gamers).map(g => g[1]);
+  }
 
   constructor(
     protected route: ActivatedRoute,
@@ -238,11 +240,11 @@ export class GamePageComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'warn') {
+  private handleError(err: string | Error, title = 'Ошибка', type: MessageDataType = 'error') {
     this.uiSnack.showMessage({
       title, type,
       message: isString(err) ? err as string : (err as Error).message,
-    });
+    }, { duration: 10000 });
   }
 
   private setActiveEvents(isInit = false) {

@@ -1,16 +1,16 @@
 ::placeholder {
-  color: #cecece;
+  color: $light-gray;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="phone"],
 input[type="password"] {
-  color: #3f3f3f;
+  color: $black;
 }
 
 .form-control {
-  border-color: #cecece;
+  border-color: $light-gray;
 }
 
 input:-webkit-autofill,
@@ -29,7 +29,7 @@ input:-webkit-autofill:active  {
 
 /*Change text in autofill textbox*/
 input:-webkit-autofill {
-  -webkit-text-fill-color: #3f3f3f !important;
+  -webkit-text-fill-color: $black !important;
 }
 
 .was-validated .form-control:invalid, .form-control.is-invalid, .was-validated .custom-select:invalid, .custom-select.is-invalid {
@@ -53,8 +53,8 @@ max-width: 180px;
 }
 
 .btn-primary.disabled, .btn-primary:disabled {
-  background-color: #cecece;
-  border-color: #cecece;
+  background-color: $light-gray;
+  border-color: $light-gray;
 }
 
 .custom-file-label {
@@ -73,7 +73,7 @@ label {
 }
 
 .as-link {
-color: #0099ff;
+color: $indigo;
 text-decoration: underline;
 background-color: transparent;
 cursor: pointer;
@@ -89,7 +89,7 @@ color: $primary;
   color: $red;
 
   &.error-message--black {
-    color: #212529;
+    color: $black;
   }
 }
 
@@ -141,17 +141,17 @@ color: $primary;
   left: 0;
   height: 18px;
   width: 18px;
-  background-color: #eee;
+  background-color: $gray;
 }
 
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
-  background-color: #ccc;
+  background-color: $light-gray;
 }
 
 /* When the checkbox is checked, add a blue background */
 .checkbox-container input:checked ~ .checkmark {
-  background-color: #3f3f3f;
+  background-color: $black;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -172,7 +172,7 @@ color: $primary;
   top: 3px;
   width: 5px;
   height: 10px;
-  border: solid #f7f7f7;
+  border: solid $light-gray;
   border-width: 0 2px 2px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

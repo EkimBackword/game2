@@ -1,6 +1,7 @@
+<small>Осталось свободных замков: <strong>{{effect.emptyCastle}}</strong></small>
 <small>Максимальный рамер армии: <strong>{{effect.maxArmy}}</strong></small>
 <small>Бонус получают: <strong>{{effect.unitTypeBonus ? typeRus[effect.unitTypeBonus] : 'Никто'}}</strong></small>
-<small>Количество тёмных веков: <strong>{{effect.deathCount}}/5</strong></small>
+<small>Количество тёмных веков: <strong>{{effect.deathCount}}/{{effect.maxDeathCount}}</strong></small>
 <div class="mana_list">
   <div class="mana" [class.mana_active]="effect.nextEffect >= 1"></div>
   <div class="mana" [class.mana_active]="effect.nextEffect >= 2"></div>

@@ -4,6 +4,10 @@ html {
 body {
   min-width: 970px;
   min-height: 100%;
+
+  @include for-xsmall {
+    min-width: $xxs;
+  }
 }
 .btn {
   padding-left: 18px;

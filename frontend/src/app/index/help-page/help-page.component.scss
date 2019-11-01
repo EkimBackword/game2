@@ -13,30 +13,73 @@
 }
 
 .menu-content {
-  width: $xxs;
+  width: $xs;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 30px;
   padding-left: 60px;
   padding-right: 60px;
   padding-bottom: 30px;
   padding-top: 30px;
   background-color: $white;
+
+  @include for-xsmall {
+    width: $xxs;
+  }
 }
 
 .form-group {
   margin: 8px 0px;
 }
 
-h3 {
+h3, h4 {
   text-align: center;
 }
+
 p {
     text-align: justify;
+}
+
+a {
+  width: 100%;
+  display: flex;
+
+  opacity: .6;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+img {
+  max-width: $xs - 120;
+  margin: 0 auto;
+
+  @include for-xsmall {
+    max-width: $xxs - 120;
+  }
 }
 
 .menu__login {
   color: $dark-primary;
   text-transform: uppercase;
+}
+
+.my-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+
+
+  a {
+    width: 46%;
+    display: flex;
+  }
+  img {
+    width: 100%;
+    border: 2px solid $gray;
+  }
 }
 
 .btn {

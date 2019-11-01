@@ -41,8 +41,10 @@ export interface ICastleInfo {
 export interface IEffect {
     unitTypeBonus: GameUnitType;
     deathCount: number;
+    maxDeathCount: number;
     maxArmy: number;
     nextEffect: number;
+    emptyCastle: number;
 }
 
 export interface IGameMapOption {
@@ -86,11 +88,12 @@ export class GameMap {
       this.currentPeriodEffects = null;
       this.effect = {
           deathCount: 0,
+          maxDeathCount: this.getMaxDeathCount(),
           maxArmy: 6,
           unitTypeBonus: null,
-          nextEffect: 4
+          nextEffect: 4,
+          emptyCastle: this.getMaxCastle()
       };
-
 
       // gen map
       const positions: IPosition[] = [];
@@ -108,6 +111,14 @@ export class GameMap {
       for (const point of CastlesPoints) {
           this.createCastle(point.x, point.y);
       }
+  }
+
+  private getMaxCastle(): number {
+    return this.size.width === 6 ? 5 : 8;
+  }
+
+  private getMaxDeathCount(): number {
+    return this.size.width === 6 ? 3 : 3;
   }
 
   initFrontend(dto: GameMap): void {
@@ -260,14 +271,13 @@ export class GameMap {
   }
 
   protected genCastlesPoints(positions: IPosition[]): IPosition[] {
-    const count: number = this.size.width === 6 ? 4 : 7;
+    const count: number = this.effect.emptyCastle;
     const result: IPosition[] = [];
     for (let i: number = 0; i < count; i++) {
       const point: IPosition = positions[randomizer(0, positions.length - 1)];
-      const nearPoints: IPosition[] = getNearPoints(point);
       positions = positions.filter(p => {
         if (p.x === point.x && p.y === point.y) { return false; }
-        return !nearPoints.some(near =>  p.x === near.x && p.y === near.y );
+        return true;
       });
       result.push(point);
     }
@@ -305,18 +315,24 @@ export class GameMap {
   }
 
   public checkDeathStatusOfUser(user: IGamer): boolean {
-    const gamer: IGameUser = this.gameUsers.get(user.id);
-    if (gamer.army.length === 0 && gamer.castleCount === 0) {
-      return this.setDeathToUser(user);
+    if (this.gameUsers.has(user.id)) {
+      const gamer: IGameUser = this.gameUsers.get(user.id);
+      if (gamer.army.length === 0 && gamer.castleCount === 0 && this.effect.emptyCastle === 0) {
+        return this.setDeathToUser(user);
+      }
+      return false;
+    } else {
+      return true;
     }
-    return false;
   }
 
   public setDeathToUser(user: IGamer): boolean {
-    const gamer: IGameUser = this.gameUsers.get(user.id);
-    this.tiles[gamer.x][gamer.y].hasUser = false;
-    this.tiles[gamer.x][gamer.y].userId = null;
-    this.gameUsers.delete(user.id);
+    if (this.gameUsers.has(user.id)) {
+      const gamer: IGameUser = this.gameUsers.get(user.id);
+      this.tiles[gamer.x][gamer.y].hasUser = false;
+      this.tiles[gamer.x][gamer.y].userId = null;
+      this.gameUsers.delete(user.id);
+    }
     return true;
   }
 
@@ -341,7 +357,6 @@ export class GameMap {
   public setNewPeriodEffects() {
     this.effect.nextEffect--;
     if (this.effect.nextEffect === 0) {
-      // TODO: Ошибка игра не найдена
       this.effect.nextEffect = 4;
       this.currentPeriodEffects = null;
       const currentPeriodEffects = this.deckPeriodEffects.pop();
@@ -365,6 +380,15 @@ export class GameMap {
         }
       }
     }
+  }
+
+  public checkCastles(): boolean {
+    for (const gamer of this.gameUsers.values()) {
+      if (gamer.castleCount === this.getMaxCastle()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected getSurvivorsUnits(units: IUnit[], diffPower: number): IUnit[] {
@@ -452,6 +476,7 @@ export class GameMap {
     this.moveUserTo(user, data.to);
     this.setVisibleFor(data.to, data.userId);
     user.castleCount++;
+    this.effect.emptyCastle--;
     return { isNext: true, tmpId: null };
   }
 

@@ -50,7 +50,10 @@ export class GameGateway implements OnGatewayDisconnect {
         const res: IGameInfoResponse[] = [];
         const games = this.gameService.findList();
         for (const game of games.values()) {
-            if (game.state === GameState.WAITING) {
+            const diff = Number(new Date()) - Number(game.lastUpdate);
+            if ( (diff) / (1000 * 60 * 60 * 24) > 2) {
+                games.delete(game.GameId);
+            } else if (game.state === GameState.WAITING) {
                 res.push(game.response);
             } else if (game.getUser(req.user.id) !== null) {
                 res.push(game.response);
@@ -68,7 +71,7 @@ export class GameGateway implements OnGatewayDisconnect {
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
-            socket.emit('CreateGameError', `${JSON.parse(JSON.stringify(err))}`);
+            socket.emit('CreateGameError', err.message);
         }
     }
 
@@ -87,9 +90,9 @@ export class GameGateway implements OnGatewayDisconnect {
                 socket.emit('JoinGameSuccess', game.response);
                 return;
             }
-            socket.emit('JoinGameError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
+            socket.emit('JoinGameError', `Игра не найдена`);
         } catch (err) {
-            socket.emit('JoinGameError', 'Необработанная ошибка');
+            socket.emit('JoinGameError', err.message);
         }
     }
 
@@ -108,9 +111,9 @@ export class GameGateway implements OnGatewayDisconnect {
                 socket.emit('LeaveGameSuccess', true);
                 return;
             }
-            socket.emit('LeaveGameError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
+            socket.emit('LeaveGameError', `Игра не найдена`);
         } catch (err) {
-            socket.emit('LeaveGameError', 'Необработанная ошибка');
+            socket.emit('LeaveGameError', err.message);
         }
     }
 
@@ -129,9 +132,9 @@ export class GameGateway implements OnGatewayDisconnect {
                 socket.emit('StartGameSuccess', game.response);
                 return;
             }
-            socket.emit('StartGameError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
+            socket.emit('StartGameError', `Игра не найдена`);
         } catch (err) {
-            socket.emit('StartGameError', 'Игра не найдена');
+            socket.emit('StartGameError', err.message);
         }
     }
 
@@ -146,10 +149,9 @@ export class GameGateway implements OnGatewayDisconnect {
                 socket.emit('GameEvent', req);
                 socket.emit('GameEventSuccess', true);
             }
-            socket.emit('GameEventError', `Игра не найдена - GameId: ${req.gameId}; User: ${req.user};`);
+            socket.emit('GameEventError', `Игра не найдена`);
         } catch (err) {
-            console.log(err);
-            socket.emit('GameEventError', 'Игра не найдена');
+            socket.emit('GameEventError', err.message);
         }
     }
 }

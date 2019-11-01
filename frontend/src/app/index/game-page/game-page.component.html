@@ -13,6 +13,7 @@
         event_color_{{event.data.color}}
         event_type_{{event.type}}
       "
+      title="{{typesRus[event.type]}}"
   ></div>
 </div>
 
@@ -60,6 +61,7 @@
           layout-tile-event
           layout-tile-event--{{event.type}}
         "
+        title="{{typesRus[event.type]}}"
         (click)="click(event)"
       > </div>
     </div>
@@ -78,19 +80,20 @@
 
 <section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
   <div class="map-info--main">
-    <small>Игра: <strong>{{game.Name}}</strong> </small>
+    <small>Игра: <strong>{{game.Name}}</strong> </small> <br>
     <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
     <div class="user-list">
-      <div *ngFor="let item of game.Gamers | keyvalue"
+      <div *ngFor="let item of Gamers"
       class="
         user-list_user
-        user-list_user--color-{{item.value.color}}
+        user-list_user--color-{{item.color}}
       "
-      [class.user-list_user--connected]="item.value.isConnected"
-      [class.user-list_user--active]="item.value.id === game.currentUserId"
+      [class.user-list_user--connected]="item.isConnected"
+      [class.user-list_user--active]="item.id === game.currentUserId"
+      [class.user-list_user--death]="item.isDeath"
       >
-        <p class="name">{{item.value.name}}</p>
-        <p class="score">{{getCastleCount(item.value.id)}}</p>
+        <p class="name">{{item.name}}</p>
+        <p class="score">{{getCastleCount(item.id)}}</p>
       </div>
     </div>
     <div *ngIf="game && game.gameMap && game.gameMap.gameUsers">

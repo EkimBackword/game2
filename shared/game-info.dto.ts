@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import * as uuid4 from 'uuid4';
-import { IGameEvent } from './game-event.model';
+import { IGameEvent, GameEventType } from './game-event.model';
 import { GameMap, ISize } from './game-map.model';
 
 export interface IUser {
@@ -55,10 +55,10 @@ export interface IGameInfoOption {
 }
 
 export interface IGameInfoBackendDTO {
-    name: string,
-    hostId: string,
-    size: ISize,
-    socket?: Socket
+    name: string;
+    hostId: string;
+    size: ISize;
+    socket?: Socket;
 }
 
 export class GameInfo implements IGameInfoResponse {
@@ -78,7 +78,7 @@ export class GameInfo implements IGameInfoResponse {
 
     public message: string;
 
-
+    public lastUpdate: Date;
 
     constructor(option: IGameInfoOption) {
         if (option.isFrontend) {
@@ -95,6 +95,7 @@ export class GameInfo implements IGameInfoResponse {
         this.Gamers = new Map();
         this.Size = dto.size;
         this.State = GameState.WAITING;
+        this.lastUpdate = new Date();
         if (dto.socket) { dto.socket.join(this.GameId); }
     }
 
@@ -105,9 +106,9 @@ export class GameInfo implements IGameInfoResponse {
         this.Gamers = new Map(dto.gamers);
         this.Size = dto.size;
         this.State = dto.state;
-  
+
         this.message = this.State === GameState.WAITING ? 'Ждём начала игры...' : null;
-  
+
         if (dto.gameMap) {
           this.gameMap = new GameMap({
             isFrontend: true,
@@ -117,6 +118,10 @@ export class GameInfo implements IGameInfoResponse {
           this.tmpCurrentUserId = dto.tmpCurrentUserId;
           this.tmpEvents = dto.tmpEvents;
           this.events = dto.events;
+        }
+
+        if (this.State === GameState.FINISHED) {
+            this.finish();
         }
       }
 
@@ -172,6 +177,7 @@ export class GameInfo implements IGameInfoResponse {
         this.events = [];
     }
     startBackend() {
+        this.lastUpdate = new Date();
         this.gameMap = new GameMap({
             isFrontend: false,
             size: this.Size
@@ -201,19 +207,40 @@ export class GameInfo implements IGameInfoResponse {
 
     get gamers() { return Array.from(this.Gamers); }
     event(event: IGameEvent) {
+        this.lastUpdate = new Date();
+        const user: IGamer = this.Gamers.get(event.data.userId);
+        if (user.isDeath) { this.setNextUser(); }
+
         const result = this.gameMap.mapEvent(event);
         this.events.push(event);
+
+        if (this.gameMap.checkCastles()) {
+            this.finish();
+        }
+
+        const needCheckDeathStatusOfUser = !(event.type === GameEventType.chooseTile ||
+        (this.tmpCurrentUserId !== null && event.type === GameEventType.capture));
+
         if (result.isNext) {
-            const user: IGamer = this.Gamers.get(event.data.userId);
-            this.setNextUser(user, (user) => {
-                return this.gameMap.checkDeathStatusOfUser(user);
-            });
+            this.setNextUser();
+            if (needCheckDeathStatusOfUser) {
+                for (const gamer of this.Gamers.values()) {
+                    gamer.isDeath = this.gameMap.checkDeathStatusOfUser(gamer);
+                }
+                if (this.gamers.filter(g => !g[1].isDeath).length <= 1) {
+                    this.finish();
+                }
+            }
         } else {
             if (result.tmpEvents.length === 0) {
-                const user: IGamer = this.Gamers.get(result.tmpId);
-                this.setNextUser(user, (user) => {
-                    return this.gameMap.setDeathToUser(user);
-                });
+                const tmpUser: IGamer = this.Gamers.get(result.tmpId);
+                this.setNextUser();
+                if (needCheckDeathStatusOfUser) {
+                    tmpUser.isDeath = this.gameMap.setDeathToUser(tmpUser);
+                    if (this.gamers.filter(g => !g[1].isDeath).length <= 1) {
+                        this.finish();
+                    }
+                }
             } else {
                 this.tmpCurrentUserId = result.tmpId;
                 this.tmpEvents = result.tmpEvents;
@@ -221,28 +248,33 @@ export class GameInfo implements IGameInfoResponse {
         }
     }
 
-    private setNextUser(user: IGamer, funcDeath: (user: IGamer) => boolean) {
-        let gamers = this.gamers.filter(g => !g[1].isDeath);
-        let index: number = gamers.findIndex(g => g[0] === this.currentUserId);
+    private setNextUser() {
+        let index: number = this.gamers.findIndex(g => g[0] === this.currentUserId);
         index++;
-        if (index >= gamers.length) {
+        while ( index < this.gamers.length && this.gamers[index][1].isDeath ) {
+            index++;
+        }
+        if (index === this.gamers.length) {
             this.newPeriod();
-            this.currentUserId = gamers[0][0];
+            index = 0;
+            while ( index < this.gamers.length && this.gamers[index][1].isDeath ) {
+                index++;
+            }
+            if ( index === this.gamers.length) {
+                this.finish();
+            } else {
+                this.currentUserId = this.gamers[0][0];
+            }
         } else {
-            this.currentUserId = gamers[index][0];
+            this.currentUserId = this.gamers[index][0];
         }
         this.tmpCurrentUserId = null;
         this.tmpEvents = null;
-
-        user.isDeath = funcDeath(user);
-        if (user.isDeath && this.gamers.filter(g => !g[1].isDeath).length === 1) {
-            this.finish();
-        }
     }
 
     private newPeriod() {
         this.gameMap.setNewPeriodEffects();
-        if (this.gameMap.effect.deathCount === 3) {
+        if (this.gameMap.effect.deathCount === this.gameMap.effect.maxDeathCount) {
             this.finish();
         }
     }
