@@ -1,15 +1,21 @@
 <div class="user_info" *ngIf="userInfo">
   <small>Армия ({{userInfo.army.length}}/{{effect.maxArmy}}):</small>
   <div class="user_info__army">
+    <div
+      class="user_info__army-event user_info__army-take_unit_event"
+      *ngIf="takeUnitEvent"
+      (click)="atEvent.emit(takeUnitEvent)"
+    ></div>
+    <div
+      class="user_info__army-event user_info__army-castle_units_change"
+      *ngIf="castleUnitsChangeEvent"
+      (click)="atEvent.emit(castleUnitsChangeEvent)"
+    ></div>
     <app-game-unit
       *ngFor="let unit of userInfo.army"
       [unit]="unit"
       [userColor]="userInfo.color"
+      [effect]="effect"
     ></app-game-unit>
-    <div
-      class="user_info__army-take_unit_event"
-      *ngIf="takeUnitEvent"
-      (click)="takeUnit.emit(takeUnitEvent)"
-    ></div>
   </div>
 </div>

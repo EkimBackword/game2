@@ -180,11 +180,17 @@ color: $primary;
 }
 
 .form-group.single-text-form-field {
-margin-top: 30px;
-margin-bottom: 30px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .question-circle {
 color: $primary;
+}
+
+.form-group {
+  @include mobile {
+    margin-bottom: 10px !important; 
+  }
 }
 

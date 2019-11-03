@@ -23,6 +23,8 @@ import { BattlefieldComponent } from './game-page/components/battlefield/battlef
 import { DialogAttackUserComponent } from './game-page/components/dialog-attack-user/dialog-attack-user.component';
 import { DialogDefenseComponent } from './game-page/components/dialog-defense/dialog-defense.component';
 import { MapEffectComponent } from './game-page/components/map-effect/map-effect.component';
+import { DialogCastleUnitsChangeComponent } from './game-page/components/dialog-castle-units-change/dialog-castle-units-change.component';
+import { DialogBattleResultComponent } from './game-page/components/dialog-battle-result/dialog-battle-result.component';
 
 
 
@@ -44,6 +46,8 @@ import { MapEffectComponent } from './game-page/components/map-effect/map-effect
     DialogAttackUserComponent,
     DialogDefenseComponent,
     MapEffectComponent,
+    DialogCastleUnitsChangeComponent,
+    DialogBattleResultComponent,
   ],
   imports: [
     CommonModule,
@@ -58,6 +62,8 @@ import { MapEffectComponent } from './game-page/components/map-effect/map-effect
   DialogCaptureComponent,
   DialogAttackCastleComponent,
   DialogAttackUserComponent,
-  DialogDefenseComponent]
+  DialogDefenseComponent,
+  DialogCastleUnitsChangeComponent,
+  DialogBattleResultComponent]
 })
 export class IndexModule { }

@@ -1,6 +1,7 @@
 @import "./src/assets/styles/_variables";
 
 $sidebar_size: 400px;
+$sidebar_size_mobile: 160px;
 
 :host {
   display: flex;
@@ -16,6 +17,13 @@ $sidebar_size: 400px;
   position: relative;
 }
 
+
+
+
+
+
+
+
 .scene_info {
   position: absolute;
   z-index: 1000;
@@ -24,6 +32,10 @@ $sidebar_size: 400px;
   border-radius: 4px;
   box-shadow: 2px 2px 10px $gray;
   background-color: $white;
+
+  @include mobile {
+    padding: 4px;
+  }
 
   p {
     margin-top: 0px;
@@ -41,6 +53,10 @@ $sidebar_size: 400px;
   left: 8px;
   width: 100px;
   height: 40px;
+
+  @include mobile {
+    display: none;
+  }
 }
 
 .scene_info__game_events {
@@ -51,9 +67,16 @@ $sidebar_size: 400px;
   overflow-y: scroll;
 
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+
+  @include mobile {
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: 50px;
+  }
 
   .event {
     flex-shrink: 0;
@@ -64,6 +87,12 @@ $sidebar_size: 400px;
     border-radius: 4px;
     box-shadow: 1px 1px 4px $black;
     position: relative;
+
+    @include mobile {
+      margin: 2px auto;
+      width: 36px;
+      height: 36px;
+    }
 
     &::before {
       display: flex;
@@ -81,9 +110,22 @@ $sidebar_size: 400px;
       font-size: 1.5em;
       color: $white;
       // text-shadow: 0px 0px 4px $black;
+
+      @include mobile {
+        font-size: 1em;
+      }
     }
   }
 }
+
+
+
+
+
+
+
+
+
 
 .map-wrapper {
   display: flex;
@@ -94,10 +136,19 @@ $sidebar_size: 400px;
   width: calc(100% - #{$sidebar_size});
   position: relative;
 
+  @include mobile {
+    width: calc(100% - #{$sidebar_size_mobile});
+  }
+
+
   .map {
     width: calc(100vh);
     height: calc(100vh);
     margin-left: 50px;
+
+    @include mobile {
+      margin-left: 25px;
+    }
     // position: relative;
     position: fixed;
 
@@ -206,6 +257,10 @@ $sidebar_size: 400px;
       height: 100%;
       position: relative;
 
+      @include mobile {
+        padding: 1.5px;
+      }
+
       img {
         width: 100%;
       }
@@ -232,6 +287,16 @@ $sidebar_size: 400px;
   }
 }
 
+
+
+
+
+
+
+
+
+
+
 .layout-tile-event {
   position: relative;
   cursor: pointer;
@@ -257,6 +322,11 @@ $sidebar_size: 400px;
 
     margin-bottom: .6em;
     transition: all 0.2s linear;
+
+    @include mobile {
+      font-size: 1.25em;
+      margin-bottom: 0.2em;
+    }
   }
 
   &:hover {
@@ -291,6 +361,9 @@ $sidebar_size: 400px;
 
   &:hover::before {
     font-size: 2.75em;
+    @include mobile {
+      font-size: 1.5em;
+    }
   }
 }
 .layout-tile-event--attackCastle {
@@ -304,6 +377,9 @@ $sidebar_size: 400px;
   &:hover::before {
     font-size: 2.75em;
     text-shadow: 4px 4px 8px $black;
+    @include mobile {
+      font-size: 1.5em;
+    }
   }
 
 }
@@ -316,6 +392,9 @@ $sidebar_size: 400px;
 
   &:hover::before {
     font-size: 2.75em;
+    @include mobile {
+      font-size: 1.5em;
+    }
   }
 }
 .layout-tile-event--defense {
@@ -326,6 +405,9 @@ $sidebar_size: 400px;
 
   &:hover::before {
     font-size: 2.75em;
+    @include mobile {
+      font-size: 1.5em;
+    }
   }
 }
 
@@ -334,6 +416,10 @@ $sidebar_size: 400px;
   cursor: pointer;
   background-color: adjust-color($white, $alpha: -0.5);
   margin: 4px;
+
+  @include mobile {
+    margin: 0px;
+  }
 
   &::before {
     display: flex;
@@ -351,8 +437,20 @@ $sidebar_size: 400px;
     font-size: 2em;
     color: $gray;
     text-shadow: 0px 0px 4px $black;
+    @include mobile {
+      font-size: 1em;
+    }
   }
 }
+
+
+
+
+
+
+
+
+
 
 
 // МЕНЮ
@@ -363,7 +461,16 @@ $sidebar_size: 400px;
   z-index: 1000;
   flex-shrink: 0;
 
+  @include mobile {
+    width: $sidebar_size_mobile;
+  }
+
   .map-info--main {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
 
     h1 { font-size: 1.5rem }
     h2 { font-size: 1.25rem }
@@ -372,7 +479,12 @@ $sidebar_size: 400px;
       padding: 8px 16px 4px;
     }
     small {
-      padding: 8px 16px 4px;
+      padding: 8px 8px 4px;
+
+      @include mobile {
+        padding: 4px 8px;
+      }
+      
     }
 
     .user-list {
@@ -391,16 +503,36 @@ $sidebar_size: 400px;
       justify-content: flex-start;
       align-items: center;
 
+      $basic_height: 32px;
+      $mobile_height: 20px;
+
       p {
-        line-height: 32px;
-        height: 32px;
+        line-height: $basic_height;
+        height: $basic_height;
 
         &.name {
           flex: 1 0 auto;
           margin: 0 8px 0 48px;
         }
         &.score {
-          margin: 0 32px 0 8px;
+          margin: 0 $basic_height 0 8px;
+        }
+
+        @include mobile {
+          font-size: 10px;
+          line-height: $mobile_height;
+          height: $mobile_height;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &.name {
+            flex: 1 0 auto;
+            margin: 0 8px 0 36px;
+          }
+          &.score {
+            margin: 0 $mobile_height 0 8px;
+          }
         }
       }
 
@@ -460,6 +592,11 @@ $sidebar_size: 400px;
         background-color: $orange;
         border-radius: 50%;
         box-shadow: 1px 1px 2px $gray-100;
+
+        @include mobile {
+          top: 4px; height: 10px;
+          right: 4px; width: 10px;
+        }
       }
 
       &.user-list_user--connected::after {
@@ -487,6 +624,11 @@ $sidebar_size: 400px;
     background-color: $dark-primary;
     border-radius: 50%;
     box-shadow: 1px 1px 2px $dark-primary;
+
+    @include mobile {
+      top: 4px; height: 10px;
+      left: 4px; width: 10px;
+    }
   }
 }
 @for $i from 0 through length($colors) - 1 {
@@ -502,6 +644,12 @@ $sidebar_size: 400px;
       background-color: $color;
       border-radius: 50%;
       box-shadow: 1px 1px 2px $dark-primary;
+
+      @include mobile {
+        top: 4px; height: 10px;
+        left: 4px; width: 10px;
+      }
+      
     }
   }
 

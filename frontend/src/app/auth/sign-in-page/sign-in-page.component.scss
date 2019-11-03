@@ -3,6 +3,10 @@
 :host {
   display: block;
   width: $xxs;
+
+  @include mobile {
+    width: 340px;
+  }
 }
 
 .btn {

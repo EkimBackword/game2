@@ -7,7 +7,7 @@
     <p><strong>{{curUser.name}}</strong></p>
   </div>
   <div class="scene_info scene_info__game_events" *ngIf="game && game.events">
-    <div *ngFor="let event of game.events"
+    <div *ngFor="let event of game.events.slice().reverse()"
       class="
         event
         event_color_{{event.data.color}}
@@ -80,7 +80,7 @@
 
 <section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
   <div class="map-info--main">
-    <small>Игра: <strong>{{game.Name}}</strong> </small> <br>
+    <small>Игра: <strong>{{game.Name}}</strong> </small>
     <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
     <div class="user-list">
       <div *ngFor="let item of Gamers"
@@ -101,7 +101,8 @@
         [users]="game.gameMap.gameUsers"
         [effect]="game.gameMap.effect"
         [takeUnitEvent]="takeUnitEvent"
-        (takeUnit)="click($event)"
+        [castleUnitsChangeEvent]="castleUnitsChangeEvent"
+        (atEvent)="click($event)"
       ></app-user-info>
     </div>
   </div>

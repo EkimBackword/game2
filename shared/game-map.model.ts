@@ -10,8 +10,9 @@ import {
     IGameEventAttackUserData,
     IGameEventDefenseData,
     IGameEventTakeUnitData,
+    IGameEventCastleUnitsChangeData,
 } from './game-event.model';
-import { IGameUser, IGameUserInBattle } from './game-user.model';
+import { IGameUser, IGameUserInBattle, IWinner } from './game-user.model';
 import { IEventResponse, IUser, IGamer } from './game-info.dto';
 
 export interface IPosition {
@@ -36,6 +37,7 @@ export interface ICastleInfo {
     color: string;
     userId: string;
     units: IUnit[];
+    index: number;
 }
 
 export interface IEffect {
@@ -57,7 +59,10 @@ export interface IBattleResult {
   isWin: boolean;
   attackPower: number;
   defensePower: number;
-  survivorsUnits: IUnit[];
+  attackDeathUnits: IUnit[];
+  attackSurvivorsUnits: IUnit[];
+  defenseDeathUnits: IUnit[];
+  defenseSurvivorsUnits: IUnit[];
 }
 
 export class GameMap {
@@ -69,6 +74,7 @@ export class GameMap {
   public deckPeriodEffects: IPeriodEffects[];
   public deckOldEffects: IPeriodEffects[];
   public currentPeriodEffects: IPeriodEffects;
+  public castelsList: Map<number, string>;
 
 
   constructor(option: IGameMapOption) {
@@ -83,6 +89,7 @@ export class GameMap {
   initBackend(size: ISize): void {
       this.size = size;
       this.gameUsers = new Map();
+      this.castelsList = new Map();
       this.deckPeriodEffects = genPeriodEffects(size);
       this.deckOldEffects = [];
       this.currentPeriodEffects = null;
@@ -108,8 +115,9 @@ export class GameMap {
 
       // gen castle
       const CastlesPoints: IPosition[] = this.genCastlesPoints(positions);
+      let index = 0;
       for (const point of CastlesPoints) {
-          this.createCastle(point.x, point.y);
+        this.createCastle(point.x, point.y, index++);
       }
   }
 
@@ -129,6 +137,7 @@ export class GameMap {
       this.deckPeriodEffects = dto.deckPeriodEffects;
       this.deckOldEffects = dto.deckOldEffects;
       this.currentPeriodEffects = dto.currentPeriodEffects;
+      this.castelsList = dto.castelsList instanceof Map ? dto.castelsList : new Map(dto.castelsList);
   }
   //#endregion init
 
@@ -162,9 +171,12 @@ export class GameMap {
       }
     });
     const userTile: ITile = this.tiles[gamer.x][gamer.y];
-    if (userTile.isCastle && gamer.army.length < this.effect.maxArmy) {
-      const event: IGameEvent = this.getActionTakeUnit(gamer);
-      events.push(event);
+    if (userTile.isCastle) {
+      events.push(this.getActionCastleUnitsChange(gamer, userTile));
+      if (gamer.army.length < this.effect.maxArmy) {
+        const event: IGameEvent = this.getActionTakeUnit(gamer);
+        events.push(event);
+      }
     }
     return events;
   }
@@ -195,6 +207,17 @@ export class GameMap {
       units: [genGameUnit()]
     };
     return { type: GameEventType.takeUnit, data };
+  }
+
+  private getActionCastleUnitsChange(gamer: IGameUser, tile: ITile): IGameEvent {
+    const data: IGameEventCastleUnitsChangeData = {
+      color: gamer.color,
+      userId: gamer.userId,
+      army: gamer.army,
+      units: tile.castleInfo.units,
+      to: { x: tile.x, y: tile.y },
+    };
+    return { type: GameEventType.castleUnitsChange, data };
   }
 
   private getActionAttackCastle(gamer: IGameUser, tile: ITile): IGameEvent {
@@ -284,12 +307,14 @@ export class GameMap {
     return result;
   }
 
-  protected createCastle(x: number, y: number): void {
+  protected createCastle(x: number, y: number, index: number): void {
     const castle: ICastleInfo = {
       color: null,
       userId: null,
       units: [],
+      index
     };
+    this.castelsList.set(index, null);
     this.tiles[x][y].isCastle = true;
     this.tiles[x][y].castleInfo = castle;
   }
@@ -326,6 +351,34 @@ export class GameMap {
     }
   }
 
+  public checkWinner(users: IGamer[]): IWinner {
+    let max = 0;
+    let winners: IWinner[] = [];
+    for (const user of users) {
+      const gamer: IGameUser = this.gameUsers.get(user.id);
+      if (gamer.castleCount > max) {
+        max = gamer.castleCount;
+        winners = [ { ...gamer, name: user.name } ];
+      } else if (gamer.castleCount === max) {
+        winners.push({ ...gamer, name: user.name });
+      }
+    }
+    if (winners.length > 1) {
+      let winner: IWinner = null;
+      let index = 0;
+      let winnerIds = winners.map(w => w.userId);
+      for (const castle of this.castelsList.entries()) {
+        if (castle[0] > index && winnerIds.indexOf(castle[1]) > -1) {
+          winner = winners.find(w => w.userId === castle[1]);
+          index = castle[0];
+        }
+      }
+      return winner;
+    } else {
+      return winners[0];
+    }
+  }
+
   public setDeathToUser(user: IGamer): boolean {
     if (this.gameUsers.has(user.id)) {
       const gamer: IGameUser = this.gameUsers.get(user.id);
@@ -346,12 +399,27 @@ export class GameMap {
       return prev + unit.power + bonus;
     }, 0);
     const diffPower: number = Math.abs(attackPower - defensePower);
-    const survivorsUnits: IUnit[] = attackPower > defensePower ?
-      this.getSurvivorsUnits(attackUnits, diffPower) :
-      this.getSurvivorsUnits(defenseUnits, diffPower);
-    return { attackPower, defensePower, survivorsUnits,
-      isWin: attackPower > defensePower
-    };
+    if (attackPower > defensePower) {
+      const result = this.getSurvivorsUnits(attackUnits, diffPower);
+      return {
+        attackPower, defensePower,
+        isWin: attackPower > defensePower,
+        defenseDeathUnits: defenseUnits,
+        defenseSurvivorsUnits: [],
+        attackDeathUnits: result.deathUnits,
+        attackSurvivorsUnits: result.survivorsUnits
+      }
+    } else {
+      const result = this.getSurvivorsUnits(defenseUnits, diffPower,  -1);
+      return {
+        attackPower, defensePower,
+        isWin: attackPower > defensePower,
+        defenseDeathUnits: result.deathUnits,
+        defenseSurvivorsUnits: result.survivorsUnits,
+        attackDeathUnits: attackUnits,
+        attackSurvivorsUnits: []
+      }
+    }
   }
 
   public setNewPeriodEffects() {
@@ -391,16 +459,21 @@ export class GameMap {
     return false;
   }
 
-  protected getSurvivorsUnits(units: IUnit[], diffPower: number): IUnit[] {
-    let survivorsPower: number = 0;
-    return units.sort((a, b) => a.power > b.power ? 1 : a.power < b.power ? -1 : 0)
-                .filter(unit => {
-                  if (survivorsPower < diffPower) {
-                    survivorsPower += unit.power;
-                    return true;
-                  }
-                  return false;
-                });
+  protected getSurvivorsUnits(units: IUnit[], diffPower: number, survivorsPower = 0): { survivorsUnits: IUnit[], deathUnits: IUnit[] } {
+    const unitsSort = units.sort((a, b) => a.power > b.power ? -1 : a.power < b.power ? 1 : 0);
+    const data = {
+      survivorsUnits: [],
+      deathUnits: [],
+    };
+    unitsSort.forEach(unit => {
+      if (survivorsPower < diffPower) {
+        survivorsPower += unit.power;
+        data.survivorsUnits.push(unit);
+      } else {
+        data.deathUnits.push(unit);
+      }
+    })
+    return data;
   }
   //#endregion protected
 
@@ -427,6 +500,9 @@ export class GameMap {
       }
       case GameEventType.takeUnit: {
           return this.takeUnit(event.data as IGameEventTakeUnitData);
+      }
+      case GameEventType.castleUnitsChange: {
+          return this.castleUnitsChange(event.data as IGameEventCastleUnitsChangeData);
       }
     }
   }
@@ -468,7 +544,9 @@ export class GameMap {
   private capture(data: IGameEventCaptureData): IEventResponse {
     const user: IGameUser = this.gameUsers.get(data.userId);
     user.army = data.army;
-    this.tiles[data.to.x][data.to.y].castleInfo = {
+    const tile = this.tiles[data.to.x][data.to.y]; 
+    tile.castleInfo = {
+      ...tile.castleInfo,
       color: data.color,
       userId: data.userId,
       units: data.units,
@@ -476,6 +554,7 @@ export class GameMap {
     this.moveUserTo(user, data.to);
     this.setVisibleFor(data.to, data.userId);
     user.castleCount++;
+    this.castelsList[tile.castleInfo.index] = user.userId;
     this.effect.emptyCastle--;
     return { isNext: true, tmpId: null };
   }
@@ -484,9 +563,9 @@ export class GameMap {
     const user: IGameUser = this.gameUsers.get(data.userId);
     user.army = data.army;
     const tile: ITile = this.tiles[data.to.x][data.to.y];
-    const result: IBattleResult = this.getBattleResult(data.units, tile.castleInfo.units);
+    const BattleResult: IBattleResult = this.getBattleResult(data.units, tile.castleInfo.units);
     const eventResult: IEventResponse = { isNext: true, tmpId: null };
-    if (result.isWin) {
+    if (BattleResult.isWin) {
       const defenseUser: IGameUser = this.gameUsers.get(tile.castleInfo.userId);
       defenseUser.castleCount--;
       if (tile.hasUser) {
@@ -495,13 +574,17 @@ export class GameMap {
         eventResult.tmpEvents = this.getGamerActions(defenseUser).filter(e => e.type === GameEventType.move);
       }
       this.tiles[data.to.x][data.to.y].castleInfo = {
+        ...this.tiles[data.to.x][data.to.y].castleInfo,
         color: data.color,
         userId: data.userId,
-        units: data.units,
+        units: BattleResult.attackSurvivorsUnits,
       };
       user.castleCount++;
+      this.castelsList[tile.castleInfo.index] = user.userId;
       this.moveUserTo(user, data.to);
       this.setVisibleFor(data.to, data.userId);
+    } else {
+      this.tiles[data.to.x][data.to.y].castleInfo.units = BattleResult.defenseSurvivorsUnits;
     }
     return eventResult;
   }
@@ -523,9 +606,9 @@ export class GameMap {
     defenseUser.army = data.army;
     const BattleResult: IBattleResult = this.getBattleResult(data.attackUnits, data.units);
     if (BattleResult.isWin) {
-      attackUser.army = attackUser.army.concat(BattleResult.survivorsUnits);
+      attackUser.army = attackUser.army.concat(BattleResult.attackSurvivorsUnits);
     } else {
-      defenseUser.army = defenseUser.army.concat(BattleResult.survivorsUnits);
+      defenseUser.army = defenseUser.army.concat(BattleResult.defenseSurvivorsUnits);
     }
     return { isNext: true, tmpId: null };
   }
@@ -535,11 +618,19 @@ export class GameMap {
     user.army.push(...data.units);
     return { isNext: true, tmpId: null };
   }
+
+  private castleUnitsChange(data: IGameEventCastleUnitsChangeData): IEventResponse {
+    const user: IGameUser = this.gameUsers.get(data.userId);
+    user.army = data.army;
+    this.tiles[data.to.x][data.to.y].castleInfo.units = data.units;
+    return { isNext: true, tmpId: null };
+  }
   //#endregion Events
 
   get response() {
     return Object.assign({}, this, {
         gameUsers: Array.from(this.gameUsers),
+        castelsList: Array.from(this.castelsList),
     });
   }
 }

@@ -25,13 +25,19 @@ import {
   IGameEventCaptureData,
   IGameEventDefenseData,
   IGameEventTakeUnitData,
-  GameState
+  GameState,
+  IGameEventCastleUnitsChangeData
 } from '../../share-services';
 import { Scene } from './classes/scene';
 import { DialogCaptureComponent } from './components/dialog-capture/dialog-capture.component';
 import { DialogAttackCastleComponent } from './components/dialog-attack-castle/dialog-attack-castle.component';
 import { DialogAttackUserComponent } from './components/dialog-attack-user/dialog-attack-user.component';
 import { DialogDefenseComponent } from './components/dialog-defense/dialog-defense.component';
+import { DialogCastleUnitsChangeComponent } from './components/dialog-castle-units-change/dialog-castle-units-change.component';
+import {
+  DialogBattleResultComponent,
+  IDialogBattleResultComponentData
+} from './components/dialog-battle-result/dialog-battle-result.component';
 
 
 @Component({
@@ -48,6 +54,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
   public tileEvents: IGameEvent[];
   public takeUnitEvent: IGameEvent;
+  public castleUnitsChangeEvent: IGameEvent;
 
   private subscriptions: Map<string, Subscription>;
 
@@ -162,42 +169,62 @@ export class GamePageComponent implements OnInit, OnDestroy {
   }
 
   async click(event: IGameEvent) {
+    let dialogComponent = null;
+    let dialogData = null;
     switch (event.type) {
       case GameEventType.capture: {
-        const dialogRef = this.dialog.open(DialogCaptureComponent, { width: '650px', data: event.data });
-        const result = await dialogRef.afterClosed().toPromise();
-        if (result) { event.data = result; break; }
-        return;
+        dialogComponent = DialogCaptureComponent;
+        dialogData = { data: event.data };
+        break;
       }
       case GameEventType.attackCastle: {
+        dialogComponent = DialogAttackCastleComponent;
         const data = event.data as IGameEventAttackCastleData;
         const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
-        const dialogRef = this.dialog.open(DialogAttackCastleComponent, { width: '650px', data: { data, tile } });
-        const result = await dialogRef.afterClosed().toPromise();
-        if (result) { event.data = result; break; }
-        return;
+        dialogData = { data, tile };
+        break;
       }
       case GameEventType.attackUser: {
+        dialogComponent = DialogAttackUserComponent;
         const data = event.data as IGameEventAttackUserData;
         const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
-        const dialogRef = this.dialog.open(DialogAttackUserComponent, { width: '650px', data: { data, tile } });
-        const result = await dialogRef.afterClosed().toPromise();
-        if (result) { event.data = result; break; }
-        return;
+        dialogData = { data, tile };
+        break;
       }
       case GameEventType.defense: {
+        dialogComponent = DialogDefenseComponent;
         const data = event.data as IGameEventAttackUserData;
         const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
-        const dialogRef = this.dialog.open(DialogDefenseComponent, { width: '650px', data: { data, tile } });
-        const result = await dialogRef.afterClosed().toPromise();
-        if (result) { event.data = result; break; }
-        return;
+        dialogData = { data, tile };
+        break;
+      }
+      case GameEventType.castleUnitsChange: {
+        dialogComponent = DialogCastleUnitsChangeComponent;
+        const data = event.data as IGameEventCastleUnitsChangeData;
+        const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
+        dialogData = { data, tile };
+        break;
       }
       default: {
         break;
       }
     }
 
+    if (dialogComponent) {
+      const dialogRef = this.dialog.open(dialogComponent, {
+        maxHeight: '100vh',
+        maxWidth: '100vw',
+        width: '650px',
+        panelClass: 'full-screen-modal',
+        data: { ...dialogData, effect: this.game.gameMap.effect }
+      });
+      const result = await dialogRef.afterClosed().toPromise();
+      if (result) {
+        event.data = result;
+      } else {
+        return;
+      }
+    }
 
     const click$ = this.gameSocket.GameEvent({
       event, gameId: this.gameId
@@ -250,10 +277,15 @@ export class GamePageComponent implements OnInit, OnDestroy {
   private setActiveEvents(isInit = false) {
     this.tileEvents = null;
     this.takeUnitEvent = undefined;
+    this.castleUnitsChangeEvent = undefined;
     if (!isInit && this.game.State !== GameState.FINISHED) {
       const activeEvents = this.game.getActions(this.user);
-      this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit);
+      if (activeEvents.length === 1 && activeEvents[0].type === GameEventType.defense) {
+        this.click(activeEvents[0]);
+      }
+      this.tileEvents = activeEvents.filter(e => e.type !== GameEventType.takeUnit && e.type !== GameEventType.castleUnitsChange);
       this.takeUnitEvent = activeEvents.find(e => e.type === GameEventType.takeUnit);
+      this.castleUnitsChangeEvent = activeEvents.find(e => e.type === GameEventType.castleUnitsChange);
     }
   }
 
@@ -300,7 +332,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title: `Игрок ${user.name}`,
       message: `Выбрал стартовую позицию`,
       type: 'success'
-    }, { duration: 2000 });
+    });
   }
   uiSnackEventMove(data: IGameEventMoveData) {
     const user = this.game.Gamers.get(data.userId);
@@ -308,7 +340,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title: `Игрок ${user.name}`,
       message: `Переместился`,
       type: 'success'
-    }, { duration: 2000 });
+    });
   }
   uiSnackEventCapture(data: IGameEventCaptureData) {
     const user = this.game.Gamers.get(data.userId);
@@ -316,18 +348,34 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title: `Игрок ${user.name}`,
       message: `Захватил замок`,
       type: 'success'
-    }, { duration: 2000 });
+    });
   }
   uiSnackEventAttackCastle(data: IGameEventAttackCastleData) {
-    const user = this.game.Gamers.get(data.userId);
+    const attackUser = this.game.Gamers.get(data.userId);
     const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
     const defenseUser = this.game.Gamers.get(tile.castleInfo.userId);
-    const BattleResult = this.game.gameMap.getBattleResult(data.units, tile.castleInfo.units);
-    this.uiSnack.showMessage({
-      title: BattleResult.isWin ? `Игрок ${user.name} захватил замок` : `Игрок ${user.name} проиграл при захвате`,
-      message: `Счёт: Атака ${user.name} ${BattleResult.attackPower} - ${BattleResult.defensePower} ${defenseUser.name} Защита`,
-      type: BattleResult.isWin ? 'success' : 'warn'
-    }, { duration: 10000 });
+    const battle = this.game.gameMap.getBattleResult(data.units, tile.castleInfo.units);
+
+    if (this.user.id === attackUser.id || this.user.id === defenseUser.id) {
+      const dialogData: IDialogBattleResultComponentData = {
+        battle, attackUser, defenseUser,
+        effect: this.game.gameMap.effect
+      };
+      this.dialog.open(DialogBattleResultComponent, {
+        maxHeight: '100vh',
+        maxWidth: '100vw',
+        width: '650px',
+        panelClass: 'full-screen-modal',
+        data: dialogData
+      });
+    } else {
+      this.uiSnack.showMessage({
+        title: 'Нападение на замок',
+        message: battle.isWin ? `Игрок ${attackUser.name} захватил замок` : `Игрок ${attackUser.name} проиграл при захвате`,
+        type: battle.isWin ? 'success' : 'warn'
+      });
+    }
+
   }
   uiSnackEventAttackUser(data: IGameEventAttackUserData) {
     const attackUser = this.game.Gamers.get(data.userId);
@@ -336,17 +384,33 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title: `Игрок ${attackUser.name}`,
       message: `Совершает атаку на ${defenseUser.name}`,
       type: 'info'
-    }, { duration: 2000 });
+    }, { duration: 1500 });
   }
   uiSnackEventDefense(data: IGameEventDefenseData) {
     const attackUser = this.game.Gamers.get(data.attackUserId);
     const defenseUser = this.game.Gamers.get(data.userId);
-    const BattleResult = this.game.gameMap.getBattleResult(data.attackUnits, data.units);
-    this.uiSnack.showMessage({
-      title: BattleResult.isWin ? `Игрок ${attackUser.name} победил` : `Игрок ${attackUser.name} проиграл`,
-      message: `Счёт: Атака ${attackUser.name} ${BattleResult.attackPower} - ${BattleResult.defensePower} ${defenseUser.name} Защита`,
-      type: BattleResult.isWin ? 'success' : 'warn'
-    }, { duration: 10000 });
+    const battle = this.game.gameMap.getBattleResult(data.attackUnits, data.units);
+
+    if (this.user.id === attackUser.id || this.user.id === defenseUser.id) {
+      const dialogData: IDialogBattleResultComponentData = {
+        battle, attackUser, defenseUser,
+        effect: this.game.gameMap.effect
+      };
+      this.dialog.open(DialogBattleResultComponent, {
+        maxHeight: '100vh',
+        maxWidth: '100vw',
+        width: '650px',
+        panelClass: 'full-screen-modal',
+        data: dialogData
+      });
+    } else {
+      this.uiSnack.showMessage({
+        title: `Нападение на ${defenseUser.name}`,
+        message: battle.isWin ? `Игрок ${attackUser.name} победил` : `Игрок ${attackUser.name} проиграл`,
+        type: battle.isWin ? 'success' : 'warn'
+      });
+    }
+
   }
   uiSnackEventTakeUnit(data: IGameEventTakeUnitData) {
     const user = this.game.Gamers.get(data.userId);
@@ -354,6 +418,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
       title: `Игрок ${user.name}`,
       message: `Усилил армию`,
       type: 'success'
-    }, { duration: 2000 });
+    }, { duration: 1500 });
   }
 }

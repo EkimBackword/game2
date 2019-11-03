@@ -19,13 +19,22 @@
   align-items: flex-start;
   margin: 0 0 8px;
 
+  @include mobile {
+    margin: 2px 0 4px;
+  }
+
   .mana {
     height: 10px;
     width: 10px;
     border-radius: 50%;
-    background-color: adjust-color($blue, $alpha: -0.6);
+    background-color: adjust-color($blue, $alpha: -0.7);
     box-shadow: 1px 1px 2px adjust-color($black, $alpha: -0.4);
     margin: 0 4px;
+
+    @include mobile {
+      height: 6px;
+      width: 6px;
+    }
 
     &.mana_active {
       background-color: $blue;
@@ -37,6 +46,9 @@
 $height: 200px;
 $width: 160px;
 
+$height_mobile: 72px;
+$width_mobile: 58px;
+
 .periods_info {
   padding-bottom: 8px;
   margin: 0 16px;
@@ -46,6 +58,11 @@ $width: 160px;
   justify-content: flex-start;
   align-items: stretch;
   position: relative;
+
+  @include mobile {
+    padding-bottom: 4px;
+    margin: 0 8px;
+  }
 }
 
 .periods_info__deck {
@@ -60,6 +77,12 @@ $width: 160px;
   box-shadow: 2px 2px 4px $black;
   background-color: $gray;
 
+  @include mobile {
+    height: $height_mobile;
+    width: $width_mobile;
+    background-size: cover;
+  }
+
   &::before {
     position: absolute;
     bottom: -2px;
@@ -73,6 +96,10 @@ $width: 160px;
     background-position: bottom;
     border-radius: 4px;
     box-shadow: 1px 2px 4px $black;
+    @include mobile {
+      height: $height_mobile;
+      width: $width_mobile;
+    }
   }
 
   &::after {
@@ -88,6 +115,10 @@ $width: 160px;
     background-position: bottom;
     border-radius: 4px;
     box-shadow: 1px 1px 2px $black;
+    @include mobile {
+      height: $height_mobile;
+      width: $width_mobile;
+    }
   }
 
   &.periods_info__deck--last {
@@ -116,6 +147,14 @@ $width: 160px;
   left: $width + 20;
   animation-duration: 0.4s;
   animation-name: cardup;
+  
+  @include mobile {
+    height: $height_mobile;
+    width: $width_mobile;
+    background: $white-force;
+    padding: 2px;
+    left: $width_mobile + 20;
+  }
 
   &::before, &::after {
     position: absolute;
@@ -124,6 +163,11 @@ $width: 160px;
     width: $width;
     background-color: $white-force;
     border-radius: 4px;
+
+    @include mobile {
+      height: $height_mobile;
+      width: $width_mobile;
+    }
   }
   &::before {
     bottom: -2px;
@@ -156,11 +200,23 @@ $width: 160px;
     font-weight: 400;
     color: $dark-primary;
     border-bottom: 1px solid black;
+
+    @include mobile {
+      font-size: 8px;
+      line-height: 10px;
+      font-weight: 500;
+    }
   }
 
   .description {
     font-size: 12px;
     font-weight: 600;
+
+    @include mobile {
+      font-size: 8px;
+      line-height: 8px;
+      font-weight: 400;
+    }
   }
 }
 
@@ -170,10 +226,18 @@ $width: 160px;
     left: 0;
     margin-right: $width;
     color: $white-force;
+
+    @include mobile {
+      margin-right: $width_mobile;
+    }
   }
 
   to {
     left: $width + 20;
     color: $black;
+
+    @include mobile {
+      left: $width_mobile + 20;
+    }
   }
 }

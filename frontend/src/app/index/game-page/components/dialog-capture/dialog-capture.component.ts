@@ -1,14 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-  CdkDrag,
-  CdkDropList,
-} from '@angular/cdk/drag-drop';
+import { IGameEventCaptureData, IUnit, IEffect } from '../../../../share-services';
 
-import { IGameEventCaptureData, IUnit } from '../../../../share-services';
+export interface IDialogCaptureComponentData {
+  data: IGameEventCaptureData;
+  effect: IEffect;
+}
 
 @Component({
   templateUrl: './dialog-capture.component.html',
@@ -19,14 +16,21 @@ export class DialogCaptureComponent implements OnInit {
   units: IUnit[] = [];
   army: IUnit[] = [];
 
+  get power() {
+        return this.units.reduce((prev, unit) => {
+      const bonus: number = unit.type === this.data.effect.unitTypeBonus ? 1 : 0;
+      return prev + unit.power + bonus;
+    }, 0);
+  }
+
   constructor(
     public dialogRef: MatDialogRef<DialogCaptureComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IGameEventCaptureData,
+    @Inject(MAT_DIALOG_DATA) public data: IDialogCaptureComponentData,
   ) {}
 
   ngOnInit() {
-    this.army = JSON.parse(JSON.stringify(this.data.army));
-    this.units = JSON.parse(JSON.stringify(this.data.units));
+    this.army = JSON.parse(JSON.stringify(this.data.data.army));
+    this.units = JSON.parse(JSON.stringify(this.data.data.units));
   }
 
   public onCancel() {
@@ -34,9 +38,10 @@ export class DialogCaptureComponent implements OnInit {
   }
 
   public async onSubmit() {
-    this.data.army = JSON.parse(JSON.stringify(this.army));
-    this.data.units = JSON.parse(JSON.stringify(this.units));
-    this.dialogRef.close(this.data);
+    const data = this.data.data;
+    data.army = JSON.parse(JSON.stringify(this.army));
+    data.units = JSON.parse(JSON.stringify(this.units));
+    this.dialogRef.close(data);
   }
 
 }

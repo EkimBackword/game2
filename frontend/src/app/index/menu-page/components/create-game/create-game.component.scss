@@ -11,6 +11,10 @@ h3, p {
 .menu__login {
   color: $dark-primary;
   text-transform: uppercase;
+
+  @include mobile {
+    display: none !important;
+  }
 }
 
 .btn {

@@ -44,6 +44,9 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
+              "src/manifest.json",
+              "src/sw.js",
+              "src/images",
               "src/assets"
             ],
             "styles": [

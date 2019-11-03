@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4200 --proxy-config proxy.conf.json",
@@ -8,8 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "pscp -r -i ~\\.ssh\\digital.ppk dist\\ root@mzharkov.ru:/var/www/games/game1/frontend/dist",
-    "deploy-work": "pscp -r -i C:\\Users\\ZharkovMike\\.ssh\\digital.ppk dist\\ root@mzharkov.ru:/var/www/games/game1/frontend/dist",
+    "deploy": "pscp -r -i C:\\Users\\mike_\\.ssh\\putty_rsa_hp.ppk dist\\ root@mzharkov.ru:/var/www/games/game2/frontend/dist",
+    "deploy-work": "pscp -r -i C:\\Users\\ZharkovMike\\.ssh\\digital.ppk dist\\ root@mzharkov.ru:/var/www/games/game2/frontend/dist",
     "build-prod": "ng build --prod && npm run deploy",
     "build-prod-work": "ng build --prod && npm run deploy-work"
   },

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IUnit } from '../../../../share-services';
+import { IUnit, IEffect } from '../../../../share-services';
 
 @Component({
   selector: 'app-game-unit',
@@ -10,6 +10,7 @@ export class GameUnitComponent {
 
   @Input() unit: IUnit;
   @Input() userColor: string;
+  @Input() effect: IEffect;
 
   public GameUnitType = {
     Archer: 'Лучник',

@@ -2,6 +2,7 @@
 <p> Сформируйте отряд для нападения. </p>
 <div mat-dialog-content>
   <app-battlefield
+    [effect]="data.effect"
     [army]="army"
     [units]="units"
     [color]="data.data.color"
@@ -9,10 +10,10 @@
   ></app-battlefield>
 </div>
 <div mat-dialog-actions>
-    <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
+  <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
   >
-    <div class="btn-content">Напасть</div>
+    <div class="btn-content">Напасть ({{power}})</div>
   </button>
   <button type="button" tabindex="2" class="btn btn-danger"
     (click)="onCancel()"

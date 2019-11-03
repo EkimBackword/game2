@@ -25,21 +25,36 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+
+  @include mobile {
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+  }
 }
 
 $height: 100px;
 $width: 84px;
 
-.user_info__army-take_unit_event {
+$height_mobile: 56px;
+$width_mobile: 44px;
+
+.user_info__army-event {
   display: block;
   height: $height;
   width: $width;
+
+  flex-shrink: 0;
 
   margin: 4px;
   border-radius: 4px;
   border: 2px dashed $black;
   position: relative;
   transition: all 0.15s linear;
+
+  @include mobile {
+    height: $height_mobile;
+    width: $width_mobile;
+  }
 
   &::before {
     position: absolute;
@@ -58,6 +73,10 @@ $width: 84px;
     justify-content: center;
     align-items: center;
     transition: all 0.15s linear;
+
+    @include mobile {
+      font-size: 1em;
+    }
   }
 
   &:hover{
@@ -66,5 +85,19 @@ $width: 84px;
     &::before {
       background-color: $white-force;
     }
+  }
+}
+
+.user_info__army-take_unit_event {
+  &::before {
+    content: "\f2b5";
+  }
+}
+
+.user_info__army-castle_units_change {
+  border: 2px dashed $black;
+  &::before {
+    color: $dark-primary;
+    content: "\f286";
   }
 }

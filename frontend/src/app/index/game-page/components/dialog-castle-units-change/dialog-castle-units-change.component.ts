@@ -1,18 +1,18 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import { IGameEventCastleUnitsChangeData, ITile, IUnit, IEffect } from '../../../../share-services';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { IGameEventAttackUserData, ITile, IUnit, IEffect } from '../../../../share-services';
 
-export interface IDialogAttackUserComponentData {
-  data: IGameEventAttackUserData;
+export interface IDialogCastleUnitsChangeComponentData {
+  data: IGameEventCastleUnitsChangeData;
   tile: ITile;
   effect: IEffect;
 }
 
 @Component({
-  templateUrl: './dialog-attack-user.component.html',
-  styleUrls: ['./dialog-attack-user.component.scss']
+  templateUrl: './dialog-castle-units-change.component.html',
+  styleUrls: ['./dialog-castle-units-change.component.scss']
 })
-export class DialogAttackUserComponent implements OnInit {
+export class DialogCastleUnitsChangeComponent implements OnInit {
 
   units: IUnit[] = [];
   army: IUnit[] = [];
@@ -25,8 +25,8 @@ export class DialogAttackUserComponent implements OnInit {
   }
 
   constructor(
-    public dialogRef: MatDialogRef<DialogAttackUserComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IDialogAttackUserComponentData,
+    public dialogRef: MatDialogRef<DialogCastleUnitsChangeComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: IDialogCastleUnitsChangeComponentData,
   ) { }
 
   ngOnInit() {

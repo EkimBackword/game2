@@ -33,8 +33,9 @@ export class SignInPageComponent implements OnInit {
   private initForm() {
     const controls: any = {
       name: new FormControl('', [
-        Validators.minLength(4),
+        Validators.minLength(3),
         Validators.maxLength(512),
+        Validators.required
       ]),
     };
     this.form = new FormGroup(controls);

@@ -15,6 +15,7 @@ export enum GameEventType {
     attackUser = 'attackUser', // напасть на игрока
     defense = 'defense', // оборона от атаки игрока
     takeUnit = 'takeUnit', // усилить войско
+    castleUnitsChange = 'castleUnitsChange', // Изменить защиту замка
 }
 
 export interface IGameEventData {
@@ -54,4 +55,9 @@ export interface IGameEventDefenseData extends IGameEventData {
 }
 export interface IGameEventTakeUnitData extends IGameEventData {
     units: IUnit[];
+}
+export interface IGameEventCastleUnitsChangeData extends IGameEventData {
+    to: IPosition;
+    units: IUnit[];
+    army: IUnit[];
 }

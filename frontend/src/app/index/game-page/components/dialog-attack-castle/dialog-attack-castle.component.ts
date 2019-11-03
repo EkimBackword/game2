@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { IGameEventAttackCastleData, ITile, IUnit } from '../../../../share-services';
+import { IGameEventAttackCastleData, ITile, IUnit, IEffect } from '../../../../share-services';
 
 export interface IDialogAttackCastleComponentData {
   data: IGameEventAttackCastleData;
   tile: ITile;
+  effect: IEffect;
 }
 
 @Component({
@@ -15,6 +16,13 @@ export class DialogAttackCastleComponent implements OnInit {
 
   units: IUnit[] = [];
   army: IUnit[] = [];
+
+  get power() {
+    return this.units.reduce((prev, unit) => {
+      const bonus: number = unit.type === this.data.effect.unitTypeBonus ? 1 : 0;
+      return prev + unit.power + bonus;
+    }, 0);
+  }
 
   constructor(
     public dialogRef: MatDialogRef<DialogAttackCastleComponent>,

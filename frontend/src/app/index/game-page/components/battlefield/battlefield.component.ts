@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IUnit } from '../../../../share-services';
+import { IUnit, IEffect } from '../../../../share-services';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -12,6 +12,7 @@ export class BattlefieldComponent {
   @Input() army: IUnit[];
   @Input() color: string;
   @Input() isUser: boolean;
+  @Input() effect: IEffect;
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {

@@ -281,10 +281,9 @@ export class GameInfo implements IGameInfoResponse {
 
     finish() {
         this.State = GameState.FINISHED;
-        let gamers = this.gamers.filter(g => !g[1].isDeath)
-                                .map(g => ({...this.gameMap.gameUsers.get(g[0]), name: g[1].name}))
-                                .sort((a, b) => a.castleCount > b.castleCount ? -1 : a.castleCount < b.castleCount ? 1 : 0);
-        this.message = `Победитель ${gamers[0].name}`;
+        let gamers = this.gamers.filter(g => !g[1].isDeath).map(g => g[1]);
+        const winner = this.gameMap.checkWinner(gamers);
+        this.message = `Победитель ${winner.name}`;
     }
 
     // BACKERND

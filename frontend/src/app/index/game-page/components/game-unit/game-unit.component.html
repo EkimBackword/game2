@@ -1,6 +1,7 @@
 
 <div class="unit">
   <div class="unit-power">{{unit.power}}</div>
+  <div class="unit-power unit-power-bonus" *ngIf="effect && unit.type === effect.unitTypeBonus">+1</div>
   <div class=" unit-img unit-img--color-{{userColor}} ">
     <div class="unit-img-type unit-img-type--{{unit.type}}"></div>
   </div>

@@ -1,8 +1,4 @@
-<h1 mat-dialog-title>Защита от нападения</h1>
-<p>
-  Разведчики насчитали {{data.data.attackUnits.length}} вражеских юнитов.
-  Сформируйте отряд для защиты.
-</p>
+<h1 mat-dialog-title>Изменить отряд защиты</h1>
 <div mat-dialog-content>
   <app-battlefield
     [effect]="data.effect"
@@ -13,10 +9,10 @@
   ></app-battlefield>
 </div>
 <div mat-dialog-actions>
-  <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
+    <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
   >
-    <div class="btn-content">Защититься ({{power}})</div>
+    <div class="btn-content">Изменить ({{power}})</div>
   </button>
   <button type="button" tabindex="2" class="btn btn-danger"
     (click)="onCancel()"

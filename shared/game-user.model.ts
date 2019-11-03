@@ -11,3 +11,7 @@ export interface IGameUser extends IPosition {
 export interface IGameUserInBattle extends IGameUser {
     units: IUnit[];
 }
+
+export interface IWinner extends IGameUser {
+    name: string;
+}

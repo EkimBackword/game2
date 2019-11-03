@@ -1,0 +1,48 @@
+<h1 mat-dialog-title>Результаты битвы</h1>
+<p> Атака {{data.attackUser.name}} <strong>{{data.battle.attackPower}} - {{data.battle.defensePower}}</strong> {{data.defenseUser.name}} Защита</p>
+<div mat-dialog-content>
+
+    <div class="battlefield_container">
+        <div class="container_title">{{data.attackUser.name}} - {{data.battle.attackPower}}</div>
+        <div class="battlefield_list battlefield_list--attack" >
+            <app-game-unit
+                *ngFor="let item of data.battle.attackDeathUnits"
+                class="game-unit--death"
+                [unit]="item"
+                [userColor]="data.attackUser.color"
+                [effect]="data.effect"
+            ></app-game-unit>
+            <app-game-unit
+                *ngFor="let item of data.battle.attackSurvivorsUnits"
+                [unit]="item"
+                [userColor]="data.attackUser.color"
+                [effect]="data.effect"
+            ></app-game-unit>
+        </div>
+    </div>
+    
+    <div class="battlefield_container">
+        <div class="container_title">{{data.defenseUser.name}} - {{data.battle.defensePower}}</div>
+        <div class="battlefield_list battlefield_list--defense" >
+            <app-game-unit
+                *ngFor="let item of data.battle.defenseDeathUnits"
+                class="game-unit--death"
+                [unit]="item"
+                [userColor]="data.attackUser.color"
+                [effect]="data.effect"
+            ></app-game-unit>
+            <app-game-unit
+                *ngFor="let item of data.battle.defenseSurvivorsUnits"
+                [unit]="item"
+                [userColor]="data.attackUser.color"
+                [effect]="data.effect"
+            ></app-game-unit>
+        </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+  <button type="button" tabindex="1" class="btn btn-secondary" (click)="onCancel()">
+    <div class="btn-content">Закрыть</div>
+  </button>
+</div>

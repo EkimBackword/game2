@@ -3,11 +3,19 @@
 $height: 100px;
 $width: 84px;
 
+$height_mobile: 56px;
+$width_mobile: 44px;
+
 :host {
   display: block;
   height: $height;
   width: $width;
   margin: 4px;
+
+  @include mobile {
+    height: $height_mobile;
+    width: $width_mobile;
+  }
 }
 
 .unit {
@@ -16,6 +24,9 @@ $width: 84px;
   border: 2px solid $black;
   border-radius: 4px;
   position: relative;
+  @include mobile {
+    border-width: 1px;
+  }
 }
 
 .unit-power {
@@ -23,11 +34,28 @@ $width: 84px;
   line-height: 22px;
   top: 2px; height: 20px;
   left: 2px; width: 20px;
-  font-size: 15px;
+  font-size: 12px;
   background-color: $black;
   text-align: center;
   color: $white;
   border-radius: 50%;
+
+  @include mobile {
+    line-height: 14px;
+    top: 1px; height: 12px;
+    left: 1px; width: 12px;
+    font-size: 9px;
+  }
+}
+
+.unit-power-bonus {
+  left: auto;
+  right: 2px;
+
+  @include mobile {
+    left: auto;
+    right: 1px;
+  }
 }
 
 .unit-img {
@@ -38,6 +66,12 @@ $width: 84px;
   background-position: center center;
   background-repeat: no-repeat;
   padding: 8px;
+
+  @include mobile {
+    height: $width_mobile - 2;
+    width: $width_mobile - 2;
+    padding: 4px;
+  }
 }
 
 @for $i from 0 through length($colors) - 1 {
@@ -74,4 +108,11 @@ $width: 84px;
   font-size: 14px;
   text-align: center;
   width: $width - 4;
+
+  @include mobile {
+    height: 12px;
+    line-height: 14px;
+    font-size: 10px;
+    width: $width_mobile - 2;
+  }
 }

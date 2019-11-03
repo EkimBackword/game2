@@ -3,9 +3,10 @@
 <div mat-dialog-content>
 
   <app-battlefield
+    [effect]="data.effect"
     [army]="army"
     [units]="units"
-    [color]="data.color"
+    [color]="data.data.color"
     [isUser]="false"
   ></app-battlefield>
 
@@ -14,7 +15,7 @@
     <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
   >
-    <div class="btn-content">Захватить</div>
+    <div class="btn-content">Захватить ({{power}})</div>
   </button>
   <button type="button" tabindex="2" class="btn btn-danger"
     (click)="onCancel()"
