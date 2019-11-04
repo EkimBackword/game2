@@ -49,7 +49,7 @@ export const genPeriodEffects = (size: ISize): IPeriodEffects[] => {
         deathCount: 0
     };
     const PeriodOfRider: IPeriodEffects = {
-        title: 'Эпоха лучников',
+        title: 'Эпоха всадник',
         description: 'Каждый всадник получает +1 к боевой мощи',
         unitTypeBonus: GameUnitType.Rider,
         maxArmyUp: 0,
