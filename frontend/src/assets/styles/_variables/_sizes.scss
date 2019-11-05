@@ -21,6 +21,9 @@ $large: 1400px;
   @media (min-width: $large) { @content; }
 }
 @mixin mobile {
-  // @media (max-width: $small) { @content; }
+  @media (max-width: $small) { @content; }
   @media (display-mode: fullscreen ) and (max-width: $small) { @content; }
+}
+@mixin mobile-browser {
+  @media (max-width: $xxs) { @content; }
 }

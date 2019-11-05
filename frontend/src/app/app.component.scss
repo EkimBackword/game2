@@ -1,0 +1,40 @@
+@import "./src/assets/styles/_variables";
+
+.mobile_info {
+    display: none;
+
+    @include mobile-browser {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        
+        background: $light-primary;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, $light-gray, $light-primary);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, $light-gray, $light-primary); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        
+        position: absolute;
+        top: 0px; bottom: 0px;
+        left: 0px; right: 0px;
+        z-index: 1000;
+        
+        text-align: center;
+        
+    }
+
+    &.mobile_info--close {
+        display: none;
+    }
+    
+    .mobile_info__card {
+        background-color: $white;
+        margin: 8px 16px;
+        padding: 8px 16px;
+        box-shadow: 1px 1px 4px $black;
+    }
+
+    .btn {
+        width: 100%;
+    }
+  
+}

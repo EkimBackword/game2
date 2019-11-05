@@ -1,1 +1,17 @@
+<div class="mobile_info"
+[class.mobile_info--close]="isInfoClosed">
+    <div class="mobile_info__card">
+        <p>
+            Для удобного использования на мобильном устройстве советуем установить игру на 
+            <strong>домашний экран</strong>.
+        </p>
+        <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+            <button type="button" tabindex="1" class="btn btn-secondary"
+                (click)="toogleInfo()"
+            >
+                <div class="btn-content">Закрыть</div>
+            </button>
+        </fieldset>
+    </div>
+</div>
 <router-outlet></router-outlet>

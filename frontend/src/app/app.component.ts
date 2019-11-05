@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'frontend';
+
+  isInfoClosed = false;
+
+  toogleInfo() {
+    this.isInfoClosed = !this.isInfoClosed;
+  }
+
 }
