@@ -31,4 +31,8 @@ export class TileComponent implements OnInit {
     return this.tile.isCastle ? this.tile.castleInfo.color : '';
   }
 
+  get index() {
+    return this.tile.isCastle ? this.tile.castleInfo.index : null;
+  }
+
 }

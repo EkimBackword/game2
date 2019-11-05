@@ -1,4 +1,8 @@
 <h1 mat-dialog-title>Изменить отряд защиты</h1>
+<p>
+  Можно добавить юнитов для обороны или забрать обратно в армию.
+  Кнопка "Изменить" активна только, если произведены какие-либо перестановки.
+</p>
 <div mat-dialog-content>
   <app-battlefield
     [effect]="data.effect"
@@ -11,6 +15,7 @@
 <div mat-dialog-actions>
     <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
+    [disabled]="checkChange"
   >
     <div class="btn-content">Изменить ({{power}})</div>
   </button>

@@ -18,7 +18,18 @@
     align-items: stretch;
 
     @include mobile {
+        width: 100%;
         margin: 0 0 10px 0;
+    }
+}
+
+.container_title {
+    font-weight: 600;
+
+    @include mobile {
+        line-height: 14px;
+        font-size: 12px;
+        font-weight: 600;
     }
 }
 
@@ -36,6 +47,7 @@
     align-items: flex-start;
 
     @include mobile {
+        width: 100%;
         min-height: 82px;
     }
 }
@@ -62,6 +74,7 @@
         padding-top: 10px;
     }
 }
+
 
 .game-unit--death {
     position: relative;

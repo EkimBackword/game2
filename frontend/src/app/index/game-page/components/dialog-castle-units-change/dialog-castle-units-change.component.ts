@@ -45,4 +45,11 @@ export class DialogCastleUnitsChangeComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
+  get checkChange() {
+    const data = this.data.data;
+    const flag1 = JSON.stringify(data.army) === JSON.stringify(this.army);
+    const flag2 = JSON.stringify(data.units) === JSON.stringify(this.units);
+    return flag1 && flag2;
+  }
+
 }

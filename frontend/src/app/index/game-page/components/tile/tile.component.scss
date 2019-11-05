@@ -21,6 +21,14 @@
   transform-style: preserve-3d;
 }
 
+.card__face__has_user {
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 0; left: 0;
+    z-index: 1000;
+    background-color: adjust-color($color: $primary, $alpha: -0.5);
+}
+
 .card__face {
   position: absolute;
   height: 100%;
@@ -32,6 +40,26 @@
   img {
     height: 100%;
     width: 100%;
+  }
+
+  .card__face__index {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 18px;
+    width: 18px;
+    font-size: 14px;
+    line-height: 19px;
+    text-align: center;
+    background-color: $black;
+    color: $white-force;
+
+    @include mobile {
+      height: 11px;
+      width: 11px;
+      font-size: 9px;
+      line-height: 12px;
+    }
   }
 }
 

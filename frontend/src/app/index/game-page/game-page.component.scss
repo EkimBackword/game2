@@ -308,8 +308,8 @@ $sidebar_size_mobile: 160px;
     align-items: center;
 
     position: absolute;
-    top: 0; bottom: 0;
-    left: 0; right: 0;
+    top: 4px; bottom: 4px;
+    left: 4px; right: 4px;
     z-index: 1;
 
     content: "";
@@ -355,28 +355,30 @@ $sidebar_size_mobile: 160px;
 }
 .layout-tile-event--capture {
   &::before {
-    content: "\f78c";
-    margin-bottom: 0px;
+    content: "\f024";
+    opacity: .86;
+    @include mobile {
+      opacity: .95;
+    }
   }
 
   &:hover::before {
-    font-size: 2.75em;
-    @include mobile {
-      font-size: 1.5em;
-    }
+    opacity: 1;
   }
 }
 .layout-tile-event--attackCastle {
   &::before {
-    content: "\f286";
-    color: $white-force;
+    content: "\f447";
+    color: $orange;
     text-shadow: 0px 0px 4px $black;
     margin-bottom: 0px;
+    outline: 2px solid $orange;
   }
 
   &:hover::before {
     font-size: 2.75em;
     text-shadow: 4px 4px 8px $black;
+    outline: 3px solid $orange;
     @include mobile {
       font-size: 1.5em;
     }
@@ -387,11 +389,13 @@ $sidebar_size_mobile: 160px;
   &::before {
     content: "\f05b";
     margin-bottom: 0px;
-    color: $red;
+    color: $orange;
+    outline: 2px solid $orange;
   }
-
+  
   &:hover::before {
     font-size: 2.75em;
+    outline: 3px solid $orange;
     @include mobile {
       font-size: 1.5em;
     }
@@ -414,7 +418,6 @@ $sidebar_size_mobile: 160px;
 .layout-tile-user {
   position: relative;
   cursor: pointer;
-  background-color: adjust-color($white, $alpha: -0.5);
   margin: 4px;
 
   @include mobile {
@@ -425,19 +428,23 @@ $sidebar_size_mobile: 160px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
-
+    
     position: absolute;
-    top: 0; bottom: 8px;
-    left: 0; right: 0;
+    height: 1.5em; bottom: 6px;
+    left: 1px; right: 1px;
     z-index: 1;
+    background-color: adjust-color($black, $alpha: -0.125);
 
     content: "\f505";
     font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
     font-weight: 900;
-    font-size: 2em;
+    font-size: 1.5em;
     color: $gray;
-    text-shadow: 0px 0px 4px $black;
+    text-shadow: 1px 1px 4px $black;
+
     @include mobile {
+      height: 1.5em;
+      bottom: 2px;
       font-size: 1em;
     }
   }
@@ -654,9 +661,9 @@ $sidebar_size_mobile: 160px;
   }
 
   .layout-tile-user--#{$color-name} {
-    // background-color: adjust-color($color, $alpha: -0.8);
     &::before {
-      color: $color;
+      color: $white;
+      background-color: adjust-color($color, $alpha: -0.1);
     }
   }
 
@@ -669,8 +676,8 @@ $sidebar_size_mobile: 160px;
 }
 
 
-$event_types: ('chooseTile', 'move', 'capture', 'attackCastle', 'attackUser', 'defense', 'takeUnit');
-$event_types_icon: ('\f21d', '\f3c5', '\f78c', '\f286', '\f05b', '\f3ed', '\f2b5');
+$event_types: ('chooseTile', 'move', 'capture', 'attackCastle', 'attackUser', 'defense', 'takeUnit', 'castleUnitsChange');
+$event_types_icon: ('\f21d', '\f3c5', '\f024', '\f447', '\f05b', '\f3ed', '\f2b5', '\f286');
 @for $i from 0 through length($event_types) - 1 {
   $event_type: nth($event_types, $i + 1);
   $event_type_icon: nth($event_types_icon, $i + 1);

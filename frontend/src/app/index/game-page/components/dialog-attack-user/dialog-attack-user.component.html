@@ -12,6 +12,7 @@
 <div mat-dialog-actions>
   <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
     (click)="onSubmit()"
+    [disabled]="units.length === 0"
   >
     <div class="btn-content">Напасть ({{power}})</div>
   </button>

@@ -331,8 +331,10 @@ export class GameMap {
   }
 
   protected moveUserTo(user: IGameUser, to: IPosition): void {
-    this.tiles[user.x][user.y].hasUser = false;
-    this.tiles[user.x][user.y].userId = null;
+    if (this.tiles[user.x][user.y].userId === user.userId) {
+      this.tiles[user.x][user.y].hasUser = false;
+      this.tiles[user.x][user.y].userId = null;
+    }
     user.x = to.x;
     user.y = to.y;
     this.tiles[to.x][to.y].hasUser = true;

@@ -65,7 +65,8 @@ export class GamePageComponent implements OnInit, OnDestroy {
     attackCastle: 'Нападение на замок',
     attackUser: 'Нападение на игрока',
     defense: 'Защита',
-    takeUnit: 'Получение юнита'
+    takeUnit: 'Получение юнита',
+    castleUnitsChange: 'Изменение обороны замка'
   };
 
   get curUser(): IGamer {
@@ -323,6 +324,9 @@ export class GamePageComponent implements OnInit, OnDestroy {
       case GameEventType.takeUnit: {
           return this.uiSnackEventTakeUnit(event.data as IGameEventTakeUnitData);
       }
+      case GameEventType.castleUnitsChange: {
+          return this.uiSnackEventCastleUnitsChange(event.data as IGameEventCastleUnitsChangeData);
+      }
     }
   }
 
@@ -417,6 +421,14 @@ export class GamePageComponent implements OnInit, OnDestroy {
     this.uiSnack.showMessage({
       title: `Игрок ${user.name}`,
       message: `Усилил армию`,
+      type: 'success'
+    }, { duration: 1500 });
+  }
+  uiSnackEventCastleUnitsChange(data: IGameEventCastleUnitsChangeData) {
+    const user = this.game.Gamers.get(data.userId);
+    this.uiSnack.showMessage({
+      title: `Игрок ${user.name}`,
+      message: `Изменил оборону замка`,
       type: 'success'
     }, { duration: 1500 });
   }

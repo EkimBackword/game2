@@ -46,4 +46,9 @@ export class DialogDefenseComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
+  get check() {
+    const data = this.data.data;
+    return data.army.length > 0 && this.units.length === 0;
+  }
+
 }
