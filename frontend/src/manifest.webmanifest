@@ -1,11 +1,12 @@
 {
-  "name": "Castels. Game #2.",
+  "name": "Castels",
   "short_name": "Castels",
   "theme_color": "#825fc3",
   "background_color": "#f4f6f9",
   "display": "fullscreen",
   "orientation": "landscape",
-  "start_url": "/index.html",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "images/icons/icon-72x72.png",
@@ -47,6 +48,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "splash_pages": null
+  ]
 }

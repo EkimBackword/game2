@@ -14,7 +14,9 @@ import {
   AuthGuard
 } from './share-services';
 
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { SocketIoModule } from 'ngx-socket-io';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -27,7 +29,8 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
     AppRoutingModule,
     HttpClientModule,
     ShareServicesModule,
-    SocketIoModule
+    SocketIoModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     { provide: AuthServiceConfig, useValue: APP_CONFIG.auth },
