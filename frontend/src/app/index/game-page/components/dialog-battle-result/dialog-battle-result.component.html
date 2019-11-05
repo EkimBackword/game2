@@ -28,13 +28,13 @@
                 *ngFor="let item of data.battle.defenseDeathUnits"
                 class="game-unit--death"
                 [unit]="item"
-                [userColor]="data.attackUser.color"
+                [userColor]="data.defenseUser.color"
                 [effect]="data.effect"
             ></app-game-unit>
             <app-game-unit
                 *ngFor="let item of data.battle.defenseSurvivorsUnits"
                 [unit]="item"
-                [userColor]="data.attackUser.color"
+                [userColor]="data.defenseUser.color"
                 [effect]="data.effect"
             ></app-game-unit>
         </div>
