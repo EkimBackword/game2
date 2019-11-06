@@ -16,13 +16,16 @@ import {
     ICreateGameRequest,
     IGameRequest,
     IGameEventRequest,
+    IAddPushSubscriberRequest,
 } from './models';
+import { PushService } from './push.service';
 
 @WebSocketGateway(1082, { namespace: 'games' })
 export class GameGateway implements OnGatewayDisconnect {
 
     constructor(
         private readonly gameService: GameService,
+        private readonly pushService: PushService,
     ) { }
 
     handleDisconnect(socket: Socket) {
@@ -68,6 +71,10 @@ export class GameGateway implements OnGatewayDisconnect {
         try {
             const game = this.gameService.createGame(req.name, req.user.id, req.size, socket);
             game.joinUser(req.user, socket);
+            this.pushService.pushAll({
+                title: `Новая игра "${req.name}" создана`,
+                body: `Создатель игры: ${req.user.name}`,
+            });
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
@@ -152,6 +159,17 @@ export class GameGateway implements OnGatewayDisconnect {
             socket.emit('GameEventError', `Игра не найдена`);
         } catch (err) {
             socket.emit('GameEventError', err.message);
+        }
+    }
+
+    @UseGuards(WsMyGuard)
+    @SubscribeMessage('AddPushSubscriber')
+    async onAddPushSubscriber(socket: Socket, req: IAddPushSubscriberRequest) {
+        try {
+            this.pushService.add(req.pushSubscription);
+            socket.emit('AddPushSubscriberSuccess', true);
+        } catch (err) {
+            socket.emit('AddPushSubscriberError', err.message);
         }
     }
 }

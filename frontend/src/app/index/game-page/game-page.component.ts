@@ -230,7 +230,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     const click$ = this.gameSocket.GameEvent({
       event, gameId: this.gameId
     }).subscribe(
-      data => { console.log(data, event); },
+      data => { },
       err => this.handleError(err),
       () => click$.unsubscribe()
     );

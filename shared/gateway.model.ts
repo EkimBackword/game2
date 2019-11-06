@@ -19,3 +19,11 @@ export interface IGameEventRequest extends IAuthRequest {
     gameId: string;
     event: IGameEvent;
 }
+export interface IAddPushSubscriberRequest extends IAuthRequest {
+    pushSubscription : any;
+}
+
+export interface IPushRequest extends IAuthRequest {
+    title: string;
+    body: string;
+}

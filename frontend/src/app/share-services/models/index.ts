@@ -5,3 +5,4 @@ export * from '../../../../../shared/game-map.model';
 export * from '../../../../../shared/game-unit.model';
 export * from '../../../../../shared/game-user.model';
 export * from '../../../../../shared/gateway.model';
+export * from '../../../../../shared/config';
