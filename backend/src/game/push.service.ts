@@ -4,6 +4,7 @@ import {
     IAddPushSubscriberRequest,
     IPushRequest,
     vapidKeys,
+    IUser,
 } from './models';
 
 @Injectable()
@@ -23,7 +24,7 @@ export class PushService {
         this.subscriptions.set(data.user.id, data.pushSubscription);
     }
 
-    async pushAll(dto: IPushRequest) {
+    async pushAll(dto: IPushRequest, user: IUser) {
         const notificationPayload = {
             notification: {
                 title: dto.title,
@@ -41,8 +42,12 @@ export class PushService {
         };
         try {
             const promises = [];
-            for (const sub of this.subscriptions.values()) {
-                promises.push(webpush.sendNotification( sub, JSON.stringify(notificationPayload )));
+            for (const entrie of this.subscriptions.entries()) {
+                const key = entrie[0];
+                const sub = entrie[1];
+                if (key !== user.id) {
+                    promises.push(webpush.sendNotification( sub, JSON.stringify(notificationPayload )));
+                }
             }
             await Promise.all(promises);
             console.log('PushAll (SUCCESS): Уведомление отправленно');

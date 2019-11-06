@@ -74,7 +74,7 @@ export class GameGateway implements OnGatewayDisconnect {
             this.pushService.pushAll({
                 title: `Новая игра "${req.name}" создана`,
                 body: `Создатель игры: ${req.user.name}`,
-            });
+            }, req.user);
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {

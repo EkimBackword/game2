@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+    <p>{{data.text}}</p>
+</div>
+<div mat-dialog-actions>
+  <button type="button" tabindex="1" cdkFocusInitial class="btn btn-success"
+    (click)="onSubmit()"
+  >
+    <div class="btn-content">{{data.actionOk}}</div>
+  </button>
+  <button type="button" tabindex="2" class="btn btn-danger"
+    (click)="onCancel()"
+  >
+    <div class="btn-content">{{data.actionCancel}}</div>
+  </button>
+</div>
