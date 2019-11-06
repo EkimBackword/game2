@@ -28,14 +28,10 @@ export class PushService {
   }
 
   handleActions() {
-    this.swPush.notificationClicks.subscribe( notificationPayload => {
-        console.log(
-          'Action: ' + notificationPayload.action +
-          'Notification data: ' + notificationPayload.notification.data +
-          'Notification data.url: ' + notificationPayload.notification.data.url +
-          'Notification data.body: ' + notificationPayload.notification.body
-        );
-        window.open(notificationPayload.notification.data.url, '_blank');
+    this.swPush.notificationClicks.subscribe( function(notificationPayload) {
+      console.log('notificationPayload', notificationPayload);
+      console.log('this', this);
+      window.open(notificationPayload.notification.data.url);
     });
   }
 }
