@@ -166,7 +166,7 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('AddPushSubscriber')
     async onAddPushSubscriber(socket: Socket, req: IAddPushSubscriberRequest) {
         try {
-            this.pushService.add(req.pushSubscription);
+            this.pushService.add(req);
             socket.emit('AddPushSubscriberSuccess', true);
         } catch (err) {
             socket.emit('AddPushSubscriberError', err.message);
