@@ -23,7 +23,9 @@ export class PromptUpdateService {
   }
 
   private promptUser(event: UpdateAvailableEvent): boolean {
-    return confirm(`Ваша версия ${event.current.hash}, новая версия ${event.available.hash}. Обновить?`);
+    const currentAppData: any = event.current.appData;
+    const availableAppData: any = event.available.appData;
+    return confirm(`Ваша версия ${currentAppData.version}, новая версия ${availableAppData.version}. Обновить?`);
   }
 
 }
