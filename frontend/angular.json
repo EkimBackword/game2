@@ -44,10 +44,9 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/sw.js",
               "src/images",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.json"
             ],
             "styles": [
               "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",

@@ -17,6 +17,7 @@ import {
 import { SocketIoModule } from 'ngx-socket-io';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
 
 
 @NgModule({
@@ -30,12 +31,14 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     ShareServicesModule,
     SocketIoModule,
+    MatDialogModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     { provide: AuthServiceConfig, useValue: APP_CONFIG.auth },
     { provide: LOCALE_ID, useValue: APP_CONFIG.localeValue },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: APP_CONFIG.dialogOption },
     NoAuthGuard,
     AuthGuard
   ],

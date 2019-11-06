@@ -26,4 +26,16 @@ export class PushService {
       .catch(err => console.error('Could not subscribe to notifications', err));
     }
   }
+
+  handleActions() {
+    this.swPush.notificationClicks.subscribe( notificationPayload => {
+        console.log(
+          'Action: ' + notificationPayload.action +
+          'Notification data: ' + notificationPayload.notification.data +
+          'Notification data.url: ' + notificationPayload.notification.data.url +
+          'Notification data.body: ' + notificationPayload.notification.body
+        );
+        window.open(notificationPayload.notification.data.url, '_blank');
+    });
+  }
 }

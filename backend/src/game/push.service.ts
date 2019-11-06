@@ -29,17 +29,20 @@ export class PushService {
             notification: {
                 title: dto.title,
                 body: dto.body,
+                icon: 'assets/logo.png',
                 vibrate: [100, 50, 100],
                 data: {
+                    url: `app/games/${dto.gameId}`,
                     dateOfArrival: Date.now(),
                     primaryKey: 1,
                 },
                 actions: [{
                     action: 'explore',
-                    title: 'Открыть приложение',
+                    title: 'Присоединиться',
                 }],
             },
         };
+
         try {
             const promises = [];
             for (const entrie of this.subscriptions.entries()) {

@@ -213,10 +213,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
     if (dialogComponent) {
       const dialogRef = this.dialog.open(dialogComponent, {
-        maxHeight: '100vh',
-        maxWidth: '100vw',
-        width: '650px',
-        panelClass: 'full-screen-modal',
         data: { ...dialogData, effect: this.game.gameMap.effect }
       });
       const result = await dialogRef.afterClosed().toPromise();
@@ -365,13 +361,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
         battle, attackUser, defenseUser,
         effect: this.game.gameMap.effect
       };
-      this.dialog.open(DialogBattleResultComponent, {
-        maxHeight: '100vh',
-        maxWidth: '100vw',
-        width: '650px',
-        panelClass: 'full-screen-modal',
-        data: dialogData
-      });
+      this.dialog.open(DialogBattleResultComponent, { data: dialogData });
     } else {
       this.uiSnack.showMessage({
         title: 'Нападение на замок',
@@ -400,13 +390,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
         battle, attackUser, defenseUser,
         effect: this.game.gameMap.effect
       };
-      this.dialog.open(DialogBattleResultComponent, {
-        maxHeight: '100vh',
-        maxWidth: '100vw',
-        width: '650px',
-        panelClass: 'full-screen-modal',
-        data: dialogData
-      });
+      this.dialog.open(DialogBattleResultComponent, { data: dialogData });
     } else {
       this.uiSnack.showMessage({
         title: `Нападение на ${defenseUser.name}`,

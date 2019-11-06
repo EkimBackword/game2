@@ -1,5 +1,6 @@
 import { environment } from 'src/environments/environment';
 import { AuthServiceConfig } from './share-services/auth/auth.types';
+import { MatDialogConfig } from '@angular/material';
 
 // Структура конфигурации приложения
 export interface IAppConfig {
@@ -11,6 +12,8 @@ export interface IAppConfig {
 
     // Префикс API, описывает текущую используемую версию
     auth: AuthServiceConfig;
+
+    dialogOption: MatDialogConfig;
 
     // Дефолтовый язык интерфейса
     language?: string;
@@ -25,6 +28,12 @@ export const APP_CONFIG: IAppConfig = {
       defaultUnauthorizedUrn: '/auth',
       defaultAuthorizedUrn: '/app',
       authCheckTimeout: 15000,
+    },
+    dialogOption: {
+      maxHeight: '100vh',
+      maxWidth: '100vw',
+      width: '650px',
+      panelClass: 'full-screen-modal',
     },
     language: 'rus',
     localeValue: 'ru',

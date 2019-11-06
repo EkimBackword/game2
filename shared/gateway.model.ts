@@ -26,4 +26,5 @@ export interface IAddPushSubscriberRequest extends IAuthRequest {
 export interface IPushRequest extends IAuthRequest {
     title: string;
     body: string;
+    gameId: string;
 }

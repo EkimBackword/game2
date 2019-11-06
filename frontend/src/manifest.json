@@ -1,8 +1,6 @@
 {
-  "lang": "ru",
   "name": "Castels",
   "short_name": "Castels",
-  "description": "Castels is a game",
   "theme_color": "#825fc3",
   "background_color": "#f4f6f9",
   "display": "fullscreen",

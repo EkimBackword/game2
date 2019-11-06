@@ -59,11 +59,12 @@ import { DialogBattleResultComponent } from './game-page/components/dialog-battl
     DragDropModule
   ],
   entryComponents: [
-  DialogCaptureComponent,
-  DialogAttackCastleComponent,
-  DialogAttackUserComponent,
-  DialogDefenseComponent,
-  DialogCastleUnitsChangeComponent,
-  DialogBattleResultComponent]
+    DialogCaptureComponent,
+    DialogAttackCastleComponent,
+    DialogAttackUserComponent,
+    DialogDefenseComponent,
+    DialogCastleUnitsChangeComponent,
+    DialogBattleResultComponent
+  ]
 })
 export class IndexModule { }

@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ApplicationRef } from '@angular/core';
 import { SwUpdate, UpdateAvailableEvent } from '@angular/service-worker';
 import { ConfirmDialogComponent, IConfirmDialogComponentData } from './confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
+import { concat, interval } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +12,14 @@ export class PromptUpdateService {
 
   constructor(
     private updates: SwUpdate,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+    private appRef: ApplicationRef,
+  ) {
+    updates.activated.subscribe(event => {
+      console.log('old version was', event.previous);
+      console.log('new version is', event.current);
+    });
+  }
 
   checkForUpdate() {
     console.log('checkForUpdate');
@@ -28,6 +36,16 @@ export class PromptUpdateService {
     }
   }
 
+  pollingCheck() {
+    console.log('pollingCheck');
+    // Allow the app to stabilize first, before starting polling for updates with `interval()`.
+    const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));
+    const everySixHours$ = interval(6 * 60 * 60 * 1000);
+    const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
+
+    everySixHoursOnceAppIsStable$.subscribe(() => this.updates.checkForUpdate());
+  }
+
   private async promptUser(event: UpdateAvailableEvent) {
     const currentAppData: any = event.current.appData;
     const availableAppData: any = event.available.appData;
@@ -38,11 +56,8 @@ export class PromptUpdateService {
       actionCancel: 'Отмена'
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      maxHeight: '100vh',
-      maxWidth: '100vw',
-      width: '650px',
-      panelClass: 'full-screen-modal',
-      data: dialogData
+      data: dialogData,
+      disableClose: true
     });
     return await dialogRef.afterClosed().toPromise();
   }

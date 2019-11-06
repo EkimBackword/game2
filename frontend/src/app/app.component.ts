@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CheckForUpdateService } from './share-services/check-for-update.service';
 import { PromptUpdateService } from './share-services/prompt-update.service';
-import { LogUpdateService } from './share-services/log-update.service';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +17,11 @@ export class AppComponent implements OnInit {
 
   constructor(
     private promptUpdate: PromptUpdateService,
-    private checkForUpdate: CheckForUpdateService,
-    private logUpdate: LogUpdateService,
   ) {}
 
   ngOnInit() {
     this.promptUpdate.checkForUpdate();
+    this.promptUpdate.pollingCheck();
   }
 
 }

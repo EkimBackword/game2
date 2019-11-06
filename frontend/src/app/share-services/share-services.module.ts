@@ -6,7 +6,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 @NgModule({
   imports: [
     CommonModule,
-    UiSnackModule
+    UiSnackModule,
   ],
   declarations: [ConfirmDialogComponent],
   entryComponents: [ConfirmDialogComponent],
