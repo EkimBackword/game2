@@ -21,6 +21,7 @@ export class MenuPageComponent implements OnInit {
   ngOnInit() {
     this.user = this.userApi.getSession();
     this.pushApi.subscribeToNotifications();
+    this.pushApi.handleActions();
   }
 
   async logout() {

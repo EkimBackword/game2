@@ -21,7 +21,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.promptUpdate.checkForUpdate();
-    this.promptUpdate.pollingCheck();
   }
 
 }
