@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.2.2"
+    "version": "1.2.5"
   },
   "assetGroups": [
     {
@@ -12,22 +12,13 @@
         "files": [
           "/favicon.ico",
           "/index.html",
-          "/*.css",
-          "/*.js"
+          "/assets/**",
+          "/images/**",
+          "/*.(js|css|eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani|json)"
         ],
         "urls": [
           "https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap",
           "https://fonts.googleapis.com/icon?family=Material+Icons"
-        ]
-      }
-    }, {
-      "name": "assets",
-      "installMode": "lazy",
-      "updateMode": "prefetch",
-      "resources": {
-        "files": [
-          "/assets/**",
-          "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
         ]
       }
     }
