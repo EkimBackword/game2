@@ -28,10 +28,9 @@ export class PushService {
   }
 
   handleActions() {
-    this.swPush.notificationClicks.subscribe( function(notificationPayload) {
-      console.log('notificationPayload', notificationPayload);
-      console.log('this', this);
-      window.open(notificationPayload.notification.data.url);
+    this.swPush.notificationClicks.subscribe(notificationPayload => {
+      window.focus();
+      window.open(notificationPayload.notification.data.url, '_self');
     });
   }
 }

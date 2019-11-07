@@ -15,13 +15,13 @@ export class MenuPageComponent implements OnInit {
 
   constructor(
     private userApi: UserService,
-    private pushApi: PushService
+    // private pushApi: PushService
   ) { }
 
   ngOnInit() {
     this.user = this.userApi.getSession();
-    this.pushApi.subscribeToNotifications();
-    this.pushApi.handleActions();
+    // this.pushApi.subscribeToNotifications();
+    // this.pushApi.handleActions();
   }
 
   async logout() {

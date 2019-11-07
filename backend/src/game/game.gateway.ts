@@ -20,8 +20,35 @@ import {
 } from './models';
 import { PushService } from './push.service';
 
+export interface IUserToGame {
+    gameId: string;
+    sockets: string[];
+}
+
 @WebSocketGateway(1082, { namespace: 'games' })
 export class GameGateway implements OnGatewayDisconnect {
+
+    userToGame = new Map<string, IUserToGame>();
+    join(socket: Socket, user: IUser, gameId: string) {
+        const data: IUserToGame = {
+            gameId,
+            sockets: [socket.id],
+        };
+        if (this.userToGame.has(user.id)) {
+            data.sockets = data.sockets.concat(this.userToGame.get(user.id).sockets);
+        }
+        this.userToGame.set(user.id, data);
+    }
+    leave(socket: Socket, user: IUser) {
+        if (this.userToGame.has(user.id)) {
+            const data = this.userToGame.get(user.id);
+            const index = data.sockets.indexOf(socket.id);
+            data.sockets.splice(index, 1);
+            if (data.sockets.length === 0) {
+                this.onLeaveGame(socket, { gameId: data.gameId, user });
+            }
+        }
+    }
 
     constructor(
         private readonly gameService: GameService,
@@ -29,13 +56,8 @@ export class GameGateway implements OnGatewayDisconnect {
     ) { }
 
     handleDisconnect(socket: Socket) {
-        for (const key in socket.rooms) {
-            if (socket.rooms.hasOwnProperty(key)) {
-                const gameId = socket.rooms[key];
-                const user = this.checkUser(socket);
-                this.onLeaveGame(socket, { gameId, user });
-            }
-        }
+        const user = this.checkUser(socket);
+        this.leave(socket, user);
     }
 
     private checkUser(socket: Socket) {
@@ -71,11 +93,11 @@ export class GameGateway implements OnGatewayDisconnect {
         try {
             const game = this.gameService.createGame(req.name, req.user.id, req.size, socket);
             game.joinUser(req.user, socket);
-            this.pushService.pushAll({
-                title: `Новая игра "${req.name}" создана`,
-                body: `Создатель игры: ${req.user.name}`,
-                gameId: game.id,
-            }, req.user);
+            // this.pushService.pushAll({
+            //     title: `Новая игра "${req.name}" создана`,
+            //     body: `Создатель игры: ${req.user.name}`,
+            //     gameId: game.id,
+            // }, req.user);
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
@@ -94,6 +116,7 @@ export class GameGateway implements OnGatewayDisconnect {
                     socket.emit('JoinGameError', 'Игра уже началась');
                     return;
                 }
+                this.join(socket, req.user, game.GameId);
                 game.toUsers(socket).emit('GamerJoined', req.user);
                 socket.emit('JoinGameSuccess', game.response);
                 return;
@@ -115,6 +138,7 @@ export class GameGateway implements OnGatewayDisconnect {
                     socket.emit('LeaveGameError', 'Такого игрока небыло в игре');
                     return;
                 }
+                this.userToGame.delete(req.user.id);
                 game.toUsers(socket).emit('GamerLeaved', req.user);
                 socket.emit('LeaveGameSuccess', true);
                 return;
@@ -167,7 +191,7 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('AddPushSubscriber')
     async onAddPushSubscriber(socket: Socket, req: IAddPushSubscriberRequest) {
         try {
-            this.pushService.add(req);
+            // this.pushService.add(req);
             socket.emit('AddPushSubscriberSuccess', true);
         } catch (err) {
             socket.emit('AddPushSubscriberError', err.message);
