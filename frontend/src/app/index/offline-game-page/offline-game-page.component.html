@@ -1,0 +1,140 @@
+<section class="d-flex flex-fill flex-column justify-content-center align-items-center" *ngIf="isLoading">
+  <h1>Loading ...</h1>
+</section>
+
+<div class="scene_info scene_info__user" *ngIf="game && curUser">
+    <p>Ход игрока:</p>
+    <p><strong>{{curUser.name}}</strong></p>
+  </div>
+  <div class="scene_info scene_info__game_events" *ngIf="game && game.events">
+    <div *ngFor="let event of game.events.slice().reverse()"
+      class="
+        event
+        event_color_{{event.data.color}}
+        event_type_{{event.type}}
+      "
+      title="{{typesRus[event.type]}}"
+  ></div>
+</div>
+
+<section id="scene" class="map-wrapper" *ngIf="!isLoading">
+
+  <div id="map" class='map'>
+
+
+
+    <!-- gameMap -->
+    <div *ngIf="game && game.gameMap" class="layout map-layout layout-row-size--{{game.gameMap.size.height}}-{{game.gameMap.size.width}}">
+      <div *ngFor="let row of game.gameMap.tiles; let x = index"
+        class="layout-row-{{x}} layout-column-size--{{game.gameMap.size.width}}"
+      >
+        <div *ngFor="let tile of row"
+          class="layout-tile layout-tile-{{tile.y}}"
+        >
+          <app-tile [tile]="tile"></app-tile>
+        </div>
+      </div>
+    </div>
+    <!-- gameMap -->
+
+
+    <!-- gameMap -->
+    <div *ngIf="game && game.gameMap" class="layout map-layout--without-row map-layout layout-row-size--{{game.gameMap.size.height}}-{{game.gameMap.size.width}}">
+      <div *ngFor="let item of game.gameMap.gameUsers | keyvalue;"
+        class="
+          layout-tile
+          layout-tile-{{item.value.x}}-{{item.value.y}}
+          layout-tile-user
+          layout-tile-user--{{item.value.color}}
+        "
+      > </div>
+    </div>
+    <!-- gameMap -->
+
+
+    <!-- map-effect-layout -->
+    <div *ngIf="game && game.gameMap && tileEvents" class="layout map-layout--without-row map-effect-layout layout-row-size--{{game.gameMap.size.height}}-{{game.gameMap.size.width}}">
+      <div *ngFor="let event of tileEvents;"
+        class="
+          layout-tile
+          layout-tile-{{event.data.to.x}}-{{event.data.to.y}}
+          layout-tile-event
+          layout-tile-event--{{event.type}}
+        "
+        title="{{typesRus[event.type]}}"
+        (click)="click(event)"
+      > </div>
+    </div>
+    <!-- map-effect-layout -->
+
+
+    <div *ngIf="game && game.message" class="layout message-layout layout-row-size--{{game.Size.height}}-{{game.Size.width}}">
+      <div class="message-layout--text">
+        <h1>{{game.message}}</h1>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
+  <div class="map-info--main">
+    <small>Игра: <strong>{{game.Name}}</strong> </small>
+    <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
+    <div class="user-list">
+      <div *ngFor="let item of Gamers"
+      class="
+        user-list_user
+        user-list_user--color-{{item.color}}
+      "
+      [class.user-list_user--active]="item.id === game.currentUserId"
+      [class.user-list_user--death]="item.isDeath"
+      >
+        <p class="name">{{item.name}}</p>
+        <p class="score">{{getCastleCount(item.id)}}</p>
+      </div>
+    </div>
+
+    <div *ngIf="game && game.gameMap && game.gameMap.gameUsers">
+      <app-user-info
+        [users]="game.gameMap.gameUsers"
+        [effect]="game.gameMap.effect"
+        [takeUnitEvent]="takeUnitEvent"
+        [castleUnitsChangeEvent]="castleUnitsChangeEvent"
+        (atEvent)="click($event)"
+      ></app-user-info>
+
+    </div>
+  </div>
+  <div class="map-info--action">
+    <div *ngIf="game && game.gameMap && game.gameMap.deckPeriodEffects">
+      <app-map-effect
+        [effect]="game.gameMap.effect"
+        [deckPeriodEffects]="game.gameMap.deckPeriodEffects"
+        [deckOldEffects]="game.gameMap.deckOldEffects"
+        [currentPeriodEffects]="game.gameMap.currentPeriodEffects"
+      ></app-map-effect>
+    </div>
+
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+     *ngIf="game && game.HostId === user.id && game.State === 'WAITING'"
+    >
+      <button type="button" tabindex="1" class="btn btn-secondary" (click)="addBot()">
+        <div class="btn-content">Добавить бота</div>
+      </button>
+    </fieldset>
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0"
+      *ngIf="game && game.HostId === user.id && game.State === 'WAITING'"
+    >
+      <button type="button" tabindex="2" class="btn btn-success" (click)="startGame()">
+        <div class="btn-content">Начать</div>
+      </button>
+    </fieldset>
+    <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+      <button type="button" tabindex="3" class="btn btn-danger" [routerLink]="['/app/games']" >
+        <div class="btn-content">Выход</div>
+      </button>
+    </fieldset>
+  </div>
+</section>

@@ -11,7 +11,7 @@
       card__face__color--{{userColor}}
     ">
       <!-- <div class="card__face__has_user" *ngIf="tile.hasUser"></div> -->
-      <span class="card__face__index" *ngIf="index">{{index}}</span>
+      <span class="card__face__index" *ngIf="index !== null">{{index}}</span>
       <img src="/assets/img/{{type}}.png" alt="{{type}}">
     </div>
   </div>

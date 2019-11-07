@@ -1,4 +1,5 @@
 export * from '../../../../../shared/functions';
+export * from '../../../../../shared/bot';
 export * from '../../../../../shared/game-event.model';
 export * from '../../../../../shared/game-info.dto';
 export * from '../../../../../shared/game-map.model';

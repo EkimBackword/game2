@@ -25,6 +25,7 @@ import { DialogDefenseComponent } from './game-page/components/dialog-defense/di
 import { MapEffectComponent } from './game-page/components/map-effect/map-effect.component';
 import { DialogCastleUnitsChangeComponent } from './game-page/components/dialog-castle-units-change/dialog-castle-units-change.component';
 import { DialogBattleResultComponent } from './game-page/components/dialog-battle-result/dialog-battle-result.component';
+import { OfflineGamePageComponent } from './offline-game-page/offline-game-page.component';
 
 
 
@@ -48,6 +49,7 @@ import { DialogBattleResultComponent } from './game-page/components/dialog-battl
     MapEffectComponent,
     DialogCastleUnitsChangeComponent,
     DialogBattleResultComponent,
+    OfflineGamePageComponent,
   ],
   imports: [
     CommonModule,

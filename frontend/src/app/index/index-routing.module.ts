@@ -12,6 +12,7 @@ import { AuthGuard } from '../share-services/auth';
 import { GamePageComponent } from './game-page/game-page.component';
 import { HelpPageComponent } from './help-page/help-page.component';
 import { MenuPageComponent } from './menu-page/menu-page.component';
+import { OfflineGamePageComponent } from './offline-game-page/offline-game-page.component';
 
 
 export const myRoutes: Routes = [
@@ -22,6 +23,7 @@ export const myRoutes: Routes = [
     children: [
       { path: 'games', component: MenuPageComponent },
       { path: 'games/:gameId', component: GamePageComponent },
+      { path: 'game-offline', component: OfflineGamePageComponent },
       { path: 'help', component: HelpPageComponent },
       { path: '**', redirectTo: 'games'},
     ]
