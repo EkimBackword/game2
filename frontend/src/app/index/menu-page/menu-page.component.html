@@ -3,10 +3,13 @@
     <span>Castles</span>
   </a>
 </header>
-<section class="menu-content shadow-sm" [ngSwitch]="menuState">
+<section class="menu-content shadow-sm" [ngSwitch]="menuState"
+  [class.menu-content--is-online]="isOnline"
+>
   <app-main-menu
     *ngSwitchCase="0"
     [user]="user"
+    [isOnline]="isOnline"
     (logout)="logout()"
     (openMenuOption)="openMenuOption($event)"
   ></app-main-menu>

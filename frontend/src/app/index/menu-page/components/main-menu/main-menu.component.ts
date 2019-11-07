@@ -10,6 +10,7 @@ export class MainMenuComponent implements OnInit {
 
   public isBusy = false;
   @Input() public user: IUser;
+  @Input() public isOnline: boolean;
   @Output() logout = new EventEmitter();
   @Output() openMenuOption = new EventEmitter<number>();
 

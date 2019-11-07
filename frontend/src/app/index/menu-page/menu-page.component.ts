@@ -12,16 +12,17 @@ export class MenuPageComponent implements OnInit {
   public user: IUser = null;
   public isBusy = false;
   public menuState = 0;
+  public isOnline: boolean;
 
   constructor(
     private userApi: UserService,
-    // private pushApi: PushService
   ) { }
 
   ngOnInit() {
     this.user = this.userApi.getSession();
-    // this.pushApi.subscribeToNotifications();
-    // this.pushApi.handleActions();
+    this.userApi.checkOnline$.subscribe(
+      flag => { this.isOnline = flag; }
+    );
   }
 
   async logout() {

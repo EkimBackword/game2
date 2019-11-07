@@ -1,4 +1,4 @@
-import { Controller, Get, Query, InternalServerErrorException, Body } from '@nestjs/common';
+import { Controller, Get, Query, InternalServerErrorException, Body, Head } from '@nestjs/common';
 
 @Controller()
 export class AppController {
@@ -11,6 +11,11 @@ export class AppController {
   @Get('hi')
   getProfile(@Query('name') name: string) {
     return `Hi, ${name ? name : 'Unknow'}!`;
+  }
+
+  @Head('check-online')
+  checkOnline() {
+    return true;
   }
 
 }

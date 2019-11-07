@@ -4,6 +4,9 @@ import * as uuid4 from 'uuid4';
 
 import { AuthServiceConfig } from './auth.types';
 import { IUser } from '../models';
+import { HttpClient } from '@angular/common/http';
+import { interval, Observable, of, concat } from 'rxjs';
+import { switchMap, catchError, map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -11,10 +14,27 @@ import { IUser } from '../models';
 })
 export class UserService {
 
+  public checkOnline$: Observable<boolean>;
+  private globalPrefix = '/api/v1.0';
+
   constructor(
     private router: Router,
-    private config: AuthServiceConfig
-  ) { }
+    private config: AuthServiceConfig,
+    http: HttpClient
+  ) {
+    if ('onLine' in navigator) {
+      const head$ = of(navigator.onLine);
+      const interval$ = interval(1000).pipe(switchMap(() => of(navigator.onLine)));
+      this.checkOnline$ = concat(head$, interval$);
+    } else {
+      const head$ = http.head<boolean>(`${this.globalPrefix}/check-online`).pipe(
+        map(() => true),
+        catchError(() => of(false)),
+      );
+      const interval$ = interval(1000).pipe(switchMap(() => head$));
+      this.checkOnline$ = concat(head$, interval$);
+    }
+  }
 
   public async create(name: string) {
     const user: IUser = { id: uuid4(), name };
