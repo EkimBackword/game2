@@ -194,13 +194,14 @@ export class GameInfo implements IGameInfoResponse {
 
     getActions(user: IUser) {
         const gamer: IGamer = this.Gamers.get(user.id);
-        if (gamer && gamer.isDeath) {
-            return [];
-        } else if (this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id) {
+        if (this.tmpCurrentUserId && this.tmpCurrentUserId !== user.id) {
             return [];
         } else if (this.tmpCurrentUserId && this.tmpCurrentUserId === user.id) {
             return this.tmpEvents;
         } else if (this.currentUserId !== user.id) {
+            return [];
+        } else if (this.currentUserId === user.id && gamer && gamer.isDeath) {
+            this.setNextUser();
             return [];
         } else {
             const gamer = this.getUser(user.id);

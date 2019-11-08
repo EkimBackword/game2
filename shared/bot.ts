@@ -44,7 +44,7 @@ export class Bot {
                     switch (e.type) {
                         case GameEventType.capture: {
                             const data = e.data as IGameEventCaptureData;
-                            return data.army.length > 0;
+                            return data.army.length >= 0;
                         }
                         case GameEventType.attackCastle: {
                             const data = e.data as IGameEventAttackCastleData;
