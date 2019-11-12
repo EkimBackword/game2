@@ -2,6 +2,23 @@
   <h1>Loading ...</h1>
 </section>
 
+<section class="
+    help_message
+    help_message__arrow_to--{{helpStateMap.get(helpState).arrowTo}}
+  "
+
+  *ngIf="isHelpShow && helpStateMap.has(helpState)">
+
+  <div class="help_message__info">
+    <p>{{helpStateMap.get(helpState).massage}}</p>
+    <button type="button" tabindex="3" class="btn btn-secondary" (click)="changeHelpState()">
+      <div class="btn-content">
+        {{helpStateMap.get(helpState).hasNext ? 'Дальше' : 'Закрыть'}}
+      </div>
+    </button>
+  </div>
+</section>
+
 <div class="scene_info scene_info__user" *ngIf="game && curUser">
     <p>Ход игрока:</p>
     <p><strong>{{curUser.name}}</strong></p>
@@ -19,7 +36,9 @@
 
 <section id="scene" class="map-wrapper" *ngIf="!isLoading">
 
-  <div id="map" class='map'>
+  <div id="map" class='map'
+    [class.map_help_info] = "helpStateMap.get(helpState).arrowTo === 'map'"
+  >
 
 
 
@@ -82,7 +101,9 @@
   <div class="map-info--main">
     <small>Игра: <strong>{{game.Name}}</strong> </small>
     <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
-    <div class="user-list">
+    <div class="user-list"
+    [class.user_list_help_info] = "helpStateMap.get(helpState).arrowTo === 'user-list'"
+    >
       <div *ngFor="let item of Gamers"
       class="
         user-list_user

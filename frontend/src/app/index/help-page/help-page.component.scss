@@ -23,7 +23,7 @@
   padding-top: 30px;
   background-color: $white;
 
-  @include for-xsmall {
+  @include mobile {
     width: $xxs;
   }
 }
@@ -54,7 +54,7 @@ img {
   max-width: $xs - 120;
   margin: 0 auto;
 
-  @include for-xsmall {
+  @include mobile {
     max-width: $xxs - 120;
   }
 }

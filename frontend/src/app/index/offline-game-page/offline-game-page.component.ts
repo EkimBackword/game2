@@ -38,6 +38,12 @@ import {
   IDialogBattleResultComponentData
 } from '../game-page/components/dialog-battle-result/dialog-battle-result.component';
 
+export interface IHelpInfo {
+  massage: string;
+  arrowTo?: string;
+  hasNext: boolean;
+}
+
 @Component({
   selector: 'app-offline-game-page',
   templateUrl: './offline-game-page.component.html',
@@ -51,7 +57,6 @@ export class OfflineGamePageComponent implements OnInit {
   public botsCount = 0;
   public game: GameInfo;
   public gameId: string;
-
   public tileEvents: IGameEvent[];
   public takeUnitEvent: IGameEvent;
   public castleUnitsChangeEvent: IGameEvent;
@@ -66,6 +71,16 @@ export class OfflineGamePageComponent implements OnInit {
     takeUnit: 'Получение юнита',
     castleUnitsChange: 'Изменение обороны замка'
   };
+
+  public isHelp = false;
+  public isHelpShow = false;
+  public helpState = 0;
+  public helpStateMap: Map<number, IHelpInfo> = new Map([
+    [0, { massage: 'Добро пожаловать в обучение', arrowTo: '', hasNext: true }],
+    [1, { massage: 'Это поле боя, тут будут проходить большинство действий', arrowTo: 'map', hasNext: true }],
+    [2, { massage: 'Это список участнико боя', arrowTo: 'user-list', hasNext: true }],
+    [3, { massage: 'Выберите изначальное рсположение вашего войска', arrowTo: '', hasNext: false }],
+  ]);
 
   get curUser(): IGamer {
     if (this.game && this.game.currentUserId) {
@@ -86,8 +101,16 @@ export class OfflineGamePageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    return this.route.queryParamMap.subscribe(
+      (queryMap) => {
+        this.isHelp = queryMap.has('help');
+        this.init();
+      }
+    );
+  }
+
+  init() {
     this.user = this.userService.getSession();
-    this.bots.set('bot-2', new Bot('bot-2', 'Бот 2'));
     this.setActiveEvents(true);
     this.game = new GameInfo({
       isFrontend: false,
@@ -100,8 +123,24 @@ export class OfflineGamePageComponent implements OnInit {
     this.gameId = this.game.GameId;
     this.game.joinUser(this.user);
     this.setActiveEvents();
+    if (this.isHelp) {
+      this.addBot();
+      this.startGame();
+    }
     this.isLoading = false;
     setTimeout(() => { const scene = new Scene('#scene', '#map'); }, 0);
+  }
+
+  changeHelpState() {
+    if (this.isHelpShow) {
+      console.log('HelpState -- change');
+      const helpInfo = this.helpStateMap.get(this.helpState);
+      this.helpState++;
+      this.isHelpShow = helpInfo.hasNext;
+    } else {
+      console.log('HelpState -- show');
+      this.isHelpShow = true;
+    }
   }
 
   addBot() {
@@ -181,6 +220,9 @@ export class OfflineGamePageComponent implements OnInit {
   private OnGameStarted(data: IGameInfoResponse) {
     this.game.startBackend();
     this.setActiveEvents();
+    if (this.isHelp) {
+      this.changeHelpState();
+    }
   }
 
   private OnGameEvent(data: IGameEventRequest) {

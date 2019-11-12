@@ -1,6 +1,7 @@
 export class Scene {
   private scene: HTMLDivElement;
   private map: HTMLDivElement;
+  private root: HTMLElement;
 
   private isDrag = false;
   private x = 0;
@@ -9,10 +10,19 @@ export class Scene {
   constructor(scene: string, map: string) {
     this.scene = document.querySelector(scene);
     this.map = document.querySelector(map);
+    this.root = document.documentElement;
+    this.handleResize();
+    window.addEventListener('resize', (e) => this.handleResize(e));
     this.scene.addEventListener('wheel', (e) => this.handleWheel(e));
     this.scene.addEventListener('mousedown', (e) => this.handleDown(e));
     this.scene.addEventListener('mousemove', (e) => this.handleMove(e));
     this.scene.addEventListener('mouseup', (e) => this.handleUp(e));
+  }
+
+  handleResize(e?: UIEvent) {
+    const diff = window.innerWidth > 1000 ? 400 + 110 : 160 + 60;
+    const battlefieldSize = Math.min(window.innerHeight, window.innerWidth - diff);
+    this.root.style.setProperty('--battlefield-size', battlefieldSize + 'px');
   }
 
   handleWheel(e: WheelEvent) {

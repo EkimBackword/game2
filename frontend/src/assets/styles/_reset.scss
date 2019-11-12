@@ -5,7 +5,7 @@ body {
   min-width: 970px;
   min-height: 100%;
 
-  @include for-xsmall {
+  @include mobile {
     min-width: $xxs;
   }
 
@@ -33,27 +33,27 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @include mobile {
-  h1, .h1 { 
+  h1, .h1 {
     font-size: 1.4rem !important;
     line-height: 1.45rem !important;
   };
-  h2, .h2 { 
+  h2, .h2 {
     font-size: 1.3rem !important;
     line-height: 1.35rem !important;
   };
-  h3, .h3 { 
+  h3, .h3 {
     font-size: 1.2rem !important;
     line-height: 1.25rem !important;
   };
-  h4, .h4 { 
+  h4, .h4 {
     font-size: 1.1rem !important;
     line-height: 1.15rem !important;
   };
-  h5, .h5 { 
+  h5, .h5 {
     font-size: 1rem !important;
     line-height: 1rem !important;
   };
-  h6, .h6 { 
+  h6, .h6 {
     font-size: 1rem !important;
     line-height: 1rem !important;
   };
@@ -74,13 +74,13 @@ h1, h2, h3, h4, h5, h6,
 .container {
   min-width: 940px;
 
-  @include for-middle {
+  @include smallscreen {
     max-width: 1140px;
   }
-  @include for-small {
+  @include tablet {
     max-width: 960px;
   }
-  @include for-xsmall {
+  @include mobile {
     max-width: none;
   }
 }

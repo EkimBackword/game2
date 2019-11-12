@@ -4,26 +4,19 @@ $small: 1000px;
 $middle: 1200px;
 $large: 1400px;
 
-// 0 - 992px
-@mixin for-xsmall {
-  @media (max-width: $small) { @content; }
-}
-// 992px - 1200px
-@mixin for-small {
-  @media (min-width: $small) { @content; }
-}
-// 1200px - 1400px
-@mixin for-middle {
-  @media (min-width: $middle) { @content; }
-}
-// 1400px - ...
-@mixin for-large {
-  @media (min-width: $large) { @content; }
+@mixin mobile-browser {
+  @media (max-width: $xxs) { @content; }
 }
 @mixin mobile {
   @media (max-width: $small) { @content; }
   @media (display-mode: fullscreen ) and (max-width: $small) { @content; }
 }
-@mixin mobile-browser {
-  @media (max-width: $xxs) { @content; }
+@mixin tablet {
+  @media (min-width: $small) { @content; }
+  @media (display-mode: fullscreen ) and (min-width: $small) { @content; }
 }
+@mixin smallscreen {
+  @media (min-width: $middle) { @content; }
+  @media (display-mode: fullscreen ) and (min-width: $middle) { @content; }
+}
+

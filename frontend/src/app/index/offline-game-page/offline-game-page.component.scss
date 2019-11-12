@@ -17,656 +17,138 @@ $sidebar_size_mobile: 160px;
   position: relative;
 }
 
-
-
-
-
-
-
-
-.scene_info {
-  position: absolute;
-  z-index: 1000;
-  padding: 8px;
-
-  border-radius: 4px;
-  box-shadow: 2px 2px 10px $gray;
-  background-color: $white;
-
-  @include mobile {
-    padding: 4px;
-  }
-
-  p {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    font-size: 12px;
-    line-height: 12px;
-  }
-}
-.scene_info__user {
-  top: 8px;
-  left: 8px;
-  width: 100px;
-  height: 40px;
-
-  @include mobile {
-    display: none;
-  }
-}
-
-.scene_info__game_events {
-  top: 56px;
-  bottom: 8px;
-  left: 8px;
-  width: 100px;
-  overflow-y: scroll;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-
-  @include mobile {
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
-    width: 50px;
-  }
-
-  .event {
-    flex-shrink: 0;
-    width: 60px;
-    height: 40px;
-    background-color: adjust-color($gray, $alpha: -0.35);
-    margin: 4px auto;
-    border-radius: 4px;
-    box-shadow: 1px 1px 4px $black;
-    position: relative;
-
-    @include mobile {
-      margin: 2px auto;
-      width: 36px;
-      height: 36px;
-    }
-
-    &::before {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 0; right: 0;
-      z-index: 1;
-
-      content: "";
-      font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-      font-weight: 900;
-      font-size: 1.5em;
-      color: $white;
-      // text-shadow: 0px 0px 4px $black;
-
-      @include mobile {
-        font-size: 1em;
+.map-info {
+  .map-info--main {
+    .user-list_user {
+      &::after {
+        content: none;
       }
     }
   }
 }
 
+.help_message {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 100px; right: $sidebar_size;
+  z-index: 2000;
+  // background-color: adjust-color($color: $white, $alpha: -0.5);
 
-
-
-
-
-
-
-
-
-.map-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: calc(100% - #{$sidebar_size});
-  position: relative;
 
   @include mobile {
-    width: calc(100% - #{$sidebar_size_mobile});
-  }
-
-
-  .map {
-    width: calc(100vh);
-    height: calc(100vh);
-    margin-left: 50px;
-
-    @include mobile {
-      margin-left: 25px;
-    }
-    // position: relative;
-    position: fixed;
-
-    .layout {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 0; right: 0;
-
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-    }
-
-    .map-layout--without-row {
-      // Нужен дальше в цикле
-    }
-
-    .map-layout {
-      z-index: 100;
-    }
-
-    .object-layout {
-      z-index: 200;
-    }
-
-    .persone-layout {
-      z-index: 300;
-    }
-
-    .map-effect-layout {
-      z-index: 400;
-    }
-
-    .message-layout {
-      z-index: 500;
-    }
-
-    .message-layout--text {
-      background-color: adjust-color($white, $alpha: -0.25);
-      box-shadow: 0 0 16px 16px adjust-color($white, $alpha: -0.25);
-
-      h1 {
-        background-color: $white-force;
-        padding: 8px;
-        box-shadow: 0 0 50px 50px $white-force;
-        text-align: center;
-      }
-    }
-
-    @for $x from 0 through 16 {
-
-      $tile-size: calc(100vh / #{$x});
-
-
-      .layout-column-size--#{$x} {
-        display: grid;
-        grid-template-rows: $tile-size;
-        grid-template-columns: repeat(#{$x}, $tile-size);
-      }
-
-      .layout-row-#{$x} {
-        grid-row: $x + 1;
-      }
-
-      .layout-tile-#{$x} {
-        grid-column: $x + 1;
-        grid-row: 1;
-      }
-
-      @for $y from 0 through 16 {
-        $columns-size: calc((100vh * #{$y}) / #{$x});
-
-        .layout-row-size--#{$x}-#{$y} {
-          display: grid;
-          grid-template-rows: repeat(#{$x}, $tile-size);
-          grid-template-columns: $columns-size;
-
-          .message-layout--text {
-            grid-row: 1 / span #{$x};
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-          }
-        }
-
-        .map-layout--without-row {
-          &.layout-row-size--#{$x}-#{$y} {
-            grid-template-columns: repeat(#{$y}, $tile-size);
-          }
-
-          .layout-tile-#{$x}-#{$y} {
-            grid-column: $y + 1;
-            grid-row: $x + 1;
-          }
-        }
-      }
-    }
-
-    .layout-tile {
-      // margin: 4px;
-      padding: 4px;
-      height: 100%;
-      position: relative;
-
-      @include mobile {
-        padding: 1.5px;
-      }
-
-      img {
-        width: 100%;
-      }
-
-
-      &:hover {
-        .pirat-info {
-          display: block;
-        }
-      }
-    }
-
-    .layout-row {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: 100%;
-    }
-
-
-
+    right: $sidebar_size_mobile;
+    left: 50px;
   }
 }
 
+.help_message__info {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  max-width: $xs;
+  padding: 20px;
+  background-color: adjust-color($color: $white, $alpha: -0.0);
 
 
-
-
-
-
-
-
-
-
-.layout-tile-event {
-  position: relative;
-  cursor: pointer;
-  background-color: adjust-color($black, $alpha: -0.75);
-
-  &::before {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    position: absolute;
-    top: 4px; bottom: 4px;
-    left: 4px; right: 4px;
-    z-index: 1;
-
-    content: "";
-    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-    font-weight: 900;
-    font-size: 2em;
-    color: $white;
-    text-shadow: 0px 0px 4px $black;
-
-
-    margin-bottom: .6em;
-    transition: all 0.2s linear;
-
-    @include mobile {
-      font-size: 1.25em;
-      margin-bottom: 0.2em;
-    }
-  }
-
-  &:hover {
-    background-color: adjust-color($black, $alpha: -0.55);
-    &::before {
-      margin-bottom: 0px;
-    }
-  }
 }
 
-.layout-tile-event--chooseTile {
-  &::before {
-    content: "\f21d";
-    opacity: .5;
-  }
-
-  &:hover::before {
-    color: $green;
-    opacity: 1;
-  }
-}
-.layout-tile-event--move {
-  &::before {
-    content: "\f3c5";
-  }
-}
-.layout-tile-event--capture {
-  &::before {
-    content: "\f024";
-    opacity: .86;
-    @include mobile {
-      opacity: .95;
-    }
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-}
-.layout-tile-event--attackCastle {
-  &::before {
-    content: "\f447";
-    color: $orange;
-    text-shadow: 0px 0px 4px $black;
-    margin-bottom: 0px;
-    outline: 2px solid $orange;
-  }
-
-  &:hover::before {
-    font-size: 2.75em;
-    text-shadow: 4px 4px 8px $black;
-    outline: 3px solid $orange;
-    @include mobile {
-      font-size: 1.5em;
-    }
-  }
+.help_message__arrow_to-- {
 
 }
-.layout-tile-event--attackUser {
-  &::before {
-    content: "\f05b";
-    margin-bottom: 0px;
-    color: $orange;
-    outline: 2px solid $orange;
-  }
+.map_help_info {
 
-  &:hover::before {
-    font-size: 2.75em;
-    outline: 3px solid $orange;
-    @include mobile {
-      font-size: 1.5em;
-    }
-  }
-}
-.layout-tile-event--defense {
-  &::before {
-    content: "\f3ed";
-    margin-bottom: 0px;
-  }
-
-  &:hover::before {
-    font-size: 2.75em;
-    @include mobile {
-      font-size: 1.5em;
-    }
-  }
-}
-
-.layout-tile-user {
-  position: relative;
-  cursor: pointer;
-  margin: 4px;
-
-  @include mobile {
-    margin: 0px;
-  }
-
-  &::before {
+  &::before, &::after {
     display: flex;
     justify-content: center;
     align-items: flex-end;
 
     position: absolute;
-    height: 1.5em; bottom: 6px;
-    left: 1px; right: 1px;
-    z-index: 1;
-    background-color: adjust-color($black, $alpha: -0.125);
+    top: 1em;
+    z-index: 1500;
 
-    content: "\f505";
     font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
     font-weight: 900;
-    font-size: 1.5em;
-    color: $gray;
-    text-shadow: 1px 1px 4px $black;
+    font-size: 3em;
+    color: $black;
+    text-shadow: 0px 0px 2px $white;
+
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
 
     @include mobile {
-      height: 1.5em;
-      bottom: 2px;
+      font-size: 2em;
+    }
+  }
+  &::before {
+    left: 0em;
+    content: '\f061';
+    animation-name: map_help_info__before;
+  }
+
+  &::after {
+    right: 0em;
+    content: '\f060';
+    animation-name: map_help_info__after;
+  }
+}
+
+@keyframes map_help_info__before {
+  0% { left: -1em; }
+  75% { left: 0em; }
+  100% { left: -1em; }
+}
+@keyframes map_help_info__after {
+  0% { right: -1em; }
+  75% { right: 0em; }
+  100% { right: -1em; }
+}
+.user_list_help_info {
+  position: relative;
+
+  &::before, &::after {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    position: absolute;
+    left: 1em;
+    z-index: 1500;
+
+    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+    font-weight: 900;
+    font-size: 2em;
+    color: $black;
+    text-shadow: 0px 0px 2px $white;
+
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: user_list_help_info;
+
+    @include mobile {
       font-size: 1em;
     }
   }
-}
-
-
-
-
-
-
-
-
-
-
-
-// МЕНЮ
-.map-info {
-  width: $sidebar_size;
-  background-color: $white;
-  overflow: auto;
-  z-index: 1000;
-  flex-shrink: 0;
-
-  @include mobile {
-    width: $sidebar_size_mobile;
-  }
-
-  .map-info--main {
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-
-    h1 { font-size: 1.5rem }
-    h2 { font-size: 1.25rem }
-    h1, h2 {
-      font-weight: 400;
-      padding: 8px 16px 4px;
-    }
-    small {
-      padding: 8px 8px 4px;
-
-      @include mobile {
-        padding: 4px 8px;
-      }
-
-    }
-
-    .user-list {
-      margin: 4px 4px 0;
-    }
-
-    .user-list_user {
-      border: 1px solid $primary;
-      border-radius: 2px;
-      margin-bottom: 2px;
-      width: 100%;
-      position: relative;
-
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-
-      $basic_height: 32px;
-      $mobile_height: 20px;
-
-      p {
-        line-height: $basic_height;
-        height: $basic_height;
-
-        &.name {
-          flex: 1 0 auto;
-          margin: 0 8px 0 48px;
-        }
-        &.score {
-          margin: 0 $basic_height 0 8px;
-        }
-
-        @include mobile {
-          font-size: 10px;
-          line-height: $mobile_height;
-          height: $mobile_height;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-
-          &.name {
-            flex: 1 0 auto;
-            margin: 0 8px 0 36px;
-          }
-          &.score {
-            margin: 0 $mobile_height 0 8px;
-          }
-        }
-      }
-
-      &.user-list_user--active {
-        background-color: $white-force;
-
-        p {
-          position: relative;
-          &:first-child:before {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-
-            position: absolute;
-            top: 0px;
-            left: -16px;
-            z-index: 1;
-
-            content: '\f061';
-            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-            font-weight: 900;
-            font-size: 0.8em;
-            color: $black;
-            text-shadow: 0px 0px 2px $white;
-          }
-        }
-      }
-
-      &.user-list_user--death {
-        p {
-          position: relative;
-          &:first-child:before {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-
-            position: absolute;
-            top: 0px;
-            left: -16px;
-            z-index: 1;
-
-            content: '\f54c';
-            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-            font-weight: 900;
-            font-size: 0.8em;
-            color: $black;
-            text-shadow: 0px 0px 2px $white;
-          }
-        }
-      }
-    }
-  }
-
-  .form-group {
-    margin: 8px 0px;
-  }
-
-  .btn {
-    width: 100%;
-  }
-}
-
-
-.user-list_user--color- {
   &::before {
-    content: '';
-    position: absolute;
-    top: 8px; height: 14px;
-    left: 8px; width: 14px;
-    background-color: $dark-primary;
-    border-radius: 50%;
-    box-shadow: 1px 1px 2px $dark-primary;
-
-    @include mobile {
-      top: 4px; height: 10px;
-      left: 4px; width: 10px;
-    }
-  }
-}
-@for $i from 0 through length($colors) - 1 {
-  $color: nth($colors, $i + 1);
-  $color-name: nth($colors-name, $i + 1);
-
-  .user-list_user--color-#{$color-name} {
-    &::before {
-      content: '';
-      position: absolute;
-      top: 8px; bottom: 8px;
-      left: 8px; width: 16px;
-      background-color: $color;
-      border-radius: 50%;
-      box-shadow: 1px 1px 2px $dark-primary;
-
-      @include mobile {
-        top: 4px; height: 10px;
-        left: 4px; width: 10px;
-      }
-
-    }
+    top: -1em;
+    content: '\f063';
   }
 
-  .layout-tile-user--#{$color-name} {
-    &::before {
-      color: $white;
-      background-color: adjust-color($color, $alpha: -0.1);
-    }
-  }
-
-  .event_color_#{$color-name} {
-    border: 3px solid $color;
-    &::before {
-      color: $color !important;
-    }
+  &::after {
+    bottom: -1em;
+    content: '\f062';
   }
 }
 
-
-$event_types: ('chooseTile', 'move', 'capture', 'attackCastle', 'attackUser', 'defense', 'takeUnit', 'castleUnitsChange');
-$event_types_icon: ('\f21d', '\f3c5', '\f024', '\f447', '\f05b', '\f3ed', '\f2b5', '\f286');
-@for $i from 0 through length($event_types) - 1 {
-  $event_type: nth($event_types, $i + 1);
-  $event_type_icon: nth($event_types_icon, $i + 1);
-
-  .event.event_type_#{$event_type} {
-    &::before {
-      content: $event_type_icon !important;
-    }
-  }
+@keyframes user_list_help_info {
+  0% { left: 1em; }
+  75% { left: 4em; }
+  100% { left: 1em; }
 }
 
