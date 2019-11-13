@@ -16,15 +16,15 @@ export class PromptUpdateService {
     private appRef: ApplicationRef,
   ) {
     updates.activated.subscribe(event => {
-      console.log('old version was', event.previous);
-      console.log('new version is', event.current);
+      // console.log('old version was', event.previous);
+      // console.log('new version is', event.current);
     });
   }
 
   checkForUpdate() {
-    console.log('checkForUpdate');
+    // console.log('checkForUpdate');
     if (this.updates.isEnabled) {
-      console.log('isEnabled');
+      // console.log('isEnabled');
       this.updates.available.subscribe(async event => {
         const flag = await this.promptUser(event);
         if (flag) {
@@ -32,12 +32,12 @@ export class PromptUpdateService {
         }
       });
     } else {
-      console.log('Not isEnabled');
+      // console.log('Not isEnabled');
     }
   }
 
   pollingCheck() {
-    console.log('pollingCheck');
+    // console.log('pollingCheck');
     // Allow the app to stabilize first, before starting polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));
     const everySixHours$ = interval(6 * 60 * 60 * 1000);

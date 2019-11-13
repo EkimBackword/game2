@@ -133,7 +133,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
         });
       },
       err => {
-        console.warn(err);
+        // console.warn(err);
       },
       () => finish$.unsubscribe()
     );

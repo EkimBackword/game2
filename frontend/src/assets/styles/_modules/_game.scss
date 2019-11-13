@@ -471,11 +471,11 @@ $sidebar_size_mobile: 160px;
 
     }
 
-    .user-list {
+    .user_list {
       margin: 4px 4px 0;
     }
 
-    .user-list_user {
+    .user_list_user {
       border: 1px solid $primary;
       border-radius: 2px;
       margin-bottom: 2px;
@@ -490,80 +490,90 @@ $sidebar_size_mobile: 160px;
       $basic_height: 32px;
       $mobile_height: 20px;
 
-      p {
+      .user_list_user__text {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
         line-height: $basic_height;
         height: $basic_height;
+        margin: 0 $basic_height 0 48px;
 
-        &.name {
-          flex: 1 0 auto;
-          margin: 0 8px 0 48px;
-        }
-        &.score {
-          margin: 0 $basic_height 0 8px;
-        }
-
-        @include mobile {
-          font-size: 10px;
-          line-height: $mobile_height;
-          height: $mobile_height;
-          // white-space: nowrap;
-          // overflow: hidden;
-          // text-overflow: ellipsis;
+        p {
+          margin: 0;
 
           &.name {
             flex: 1 0 auto;
-            margin: 0 8px 0 36px;
           }
-          &.score {
-            margin: 0 $mobile_height 0 8px;
+
+        }
+
+        @include mobile {
+          margin: 0 $mobile_height 0 36px;
+          line-height: $mobile_height;
+          height: $mobile_height;
+
+          p {
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
       }
 
-      &.user-list_user--active {
+
+
+      &.user_list_user--active {
         background-color: $white-force;
 
-        p {
-          position: relative;
-          &:first-child:before {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+        .user_list_user__text:before {
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
 
-            position: absolute;
-            top: 0px;
-            left: -16px;
-            z-index: 1;
+          position: absolute;
+          top: 0px;
+          left: 32px;
+          z-index: 1;
 
-            content: '\f061';
-            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-            font-weight: 900;
-            font-size: 0.8em;
-            color: $black;
-            text-shadow: 0px 0px 2px $white;
+          content: '\f061';
+          font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+          font-weight: 900;
+          font-size: 0.8em;
+          color: $black;
+          text-shadow: 0px 0px 2px $white;
+
+          @include mobile {
+            left: 24px;
+            font-size: 0.5em;
           }
         }
       }
 
-      &.user-list_user--death {
-        p {
-          position: relative;
-          &:first-child:before {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+      &.user_list_user--death {
+        .user_list_user__text:before {
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
 
-            position: absolute;
-            top: 0px;
-            left: -16px;
-            z-index: 1;
+          position: absolute;
+          top: 0px;
+          left: 32px;
+          z-index: 1;
 
-            content: '\f54c';
-            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
-            font-weight: 900;
-            font-size: 0.8em;
-            color: $black;
-            text-shadow: 0px 0px 2px $white;
+          content: '\f54c';
+          font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+          font-weight: 900;
+          font-size: 0.8em;
+          color: $black;
+          text-shadow: 0px 0px 2px $white;
+
+          @include mobile {
+            left: 24px;
+            font-size: 0.5em;
           }
         }
       }
@@ -583,7 +593,7 @@ $sidebar_size_mobile: 160px;
         }
       }
 
-      &.user-list_user--connected::after {
+      &.user_list_user--connected::after {
         background-color: $green;
       }
     }
@@ -599,7 +609,7 @@ $sidebar_size_mobile: 160px;
 }
 
 
-.user-list_user--color- {
+.user_list_user--color- {
   &::before {
     content: '';
     position: absolute;
@@ -619,7 +629,7 @@ $sidebar_size_mobile: 160px;
   $color: nth($colors, $i + 1);
   $color-name: nth($colors-name, $i + 1);
 
-  .user-list_user--color-#{$color-name} {
+  .user_list_user--color-#{$color-name} {
     &::before {
       content: '';
       position: absolute;

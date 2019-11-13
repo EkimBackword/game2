@@ -76,11 +76,24 @@ export class OfflineGamePageComponent implements OnInit {
   public isHelpShow = false;
   public helpState = 0;
   public helpStateMap: Map<number, IHelpInfo> = new Map([
-    [0, { massage: 'Добро пожаловать в обучение', arrowTo: '', hasNext: true }],
-    [1, { massage: 'Это поле боя, тут будут проходить большинство действий', arrowTo: 'map', hasNext: true }],
-    [2, { massage: 'Это список участнико боя', arrowTo: 'user-list', hasNext: true }],
-    [3, { massage: 'Выберите изначальное рсположение вашего войска', arrowTo: '', hasNext: false }],
+    [0, { massage: 'Добро пожаловать в обучение!', arrowTo: '', hasNext: true }],
+    [1, { massage: 'Это поле боя, тут будут проходить большинство ваших действий. На нём вы можете встретить поля, замки и других игроков.', arrowTo: 'map', hasNext: true }],
+    [2, { massage: 'Это список участнико боя. В списке можно увидеть, какой цвет принадлежит какому игроку, а также во время игры будет отображаться сколько замков захвачено.', arrowTo: 'user_list', hasNext: true }],
+    [3, { massage: 'Это основная информация об игре. Тут отображены действующие бонусы, количество уже найденых карт "Темный век", а также колода с картами эпох.', arrowTo: 'map_effect', hasNext: true }],
+    [4, { massage: 'Каждые четыре хода, будет открываться карта эпохи и менять действующие бонусы.', arrowTo: 'map_effect', hasNext: true }],
+    [5, { massage: 'Если количество тёмных веков станет равным трём, то игра прекращается и определяется победитель на основе захваченных замков.', arrowTo: 'map_effect', hasNext: true }],
+    [6, { massage: 'Побеждает тот, кто заваевал все замки. В случае если были получены все три карты "Темная эпоха", то победителем становиться тот, кто завоевал наибольшее количество замков.', arrowTo: 'map_effect', hasNext: true }],
+    [7, { massage: 'В случае если количество замков одинаковое, то победителем становиться тот, у кого во владении есть замок с значением больше, чем у других с таким же количеством замков.', arrowTo: 'map_effect', hasNext: true }],
+    [8, { massage: 'Ну а теперь, даваете начнём! Выберите изначальное расположение вашего войска.', arrowTo: '', hasNext: false }],
+    [9, { massage: 'Тепрь ваше войско на поле боя! Что же вы можете делать на нем?', arrowTo: 'map', hasNext: true }],
+    [10, { massage: 'Вы можете: Передвинуться на соседнюю клетку, захватить замока, напасть на замок другого игрока или на самого игрока.', arrowTo: 'map', hasNext: true }],
+    [11, { massage: 'Если на вас напали, то вам нужно будет защищаться.', arrowTo: 'map', hasNext: false }],
+    [12, { massage: 'Если ваше войско находиться в замке, то вы также можете: Усилить войско (Получение юнита) или измененить оборону замка.', arrowTo: 'user_info', hasNext: false }],
   ]);
+
+
+
+
 
   get curUser(): IGamer {
     if (this.game && this.game.currentUserId) {
@@ -131,15 +144,19 @@ export class OfflineGamePageComponent implements OnInit {
     setTimeout(() => { const scene = new Scene('#scene', '#map'); }, 0);
   }
 
-  changeHelpState() {
-    if (this.isHelpShow) {
-      console.log('HelpState -- change');
-      const helpInfo = this.helpStateMap.get(this.helpState);
-      this.helpState++;
-      this.isHelpShow = helpInfo.hasNext;
-    } else {
-      console.log('HelpState -- show');
-      this.isHelpShow = true;
+  changeHelpState(helpState?: number) {
+    if (this.helpStateMap.has(this.helpState)) {
+      if (this.isHelpShow) {
+        const helpInfo = this.helpStateMap.get(this.helpState);
+        if (helpState) {
+          this.helpState = helpState;
+        } else {
+          this.helpState++;
+        }
+        this.isHelpShow = helpInfo.hasNext;
+      } else {
+        this.isHelpShow = true;
+      }
     }
   }
 
@@ -225,8 +242,11 @@ export class OfflineGamePageComponent implements OnInit {
     }
   }
 
-  private OnGameEvent(data: IGameEventRequest) {
-    this.uiSnackEvent(data.event);
+  private async OnGameEvent(data: IGameEventRequest) {
+    if (this.isHelp && data.event.data.userId === this.user.id) {
+      this.eventHelpInfo(data.event);
+    }
+    await this.uiSnackEvent(data.event);
     this.game.event(data.event);
     setTimeout(() => {
       this.setActiveEvents();
@@ -280,60 +300,74 @@ export class OfflineGamePageComponent implements OnInit {
     return '';
   }
 
-  private uiSnackEvent(event: IGameEvent): any {
+  private eventHelpInfo(event: IGameEvent): any {
     switch (event.type) {
       case GameEventType.chooseTile: {
-          return this.uiSnackEventChooseTile(event.data as IGameEventChooseTileData);
-      }
-      case GameEventType.move: {
-          return this.uiSnackEventMove(event.data as IGameEventMoveData);
+        return this.changeHelpState();
       }
       case GameEventType.capture: {
-          return this.uiSnackEventCapture(event.data as IGameEventCaptureData);
-      }
-      case GameEventType.attackCastle: {
-          return this.uiSnackEventAttackCastle(event.data as IGameEventAttackCastleData);
-      }
-      case GameEventType.attackUser: {
-          return this.uiSnackEventAttackUser(event.data as IGameEventAttackUserData);
-      }
-      case GameEventType.defense: {
-          return this.uiSnackEventDefense(event.data as IGameEventDefenseData);
-      }
-      case GameEventType.takeUnit: {
-          return this.uiSnackEventTakeUnit(event.data as IGameEventTakeUnitData);
-      }
-      case GameEventType.castleUnitsChange: {
-          return this.uiSnackEventCastleUnitsChange(event.data as IGameEventCastleUnitsChangeData);
+        return this.changeHelpState();
       }
     }
   }
 
-  uiSnackEventChooseTile(data: IGameEventChooseTileData) {
-    const user = this.game.Gamers.get(data.userId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${user.name}`,
-      message: `Выбрал стартовую позицию`,
-      type: 'success'
-    });
+  private async uiSnackEvent(event: IGameEvent) {
+    switch (event.type) {
+      case GameEventType.chooseTile: {
+          return await this.uiSnackEventChooseTile(event.data as IGameEventChooseTileData);
+      }
+      case GameEventType.move: {
+          return await this.uiSnackEventMove(event.data as IGameEventMoveData);
+      }
+      case GameEventType.capture: {
+          return await this.uiSnackEventCapture(event.data as IGameEventCaptureData);
+      }
+      case GameEventType.attackCastle: {
+          return await this.uiSnackEventAttackCastle(event.data as IGameEventAttackCastleData);
+      }
+      case GameEventType.attackUser: {
+          return await this.uiSnackEventAttackUser(event.data as IGameEventAttackUserData);
+      }
+      case GameEventType.defense: {
+          return await this.uiSnackEventDefense(event.data as IGameEventDefenseData);
+      }
+      case GameEventType.takeUnit: {
+          return await this.uiSnackEventTakeUnit(event.data as IGameEventTakeUnitData);
+      }
+      case GameEventType.castleUnitsChange: {
+          return await this.uiSnackEventCastleUnitsChange(event.data as IGameEventCastleUnitsChangeData);
+      }
+    }
   }
-  uiSnackEventMove(data: IGameEventMoveData) {
+
+  async uiSnackEventChooseTile(data: IGameEventChooseTileData) {
     const user = this.game.Gamers.get(data.userId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${user.name}`,
-      message: `Переместился`,
-      type: 'success'
-    });
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${user.name}`,
+    //   message: `Выбрал стартовую позицию`,
+    //   type: 'success'
+    // });
+    return true;
   }
-  uiSnackEventCapture(data: IGameEventCaptureData) {
+  async uiSnackEventMove(data: IGameEventMoveData) {
     const user = this.game.Gamers.get(data.userId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${user.name}`,
-      message: `Захватил замок`,
-      type: 'success'
-    });
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${user.name}`,
+    //   message: `Переместился`,
+    //   type: 'success'
+    // });
+    return true;
   }
-  uiSnackEventAttackCastle(data: IGameEventAttackCastleData) {
+  async uiSnackEventCapture(data: IGameEventCaptureData) {
+    const user = this.game.Gamers.get(data.userId);
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${user.name}`,
+    //   message: `Захватил замок`,
+    //   type: 'success'
+    // });
+    return true;
+  }
+  async uiSnackEventAttackCastle(data: IGameEventAttackCastleData) {
     const attackUser = this.game.Gamers.get(data.userId);
     const tile: ITile = this.game.gameMap.tiles[data.to.x][data.to.y];
     const defenseUser = this.game.Gamers.get(tile.castleInfo.userId);
@@ -344,26 +378,28 @@ export class OfflineGamePageComponent implements OnInit {
         battle, attackUser, defenseUser,
         effect: this.game.gameMap.effect
       };
-      this.dialog.open(DialogBattleResultComponent, { data: dialogData });
+      const dialogRef = this.dialog.open(DialogBattleResultComponent, { data: dialogData });
+      await dialogRef.afterClosed().toPromise();
     } else {
-      this.uiSnack.showMessage({
-        title: 'Нападение на замок',
-        message: battle.isWin ? `Игрок ${attackUser.name} захватил замок` : `Игрок ${attackUser.name} проиграл при захвате`,
-        type: battle.isWin ? 'success' : 'warn'
-      });
+      // this.uiSnack.showMessage({
+      //   title: 'Нападение на замок',
+      //   message: battle.isWin ? `Игрок ${attackUser.name} захватил замок` : `Игрок ${attackUser.name} проиграл при захвате`,
+      //   type: battle.isWin ? 'success' : 'warn'
+      // });
     }
-
+    return true;
   }
-  uiSnackEventAttackUser(data: IGameEventAttackUserData) {
+  async uiSnackEventAttackUser(data: IGameEventAttackUserData) {
     const attackUser = this.game.Gamers.get(data.userId);
     const defenseUser = this.game.Gamers.get(data.attackedUserId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${attackUser.name}`,
-      message: `Совершает атаку на ${defenseUser.name}`,
-      type: 'info'
-    }, { duration: 1500 });
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${attackUser.name}`,
+    //   message: `Совершает атаку на ${defenseUser.name}`,
+    //   type: 'info'
+    // }, { duration: 1500 });
+    return true;
   }
-  uiSnackEventDefense(data: IGameEventDefenseData) {
+  async uiSnackEventDefense(data: IGameEventDefenseData) {
     const attackUser = this.game.Gamers.get(data.attackUserId);
     const defenseUser = this.game.Gamers.get(data.userId);
     const battle = this.game.gameMap.getBattleResult(data.attackUnits, data.units);
@@ -373,30 +409,33 @@ export class OfflineGamePageComponent implements OnInit {
         battle, attackUser, defenseUser,
         effect: this.game.gameMap.effect
       };
-      this.dialog.open(DialogBattleResultComponent, { data: dialogData });
+      const dialogRef = this.dialog.open(DialogBattleResultComponent, { data: dialogData });
+      await dialogRef.afterClosed().toPromise();
     } else {
-      this.uiSnack.showMessage({
-        title: `Нападение на ${defenseUser.name}`,
-        message: battle.isWin ? `Игрок ${attackUser.name} победил` : `Игрок ${attackUser.name} проиграл`,
-        type: battle.isWin ? 'success' : 'warn'
-      });
+      // this.uiSnack.showMessage({
+      //   title: `Нападение на ${defenseUser.name}`,
+      //   message: battle.isWin ? `Игрок ${attackUser.name} победил` : `Игрок ${attackUser.name} проиграл`,
+      //   type: battle.isWin ? 'success' : 'warn'
+      // });
     }
-
+    return true;
   }
-  uiSnackEventTakeUnit(data: IGameEventTakeUnitData) {
+  async uiSnackEventTakeUnit(data: IGameEventTakeUnitData) {
     const user = this.game.Gamers.get(data.userId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${user.name}`,
-      message: `Усилил армию`,
-      type: 'success'
-    }, { duration: 1500 });
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${user.name}`,
+    //   message: `Усилил армию`,
+    //   type: 'success'
+    // }, { duration: 1500 });
+    return true;
   }
-  uiSnackEventCastleUnitsChange(data: IGameEventCastleUnitsChangeData) {
+  async uiSnackEventCastleUnitsChange(data: IGameEventCastleUnitsChangeData) {
     const user = this.game.Gamers.get(data.userId);
-    this.uiSnack.showMessage({
-      title: `Игрок ${user.name}`,
-      message: `Изменил оборону замка`,
-      type: 'success'
-    }, { duration: 1500 });
+    // this.uiSnack.showMessage({
+    //   title: `Игрок ${user.name}`,
+    //   message: `Изменил оборону замка`,
+    //   type: 'success'
+    // }, { duration: 1500 });
+    return true;
   }
 }

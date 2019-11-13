@@ -81,19 +81,20 @@
 <section class="map-info d-flex flex-column justify-content-between align-items-stretch shadow" *ngIf="!isLoading">
   <div class="map-info--main">
     <small>Игра: <strong>{{game.Name}}</strong> </small>
-    <small>Статус: <strong>{{game.State === 'WAITING' ? 'ОЖИДАНИЕ' : game.State === 'STARTED' ? 'В ПРОЦЕССЕ' : 'ЗАВЕРШЕНА'}}</strong></small>
-    <div class="user-list">
+    <div class="user_list">
       <div *ngFor="let item of Gamers"
       class="
-        user-list_user
-        user-list_user--color-{{item.color}}
+        user_list_user
+        user_list_user--color-{{item.color}}
       "
-      [class.user-list_user--connected]="item.isConnected"
-      [class.user-list_user--active]="item.id === game.currentUserId"
-      [class.user-list_user--death]="item.isDeath"
+      [class.user_list_user--connected]="item.isConnected"
+      [class.user_list_user--active]="item.id === game.currentUserId"
+      [class.user_list_user--death]="item.isDeath"
       >
-        <p class="name">{{item.name}}</p>
-        <p class="score">{{getCastleCount(item.id)}}</p>
+        <div class="user_list_user__text">
+          <p class="name">{{item.name}}</p>
+          <p class="score">{{getCastleCount(item.id)}}</p>
+        </div>
       </div>
     </div>
     <div *ngIf="game && game.gameMap && game.gameMap.gameUsers">

@@ -31,6 +31,10 @@ $color-massage-success: $green;
         align-items: center;
         padding-left: 16px;
 
+        @include mobile {
+          padding-left: 8px;
+        }
+
         &.snack-bar__icon--close {
           display: flex;
           flex-direction: row;
@@ -40,6 +44,10 @@ $color-massage-success: $green;
           cursor: pointer;
           padding-right: 16px;
 
+          @include mobile {
+            padding-right: 8px;
+          }
+
           &:hover {
             color: $black;
           }
@@ -47,6 +55,9 @@ $color-massage-success: $green;
 
         .material-icons {
             $custom-icon-size: 36px;
+            @include mobile {
+              $custom-icon-size: 24px;
+            }
             width: $custom-icon-size;
             height: $custom-icon-size;
             font-size: $custom-icon-size;
@@ -62,6 +73,10 @@ $color-massage-success: $green;
         align-items: stretch;
         padding: 8px 16px;
 
+        @include mobile {
+          padding: 4px 8px;
+        }
+
         .snack-bar__title {
             font-size: 14px;
             font-weight: 700;
@@ -69,6 +84,11 @@ $color-massage-success: $green;
 
             padding: .3em 0 .6em;
             margin: 0;
+
+            @include mobile {
+              font-size: 11px;
+              padding: .3em 0 .2em;
+            }
         }
 
         .snack-bar__info {
@@ -78,6 +98,11 @@ $color-massage-success: $green;
 
             padding: 0;
             margin: 0;
+
+            @include mobile {
+              font-size: 11px;
+              padding: .1em 0 .1em;
+            }
         }
     }
 }

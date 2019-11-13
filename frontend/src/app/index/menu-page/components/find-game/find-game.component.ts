@@ -27,7 +27,7 @@ export class FindGameComponent implements OnInit {
         this.games = games;
       },
       err => {
-        console.warn(err);
+        // console.warn(err);
       },
       () => {
         this.isLoading = false;
@@ -39,7 +39,7 @@ export class FindGameComponent implements OnInit {
         this.games.push(game);
       },
       err => {
-        console.warn(err);
+        // console.warn(err);
       },
       () => {
         this.isLoading = false;

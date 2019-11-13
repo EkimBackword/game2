@@ -16,21 +16,19 @@ $sidebar_size_mobile: 160px;
   background-color: $light-gray;
   position: relative;
 }
-
 .map-info {
   .map-info--main {
-    .user-list_user {
+    .user_list_user {
       &::after {
         content: none;
       }
     }
   }
 }
-
 .help_message {
   position: absolute;
   top: 0; bottom: 0;
-  left: 100px; right: $sidebar_size;
+  left: 110px; right: $sidebar_size;
   z-index: 2000;
   // background-color: adjust-color($color: $white, $alpha: -0.5);
 
@@ -40,13 +38,11 @@ $sidebar_size_mobile: 160px;
   align-items: center;
 
   @include mobile {
-    right: $sidebar_size_mobile;
-    left: 50px;
+    right: $sidebar_size_mobile + 10px;
+    left: 60px;
   }
 }
-
 .help_message__info {
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -55,60 +51,78 @@ $sidebar_size_mobile: 160px;
   max-width: $xs;
   padding: 20px;
   background-color: adjust-color($color: $white, $alpha: -0.0);
-
-
-}
-
-.help_message__arrow_to-- {
+  box-shadow: 2px 2px 10px black;
+  border-radius: 4px;
 
 }
+
+
+
+
+
+
+
+
+
 .map_help_info {
 
-  &::before, &::after {
+  &::before {
     display: flex;
     justify-content: center;
     align-items: flex-end;
 
     position: absolute;
     top: 1em;
+    left: 0em;
     z-index: 1500;
 
+    content: '\f061';
     font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
     font-weight: 900;
     font-size: 3em;
     color: $black;
     text-shadow: 0px 0px 2px $white;
 
-    animation-duration: 1.5s;
+    animation-duration: 2.5s;
     animation-iteration-count: infinite;
+    animation-name: map_help_info__before;
 
     @include mobile {
       font-size: 2em;
     }
   }
-  &::before {
-    left: 0em;
-    content: '\f061';
-    animation-name: map_help_info__before;
-  }
 
   &::after {
-    right: 0em;
-    content: '\f060';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1400;
+    content: '';
+
+    background-color: $black;
+    border: 2px solid $dark-primary;
+
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
     animation-name: map_help_info__after;
   }
 }
-
 @keyframes map_help_info__before {
   0% { left: -1em; }
   75% { left: 0em; }
   100% { left: -1em; }
 }
 @keyframes map_help_info__after {
-  0% { right: -1em; }
-  75% { right: 0em; }
-  100% { right: -1em; }
+  0% { opacity: 0; }
+  75% { opacity: 0.5; }
+  100% { opacity: 0; }
 }
+
+
+
+
+
+
 .user_list_help_info {
   position: relative;
 
@@ -119,36 +133,112 @@ $sidebar_size_mobile: 160px;
 
     position: absolute;
     left: 1em;
+    top: -1em;
     z-index: 1500;
 
+    content: '\f063';
     font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
     font-weight: 900;
     font-size: 2em;
     color: $black;
     text-shadow: 0px 0px 2px $white;
 
-    animation-duration: 3s;
+    animation-duration: 2.5s;
     animation-iteration-count: infinite;
-    animation-name: user_list_help_info;
+    animation-name: user_list_help_info__arrow;
 
     @include mobile {
       font-size: 1em;
     }
   }
-  &::before {
-    top: -1em;
-    content: '\f063';
-  }
 
   &::after {
-    bottom: -1em;
-    content: '\f062';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1400;
+    content: '';
+
+    background-color: $black;
+    border: 2px solid $dark-primary;
+
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
+    animation-name: user_list_help_info__bgc;
   }
 }
 
-@keyframes user_list_help_info {
+@keyframes user_list_help_info__arrow {
   0% { left: 1em; }
-  75% { left: 4em; }
+  50% { left: 4em; }
   100% { left: 1em; }
+}
+@keyframes user_list_help_info__bgc {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+
+
+
+
+
+
+
+.map_effect_help_info {
+  position: relative;
+
+  &::before, &::after {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    position: absolute;
+    left: 1em;
+    top: -1em;
+    z-index: 1500;
+
+    content: '\f063';
+    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands";
+    font-weight: 900;
+    font-size: 2em;
+    color: $black;
+    text-shadow: 0px 0px 2px $white;
+
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
+    animation-name: map_effect_help_info__arrow;
+
+    @include mobile {
+      font-size: 1em;
+    }
+  }
+
+  &::after {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    z-index: 1400;
+    content: '';
+
+    background-color: $black;
+    border: 2px solid $dark-primary;
+
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
+    animation-name: map_effect_help_info__bgc;
+  }
+}
+
+@keyframes map_effect_help_info__arrow {
+  0% { left: 1em; }
+  50% { left: 4em; }
+  100% { left: 1em; }
+}
+@keyframes map_effect_help_info__bgc {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
 }
 

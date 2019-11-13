@@ -1,14 +1,6 @@
 <h3>Добро пожаловать</h3>
 <p class="menu__login" *ngIf="user">{{user.name}}</p>
 <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
-  <button type="button" tabindex="4" class="btn btn-primary" [disabled]="isBusy" [class.btn-busy]="isBusy"
-    [routerLink]="['/app/game-offline']"
-  >
-    <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
-    <div class="btn-content">Игра с ботами</div>
-  </button>
-</fieldset>
-<fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
   <button type="button" tabindex="4" class="btn btn-primary" [disabled]="isBusy || !isOnline" [class.btn-busy]="isBusy"
     (click)="openMenuOption.next(1)"
   >
@@ -24,16 +16,34 @@
     <div class="btn-content">Присоединиться</div>
   </button>
 </fieldset>
+
 <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
-  <button type="button" tabindex="4" class="btn btn-primary" [disabled]="isBusy" [class.btn-busy]="isBusy"
-    [routerLink]="['/app/help']"
+  <button type="button" tabindex="4" class="btn btn-info" [disabled]="isBusy" [class.btn-busy]="isBusy"
+    [routerLink]="['/app/game-offline']"
   >
     <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
-    <div class="btn-content">Инструкция</div>
+    <div class="btn-content">Игра с ботами</div>
   </button>
 </fieldset>
 <fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
-  <button type="button" tabindex="4" class="btn btn-primary" [disabled]="isBusy" [class.btn-busy]="isBusy"
+  <button type="button" tabindex="4" class="btn btn-info" [disabled]="isBusy" [class.btn-busy]="isBusy"
+    [routerLink]="['/app/game-offline']" [queryParams]="{help: '1'}"
+  >
+    <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
+    <div class="btn-content">Обучение</div>
+  </button>
+</fieldset>
+
+<fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+  <button type="button" tabindex="4" class="btn btn-info" [disabled]="isBusy" [class.btn-busy]="isBusy"
+    [routerLink]="['/app/help']"
+  >
+    <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
+    <div class="btn-content">Правила</div>
+  </button>
+</fieldset>
+<fieldset class="form-group align-items-center fieldset--buttons text-center mb-0">
+  <button type="button" tabindex="4" class="btn btn-danger" [disabled]="isBusy" [class.btn-busy]="isBusy"
     (click)="logout.next()"
   >
     <div class="spinner"><span class="fas fa-spinner fa-spin fa-pulse fa-fw"></span></div>
