@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, } from '@angular/core';
 import { IUser } from '../../../../share-services';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-main-menu',

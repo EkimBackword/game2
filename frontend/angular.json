@@ -46,7 +46,9 @@
               "src/favicon.ico",
               "src/images",
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/sw-custom.js",
+              "src/sw-master.js"
             ],
             "styles": [
               "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
@@ -86,7 +88,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "ngswConfigPath": "/src/ngsw-config.json"
             }
           }
         },

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService, IUser } from './../../share-services';
 import { PushService } from '../../share-services/push.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-menu-page',
@@ -13,6 +14,9 @@ export class MenuPageComponent implements OnInit {
   public isBusy = false;
   public menuState = 0;
   public isOnline: boolean;
+
+  public appVersionFull = environment.versionFull;
+  public appVersion = environment.version;
 
   constructor(
     private userApi: UserService,

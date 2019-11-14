@@ -33,7 +33,7 @@
     padding-right: 40px;
     padding-bottom: 20px;
     padding-top: 20px;
-    margin: 10px auto;
+    margin: 10px auto 0px;
   }
 
   &::before {
@@ -56,5 +56,11 @@
   @include mobile {
     display: none !important;
   }
+}
+
+.btn-version {
+  font-size: 0.7rem;
+  line-height: 0.7rem;
+  text-decoration: none;
 }
 

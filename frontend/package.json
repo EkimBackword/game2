@@ -1,17 +1,15 @@
 {
   "name": "frontend",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200 --proxy-config proxy.conf.json",
+    "start": "npm run version && ng serve --port 4200 --proxy-config proxy.conf.json",
     "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
+    "version": "node ./package.version.js",
+    "build-prod": "npm run version && ng build --prod && npm run deploy",
     "deploy": "pscp -r -i C:\\Users\\mike_\\.ssh\\putty_rsa_hp.ppk dist\\ root@mzharkov.ru:/var/www/games/game2/frontend/dist",
-    "deploy-work": "pscp -r -i C:\\Users\\ZharkovMike\\.ssh\\digital.ppk dist\\ root@mzharkov.ru:/var/www/games/game2/frontend/dist",
-    "build-prod": "ng build --prod && npm run deploy",
-    "build-prod-work": "ng build --prod && npm run deploy-work"
+    "build-prod-work": "npm run version && ng build --prod && npm run deploy-work",
+    "deploy-work": "pscp -r -i C:\\Users\\ZharkovMike\\.ssh\\digital.ppk dist\\ root@mzharkov.ru:/var/www/games/game2/frontend/dist"
   },
   "private": true,
   "dependencies": {
@@ -46,12 +44,12 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.801.2",
-    "@angular/cli": "~8.1.2",
+    "@angular/cli": "^8.3.18",
     "@angular/compiler-cli": "~8.1.2",
     "@angular/language-service": "~8.1.2",
-    "@types/node": "~8.9.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",

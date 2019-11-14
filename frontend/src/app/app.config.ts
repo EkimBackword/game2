@@ -9,10 +9,10 @@ export interface IAppConfig {
 
     // Версия приложения
     appVersion: string;
+    appVersionFull: string;
 
     // Префикс API, описывает текущую используемую версию
     auth: AuthServiceConfig;
-
     dialogOption: MatDialogConfig;
 
     // Дефолтовый язык интерфейса
@@ -24,6 +24,7 @@ export interface IAppConfig {
 export const APP_CONFIG: IAppConfig = {
     production: environment.production,
     appVersion: environment.version,
+    appVersionFull: environment.versionFull,
     auth: {
       defaultUnauthorizedUrn: '/auth',
       defaultAuthorizedUrn: '/app',

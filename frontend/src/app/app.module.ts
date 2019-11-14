@@ -32,7 +32,7 @@ import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
     ShareServicesModule,
     SocketIoModule,
     MatDialogModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('sw-master.js', { enabled: environment.production })
   ],
   providers: [
     { provide: AuthServiceConfig, useValue: APP_CONFIG.auth },

@@ -1,4 +1,7 @@
+import { appVersionFull, appVersion } from './version';
+
 export const environment = {
   production: true,
-  version: '1.2.0'
+  versionFull: appVersionFull,
+  version: appVersion
 };
