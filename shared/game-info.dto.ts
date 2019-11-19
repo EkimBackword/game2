@@ -15,7 +15,7 @@ export interface IGamer extends IUser {
 }
 
 export interface IGameInfoResponse {
-    id: string;
+    id?: any;
     name: string;
     hostId: string;
     gamers: Array<[string, IGamer]>;
@@ -27,6 +27,7 @@ export interface IGameInfoResponse {
     tmpCurrentUserId: string;
     tmpEvents: IGameEvent[];
     events: IGameEvent[];
+    lastUpdate: Date;
 }
 
 export enum GameState {
@@ -106,6 +107,7 @@ export class GameInfo implements IGameInfoResponse {
         this.Gamers = new Map(dto.gamers);
         this.Size = dto.size;
         this.State = dto.state;
+        this.lastUpdate = dto.lastUpdate;
 
         this.message = this.State === GameState.WAITING ? 'Ждём начала игры...' : null;
 
@@ -312,6 +314,7 @@ export class GameInfo implements IGameInfoResponse {
         tmpCurrentUserId: this.tmpCurrentUserId,
         tmpEvents: this.tmpEvents,
         events: this.events,
-    }; }
+        lastUpdate: this.lastUpdate,
+    } as IGameInfoResponse; }
 
 }

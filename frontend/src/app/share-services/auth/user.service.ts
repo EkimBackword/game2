@@ -16,6 +16,7 @@ export class UserService {
 
   public checkOnline$: Observable<boolean>;
   private globalPrefix = '/api/v1.0';
+  private stateUrl: string = null;
 
   constructor(
     private router: Router,
@@ -39,7 +40,7 @@ export class UserService {
   public async create(name: string) {
     const user: IUser = { id: uuid4(), name };
     localStorage.setItem('user', JSON.stringify(user));
-    await this.router.navigateByUrl(this.config.defaultAuthorizedUrn);
+    this.restoreState();
     return user;
   }
 
@@ -56,6 +57,20 @@ export class UserService {
     localStorage.removeItem('user');
     await this.router.navigateByUrl(this.config.defaultUnauthorizedUrn);
     return null;
+  }
+
+  saveState() {
+    this.stateUrl = window.location.pathname;
+  }
+
+  restoreState() {
+    if (this.stateUrl === null) {
+      this.router.navigateByUrl(this.config.defaultAuthorizedUrn);
+    } else {
+      const url = JSON.parse(JSON.stringify(this.stateUrl));
+      this.stateUrl = null;
+      this.router.navigateByUrl(url);
+    }
   }
 
 }

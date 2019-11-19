@@ -28,7 +28,7 @@ export class NoAuthGuard implements CanActivate {
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.userService.isAuthenticated()) {
-      this.router.navigateByUrl(this.config.defaultAuthorizedUrn);
+      this.userService.restoreState();
     }
     return !this.userService.isAuthenticated();
   }

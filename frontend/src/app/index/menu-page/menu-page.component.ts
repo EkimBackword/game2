@@ -20,10 +20,12 @@ export class MenuPageComponent implements OnInit {
 
   constructor(
     private userApi: UserService,
+    private pushApi: PushService,
   ) { }
 
   ngOnInit() {
     this.user = this.userApi.getSession();
+    this.pushApi.subscribeToNotifications();
     this.userApi.checkOnline$.subscribe(
       flag => { this.isOnline = flag; }
     );

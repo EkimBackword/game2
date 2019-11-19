@@ -91,13 +91,13 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('CreateGame')
     async onCreateGame(socket: Socket, req: ICreateGameRequest) {
         try {
-            const game = this.gameService.createGame(req.name, req.user.id, req.size, socket);
+            const game = await this.gameService.createGame(req.name, req.user.id, req.size, socket);
             game.joinUser(req.user, socket);
-            // this.pushService.pushAll({
-            //     title: `Новая игра "${req.name}" создана`,
-            //     body: `Создатель игры: ${req.user.name}`,
-            //     gameId: game.id,
-            // }, req.user);
+            this.pushService.pushAll({
+                title: `Новая игра "${req.name}" создана`,
+                body: `Создатель игры: ${req.user.name}`,
+                gameId: game.id,
+            }, req.user);
             socket.broadcast.emit('NewGameAdded', game.response);
             socket.emit('CreateGameSuccess', game.response);
         } catch (err) {
@@ -177,6 +177,7 @@ export class GameGateway implements OnGatewayDisconnect {
             const game = this.gameService.findByID(req.gameId);
             if (game) {
                 game.event(req.event);
+                await this.gameService.save(game.response);
                 socket.broadcast.emit('GameEvent', req);
                 socket.emit('GameEvent', req);
                 socket.emit('GameEventSuccess', true);
@@ -191,7 +192,7 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('AddPushSubscriber')
     async onAddPushSubscriber(socket: Socket, req: IAddPushSubscriberRequest) {
         try {
-            // this.pushService.add(req);
+            this.pushService.add(req);
             socket.emit('AddPushSubscriberSuccess', true);
         } catch (err) {
             socket.emit('AddPushSubscriberError', err.message);

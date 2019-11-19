@@ -26,11 +26,4 @@ export class PushService {
       .catch(err => console.error('Could not subscribe to notifications', err));
     }
   }
-
-  handleActions() {
-    this.swPush.notificationClicks.subscribe(notificationPayload => {
-      window.focus();
-      window.open(notificationPayload.notification.data.url, '_self');
-    });
-  }
 }
