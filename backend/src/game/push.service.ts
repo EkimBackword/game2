@@ -7,6 +7,7 @@ import {
     IPushRequest,
     vapidKeys,
     IUser,
+    IAuthRequest,
 } from './models';
 import { IPushSubsModel } from './models/push-subs.schema';
 
@@ -26,13 +27,22 @@ export class PushService {
         this.findAll();
     }
 
-    async add(data: IAddPushSubscriberRequest) {
+    async sub(data: IAddPushSubscriberRequest) {
         const flag = this.subscriptions.has(data.user.id);
         this.subscriptions.set(data.user.id, data.pushSubscription);
         if (!flag) {
             return await this.create(data.user.id, data.pushSubscription);
         }
         return await this.update(data.user.id, data.pushSubscription);
+    }
+
+    async unsub(data: IAuthRequest) {
+        const flag = this.subscriptions.has(data.user.id);
+        if (!flag) {
+            return;
+        }
+        this.subscriptions.delete(data.user.id);
+        return await this.delete(data.user.id);
     }
 
     private async create(userId: string, pushSubscription: any) {

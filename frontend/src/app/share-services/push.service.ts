@@ -22,8 +22,14 @@ export class PushService {
       this.swPush.requestSubscription({
           serverPublicKey: this.VAPID_PUBLIC_KEY
       })
-      .then(sub => this.gameSocket.AddPushSubscriber({ pushSubscription: sub }).subscribe())
-      .catch(err => console.error('Could not subscribe to notifications', err));
+      .then(sub => {
+        console.log('AddPush');
+        this.gameSocket.AddPushSubscriber({ pushSubscription: sub }).subscribe();
+      })
+      .catch(err => {
+        console.warn('DeletePush');
+        this.gameSocket.DeletePushSubscriber({}).subscribe();
+      });
     }
   }
 }

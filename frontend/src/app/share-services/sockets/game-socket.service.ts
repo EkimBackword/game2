@@ -163,7 +163,7 @@ export class GameSocketService {
   }
   //#endregion GameEvent
 
-  //#region StartGame
+  //#region AddPushSubscriber
   AddPushSubscriber(req: IAddPushSubscriberRequest) {
     this.socket.emit('AddPushSubscriber', req);
     return this.mapResponse<boolean>(this.onAddPushSubscriberSuccess(), this.onAddPushSubscriberError());
@@ -174,6 +174,19 @@ export class GameSocketService {
   private onAddPushSubscriberError() {
     return this.socket.fromEvent<string>('AddPushSubscriberError');
   }
-  //#endregion StartGame
+  //#endregion AddPushSubscriber
+
+  //#region DeletePushSubscriber
+  DeletePushSubscriber(req: any) {
+    this.socket.emit('DeletePushSubscriber', req);
+    return this.mapResponse<boolean>(this.onDeletePushSubscriberSuccess(), this.onDeletePushSubscriberError());
+  }
+  private onDeletePushSubscriberSuccess() {
+    return this.socket.fromEvent<boolean>('DeletePushSubscriberSuccess');
+  }
+  private onDeletePushSubscriberError() {
+    return this.socket.fromEvent<string>('DeletePushSubscriberError');
+  }
+  //#endregion DeletePushSubscriber
 
 }

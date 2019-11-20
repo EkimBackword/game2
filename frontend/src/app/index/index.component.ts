@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PushService } from '../share-services/push.service';
 
 @Component({
   selector: 'app-index',
@@ -7,8 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IndexComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private pushApi: PushService,
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.pushApi.subscribeToNotifications();
+  }
 
 }

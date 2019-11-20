@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService, IUser } from './../../share-services';
+import { UserService, IUser, GameSocketService } from './../../share-services';
 import { PushService } from '../../share-services/push.service';
 import { environment } from '../../../environments/environment';
 
@@ -20,19 +20,23 @@ export class MenuPageComponent implements OnInit {
 
   constructor(
     private userApi: UserService,
-    private pushApi: PushService,
+    private gameSocket: GameSocketService,
   ) { }
 
   ngOnInit() {
     this.user = this.userApi.getSession();
-    this.pushApi.subscribeToNotifications();
     this.userApi.checkOnline$.subscribe(
       flag => { this.isOnline = flag; }
     );
   }
 
   async logout() {
-    await this.userApi.logout();
+    console.warn('logout & delete PushSubscriber');
+    this.gameSocket.DeletePushSubscriber({}).subscribe(
+      () => {},
+      () => {},
+      async () => { await this.userApi.logout(); },
+    );
   }
 
   openMenuOption(state: number) {

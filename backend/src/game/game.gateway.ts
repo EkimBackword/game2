@@ -192,10 +192,21 @@ export class GameGateway implements OnGatewayDisconnect {
     @SubscribeMessage('AddPushSubscriber')
     async onAddPushSubscriber(socket: Socket, req: IAddPushSubscriberRequest) {
         try {
-            this.pushService.add(req);
+            this.pushService.sub(req);
             socket.emit('AddPushSubscriberSuccess', true);
         } catch (err) {
             socket.emit('AddPushSubscriberError', err.message);
+        }
+    }
+
+    @UseGuards(WsMyGuard)
+    @SubscribeMessage('DeletePushSubscriber')
+    async onDeletePushSubscriber(socket: Socket, req: IAuthRequest) {
+        try {
+            this.pushService.unsub(req);
+            socket.emit('DeletePushSubscriberSuccess', true);
+        } catch (err) {
+            socket.emit('DeletePushSubscriberError', err.message);
         }
     }
 }
