@@ -85,19 +85,23 @@ export class PushService {
             },
         };
 
-        try {
-            const promises = [];
-            for (const entrie of this.subscriptions.entries()) {
-                const key = entrie[0];
-                const sub = entrie[1];
-                if (key !== user.id) {
-                    promises.push(webpush.sendNotification( sub, JSON.stringify(notificationPayload )));
-                }
+        console.log('size: ', this.subscriptions.size);
+        for (const entrie of this.subscriptions.entries()) {
+            const key = entrie[0];
+            const sub = entrie[1];
+            if (key !== user.id) {
+                try {
+                    console.log('key: ', key);
+                    console.log('sub: ', sub);
+                    await webpush.sendNotification( sub, JSON.stringify(notificationPayload ));
+                    console.log('PushAll (SUCCESS): Уведомление отправленно');
+                    console.log('------------------------------------------');
+                } catch (err) {
+                    console.log('PushAll (ERROR): Уведомление неотправленно');
+                    console.log('Error: ', err);
+                    console.log('------------------------------------------');
             }
-            await Promise.all(promises);
-            console.log('PushAll (SUCCESS): Уведомление отправленно');
-        } catch (err) {
-            console.log('PushAll (ERROR): Уведомление неотправленно');
+            }
         }
     }
 
