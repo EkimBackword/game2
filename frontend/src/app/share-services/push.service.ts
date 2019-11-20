@@ -23,11 +23,11 @@ export class PushService {
           serverPublicKey: this.VAPID_PUBLIC_KEY
       })
       .then(sub => {
-        console.log('AddPush');
+        // console.log('AddPush');
         this.gameSocket.AddPushSubscriber({ pushSubscription: sub }).subscribe();
       })
       .catch(err => {
-        console.warn('DeletePush');
+        // console.warn('DeletePush');
         this.gameSocket.DeletePushSubscriber({}).subscribe();
       });
     }

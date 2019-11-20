@@ -20,7 +20,6 @@ export class MapEffectComponent implements OnInit {
   };
 
   ngOnInit() {
-    // console.log(this.deckPeriodEffects);
   }
 
 }

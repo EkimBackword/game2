@@ -85,14 +85,11 @@ export class PushService {
             },
         };
 
-        console.log('size: ', this.subscriptions.size);
         for (const entrie of this.subscriptions.entries()) {
             const key = entrie[0];
             const sub = entrie[1];
             if (key !== user.id) {
                 try {
-                    console.log('key: ', key);
-                    console.log('sub: ', sub);
                     await webpush.sendNotification( sub, JSON.stringify(notificationPayload ));
                     console.log('PushAll (SUCCESS): Уведомление отправленно');
                     console.log('------------------------------------------');
@@ -100,7 +97,7 @@ export class PushService {
                     console.log('PushAll (ERROR): Уведомление неотправленно');
                     console.log('Error: ', err);
                     console.log('------------------------------------------');
-            }
+                }
             }
         }
     }

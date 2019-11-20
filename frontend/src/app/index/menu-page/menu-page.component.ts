@@ -31,7 +31,7 @@ export class MenuPageComponent implements OnInit {
   }
 
   async logout() {
-    console.warn('logout & delete PushSubscriber');
+    // console.warn('logout & delete PushSubscriber');
     this.gameSocket.DeletePushSubscriber({}).subscribe(
       () => {},
       () => {},

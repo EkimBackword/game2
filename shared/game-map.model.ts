@@ -356,7 +356,7 @@ export class GameMap {
   public checkWinner(users: IGamer[]): IWinner {
     let max = 0;
     let winners: IWinner[] = [];
-    console.log('checkWinner! users: ', users);
+    // console.log('checkWinner! users: ', users);
     for (const user of users) {
       const gamer: IGameUser = this.gameUsers.get(user.id);
       if (gamer.castleCount > max) {
@@ -366,12 +366,12 @@ export class GameMap {
         winners.push({ ...gamer, name: user.name });
       }
     }
-    console.log('checkWinner! winners: ', winners);
+    // console.log('checkWinner! winners: ', winners);
     if (winners.length > 1) {
       let winner: IWinner = null;
       let index = -1;
       let winnerIds = winners.map(w => w.userId);
-      console.log(winners, this.castelsList);
+      // console.log(winners, this.castelsList);
       for (const castle of this.castelsList.entries()) {
         if (castle[0] > index && winnerIds.indexOf(castle[1]) > -1) {
           winner = winners.find(w => w.userId === castle[1]);
